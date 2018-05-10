@@ -1,0 +1,4 @@
+func GetAndUncompressData(filepath file) =
+	exec(image := "ubuntu", mem := GiB) (out file) {"
+	    gunzip -c {{filepath}} > {{out}}
+	"}

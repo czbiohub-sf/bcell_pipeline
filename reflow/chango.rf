@@ -1,0 +1,20 @@
+param (
+	chango_script = "s3://eric.waltari-bucket/BX_miseq/changeo/changeoV3.7_IgBLASTV1.7.sh"
+	results_bucket string
+	fastq_file string
+	docker_image = "kleinstein/immcantation:1.10.0"
+	run_name string
+	num_cores = 8
+	memory = 16
+)
+
+val dirs = make("$/dirs")
+val chango_script = file(chango_script)
+val fastq_file = file(fastq_file)
+
+val chango_results = exec(image := docker_image) (output dir) {"
+    sh {{chango_script}} -s {{fastq_file}} -n {{run_name}} -o {{output}}
+"}
+
+@requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
+val Main = dirs.Copy(chango_results, results_bucket)

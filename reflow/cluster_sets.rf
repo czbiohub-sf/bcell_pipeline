@@ -1,0 +1,20 @@
+param (
+	results_bucket string
+	fastq_pass_file = string
+	fastq_fail_file = string
+	docker_image = "kleinstein/immcantation:1.10.0"
+	run_name string
+	num_cores = 8
+	memory = 16
+)
+
+val files = make("$/files")
+val fastq_pass_file = file(fastq_pass_file)
+val fastq_fail_file = file(fastq_fail_file)
+
+val chango_results = exec(image := docker_image) (output file) {"
+    sh {{chango_script}} -s {{fastq_file}} -n {{run_name}} -o {{output}}
+"}
+
+@requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
+val Main = files.Copy(chango_results, results_bucket)

@@ -1,0 +1,44 @@
+param (
+	presto_abseq_script = "s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh"
+	read1_file = "s3://aaron-bcell-data/IgSeqBX1_S1_R1_001.fastq.gz"
+	read2_file = "s3://aaron-bcell-data/IgSeqBX1_S1_R2_001.fastq.gz"
+	read1_primers = "s3://aaron-bcell-data/primers_R1.fasta"
+	read2_primers = "s3://aaron-bcell-data/primers_R2c.fasta"
+	run_name string
+	num_cores = 8
+	docker_image = "kleinstein/immcantation:1.7.0"
+	memory = 16 // In GiB.
+	file_need_to_check_meaning_of = "s3://aaron-bcell-data/apr18_full.yaml"
+	results_bucket string
+)
+
+val get_data = make("get_data.rf")
+val dirs = make("$/dirs")
+
+val presto_abseq_script = file(presto_abseq_script)
+val read1_file = file(read1_file)
+val read2_file = file(read2_file)
+val read1_primers = file(read1_primers)
+val read2_primers = file(read2_primers)
+val file_need_to_check_meaning_of = file(file_need_to_check_meaning_of)
+
+val read1 = get_data.GetAndUncompressData(read1_file)
+val read2 = get_data.GetAndUncompressData(read2_file)
+
+val presto_results = exec(image := docker_image) (output dir) {"
+	    mv {{read1}} read1.fastq
+	    mv {{read2}} read2.fastq
+
+	    sh {{presto_abseq_script}} \
+	    -1 read1.fastq \
+	    -2 read2.fastq \
+	    -j {{read1_primers}} \
+	    -v {{read2_primers}} \
+	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
+	    -y {{file_need_to_check_meaning_of}} \
+	    -n {{run_name}} \
+	    -o {{output}}
+	"}
+
+@requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
+val Main = dirs.Copy(presto_results, results_bucket)

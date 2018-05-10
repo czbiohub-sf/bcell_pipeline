@@ -1,0 +1,16 @@
+param (
+	results_bucket string
+	fastq_file = string
+	docker_image = "kleinstein/immcantation:1.10.0"
+	// NOTE(AM): Come up with a better name for the next param.
+	num = 2
+)
+
+val files = make("$/files")
+
+val split_seq_results = exec(image := docker_image) (output file) {"
+    SplitSeq.py group -s {{fastq_file}} -f CONSCOUNT --num {{num}} > {{output}}
+"}
+
+@requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
+val Main = files.Copy(split_seq_results, results_bucket)
