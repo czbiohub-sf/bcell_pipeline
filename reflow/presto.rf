@@ -8,7 +8,7 @@ param (
 	num_cores = 8
 	docker_image = "kleinstein/immcantation:1.7.0"
 	memory = 16 // In GiB.
-	file_need_to_check_meaning_of = "s3://aaron-bcell-data/apr18_full.yaml"
+	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
 	results_bucket string
 )
 
@@ -20,7 +20,7 @@ val read1_file = file(read1_file)
 val read2_file = file(read2_file)
 val read1_primers = file(read1_primers)
 val read2_primers = file(read2_primers)
-val file_need_to_check_meaning_of = file(file_need_to_check_meaning_of)
+val metadata_file = file(metadata_file)
 
 val read1 = get_data.GetAndUncompressData(read1_file)
 val read2 = get_data.GetAndUncompressData(read2_file)
@@ -29,13 +29,16 @@ val presto_results = exec(image := docker_image) (output dir) {"
 	    mv {{read1}} read1.fastq
 	    mv {{read2}} read2.fastq
 
+	    mv {{read1_primers}} read1_primers.fasta
+	    mv {{read2_primers}} read2_primers.fasta
+
 	    sh {{presto_abseq_script}} \
 	    -1 read1.fastq \
 	    -2 read2.fastq \
-	    -j {{read1_primers}} \
-	    -v {{read2_primers}} \
+	    -j read1_primers.fasta \
+	    -v read2_primers.fasta \
 	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
-	    -y {{file_need_to_check_meaning_of}} \
+	    -y {{metadata_file}} \
 	    -n {{run_name}} \
 	    -o {{output}}
 	"}
