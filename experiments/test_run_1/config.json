@@ -1,0 +1,4 @@
+{
+  "program": "../../reflow/split_seq.rf",
+  "runs_file": "split_seq_batch.csv"
+}

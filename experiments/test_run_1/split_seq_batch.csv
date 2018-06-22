@@ -1,0 +1,10 @@
+ID,results_bucket,fastq_file,min_conscount
+MINCONS2.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,2
+MINCONS3.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,3
+MINCONS4.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,4
+MINCONS5.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,5
+MINCONS6.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,6
+MINCONS7.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,7
+MINCONS8.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,8
+MINCONS9.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,9
+MINCONS10.3,s3://aaron-bcell-data/conscount_test_3,s3://aaron-bcell-data/testing-run/my_test_run-final_collapse-unique_atleast-5.fastq,10
