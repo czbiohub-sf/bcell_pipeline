@@ -1,32 +1,30 @@
 // Human or Mouse, or manually provide primers.
 param (
-	presto_abseq_script = "s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh"
-	read1_file = "s3://aaron-bcell-data/IgSeqBX1_S1_R1_001.fastq.gz"
-	read2_file = "s3://aaron-bcell-data/IgSeqBX1_S1_R2_001.fastq.gz"
-	read1_primers = "s3://aaron-bcell-data/primers_R1.fasta"
-	read2_primers = "s3://aaron-bcell-data/primers_R2c.fasta"
-	run_name string
-	num_cores = 8
+	presto_abseq_script = "../src/presto-abseq.sh"
+	read1_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R1.fasta"
+	read2_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R2c.fasta"
 	docker_image = "kleinstein/immcantation:1.10.0"
-	memory = 16 // In GiB.
 	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
-	results_bucket string
 )
 
-val get_data = make("get_data.rf")
+val utils = make("utils.rf")
 val dirs = make("$/dirs")
 
 val presto_abseq_script = file(presto_abseq_script)
-val read1_file = file(read1_file)
-val read2_file = file(read2_file)
 val read1_primers = file(read1_primers)
 val read2_primers = file(read2_primers)
 val metadata_file = file(metadata_file)
 
-val read1 = get_data.GetAndUncompressData(read1_file)
-val read2 = get_data.GetAndUncompressData(read2_file)
+func PrestoRun(
+	read1_file,
+	read2_file file,
+	run_name,
+	results_bucket string) file = {
 
-val presto_results = exec(image := docker_image) (output dir) {"
+	read1 := utils.GetAndUncompressData(read1_file)
+	read2 := utils.GetAndUncompressData(read2_file)
+
+	val presto_results = exec(image := docker_image) (output dir) {"
 	    mv {{read1}} read1.fastq
 	    mv {{read2}} read2.fastq
 
@@ -44,5 +42,6 @@ val presto_results = exec(image := docker_image) (output dir) {"
 	    -o {{output}}
 	"}
 
-@requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
-val Main = dirs.Copy(presto_results, results_bucket)
+	val (fastq, _) = dirs.Pick(presto_results, "final_collapse-unique_atleast-5.fastq")
+	fastq
+}
