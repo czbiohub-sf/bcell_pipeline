@@ -7,7 +7,6 @@ param (
 	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
 )
 
-val utils = make("utils.rf")
 val dirs = make("$/dirs")
 
 val presto_abseq_script = file(presto_abseq_script)
@@ -21,12 +20,9 @@ func PrestoRun(
 	run_name,
 	results_bucket string) file = {
 
-	read1 := utils.GetAndUncompressData(read1_file)
-	read2 := utils.GetAndUncompressData(read2_file)
-
 	val presto_results = exec(image := docker_image) (output dir) {"
-	    mv {{read1}} read1.fastq
-	    mv {{read2}} read2.fastq
+	    mv {{read1_file}} read1.fastq
+	    mv {{read2_file}} read2.fastq
 
 	    mv {{read1_primers}} read1_primers.fasta
 	    mv {{read2_primers}} read2_primers.fasta
