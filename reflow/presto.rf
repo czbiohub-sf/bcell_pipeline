@@ -17,8 +17,7 @@ val metadata_file = file(metadata_file)
 func PrestoRun(
 	read1_file,
 	read2_file file,
-	run_name,
-	results_bucket string) file = {
+	run_name string) dir = {
 
 	val presto_results = exec(image := docker_image) (output dir) {"
 	    mv {{read1_file}} read1.fastq
@@ -38,6 +37,10 @@ func PrestoRun(
 	    -o {{output}}
 	"}
 
-	val (fastq, _) = dirs.Pick(presto_results, "final_collapse-unique_atleast-5.fastq")
-	fastq
+	// val result_dir = [results_bucket, "presto"]
+	// dirs.Copy(presto_results, strings.Join(result_dir,"/"))
+	presto_results
+	// val (fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-5.fastq")
+	// fastq
 }
+
