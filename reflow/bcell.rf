@@ -9,6 +9,7 @@ param (
 	read2_file string
 	run_name string
 	results_bucket string
+	min_conscount = 2
 )
 
 val dirs = make("$/dirs")
@@ -19,18 +20,15 @@ val presto = make("presto.rf")
 val presto_results = presto.PrestoRun(file(read1_file), file(read2_file), run_name)
 val presto_bucket = dirs.Copy(presto_results, strings.Join(["s3:/", results_bucket, run_name, "presto"], "/"))
 
-val (fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-5.fastq")
-val split_seq = make(
-	"split_seq.rf",
-	results_bucket := results_bucket)
-val split_seq_results = split_seq.SplitSeq(fastq, 2)
-
+val (split_seq_fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-5.fastq")
+val split_seq = make("split_seq.rf")
+val split_seq_results = split_seq.SplitSeq(split_seq_fastq, min_conscount)
 val split_seq_bucket = dirs.Copy(split_seq_results, strings.Join(["s3:/", results_bucket, run_name, "splitSeq"], "/"))
 
-val changeo = make("changeo.rf")
 val (changeo_fastq, _) = dirs.Pick(split_seq_results, "*atleast-2.fastq")
+val changeo = make("changeo.rf")
 val changeo_results = changeo.ChangeoRun(changeo_fastq, run_name)
-// dirs.Copy(changeo_results, strings.Join(["s3:/", results_bucket, run_name, "changeo"], "/"))
+val changeo_bucket = dirs.Copy(changeo_results, strings.Join(["s3:/", results_bucket, run_name, "changeo"], "/"))
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = dirs.Copy(changeo_results, strings.Join(["s3:/", results_bucket, run_name, "changeo"], "/"))
+val Main = presto_bucket ~> split_seq_bucket ~> changeo_bucket

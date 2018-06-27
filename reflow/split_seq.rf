@@ -1,5 +1,4 @@
 param (
-	results_bucket string
 	docker_image = "kleinstein/immcantation:1.10.0"
 )
 
