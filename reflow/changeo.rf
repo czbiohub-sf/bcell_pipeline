@@ -1,21 +1,43 @@
 param (
 	chango_script = "s3://eric.waltari-bucket/BX_miseq/changeo/changeoV3.7_IgBLASTV1.7.sh"
-	results_bucket string
-	fastq_file string
 	docker_image = "kleinstein/immcantation:1.10.0"
-	run_name string
-	num_cores = 8
-	memory = 16
+	// run_name string
+	// num_cores = 8
+	// memory = 16
 	num_sp = 4
 )
 
-val dirs = make("$/dirs")
+// val dirs = make("$/dirs")
 val chango_script = file(chango_script)
-val fastq_file = file(fastq_file)
 
-val chango_results = exec(image := docker_image) (output dir) {"
-    sh {{chango_script}} -s {{fastq_file}} -n {{run_name}} -o {{output}} -p {{num_sp}}
-"}
+func ChangeoRun(fastq file, run_name string) dir = 
+	exec(image := docker_image) (output dir) {"
+    	sh {{chango_script}} \
+    	-s {{fastq}} \
+    	-n {{run_name}} \
+    	-o {{output}} \
+    	-p {{num_sp}}
+	"}
 
-@requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
-val Main = dirs.Copy(chango_results, results_bucket)
+// func PrestoRun(read1_file, read2_file file, run_name string) dir = 
+// 	exec(image := docker_image) (output dir) {"
+// 	    mv {{read1_file}} read1.fastq
+// 	    mv {{read2_file}} read2.fastq
+
+// 	    mv {{read1_primers}} read1_primers.fasta
+// 	    mv {{read2_primers}} read2_primers.fasta
+
+// 	    sh {{presto_abseq_script}} \
+// 	    -1 read1.fastq \
+// 	    -2 read2.fastq \
+// 	    -j read1_primers.fasta \
+// 	    -v read2_primers.fasta \
+// 	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
+// 	    -y {{metadata_file}} \
+// 	    -n {{run_name}} \
+// 	    -o {{output}}
+// 	"}
+
+
+// @requires(cpu := num_cores, mem := memory*GiB, disk := 200*GiB)
+// val Main = dirs.Copy(chango_results, results_bucket)

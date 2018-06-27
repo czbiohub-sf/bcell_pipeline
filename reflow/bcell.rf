@@ -25,5 +25,12 @@ val split_seq = make(
 	results_bucket := results_bucket)
 val split_seq_results = split_seq.SplitSeq(fastq, 2)
 
+val split_seq_bucket = dirs.Copy(split_seq_results, strings.Join(["s3:/", results_bucket, run_name, "splitSeq"], "/"))
+
+val changeo = make("changeo.rf")
+val (changeo_fastq, _) = dirs.Pick(split_seq_results, "*atleast-2.fastq")
+val changeo_results = changeo.ChangeoRun(changeo_fastq, run_name)
+// dirs.Copy(changeo_results, strings.Join(["s3:/", results_bucket, run_name, "changeo"], "/"))
+
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = dirs.Copy(split_seq_results, strings.Join(["s3:/", results_bucket, run_name], "/"))
+val Main = dirs.Copy(changeo_results, strings.Join(["s3:/", results_bucket, run_name, "changeo"], "/"))
