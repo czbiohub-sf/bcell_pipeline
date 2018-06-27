@@ -1,3 +1,9 @@
+/* Reflow workflow for B-cell repertoire sequencing pipeline. Developed at Chan 
+   Zuckerberg Biohub. Follows Immcantation framework. */
+
+/* Input: read1_file and read2_file are read sequencing files in fastq format.
+   run_name gives a name to the current run that files will be saved under.
+   results_bucket refers to an s3 bucket that files will be saved under. */
 param (
 	read1_file string
 	read2_file string
@@ -5,25 +11,19 @@ param (
 	results_bucket string
 )
 
-val read1 = file(read1_file)
-val read2 = file(read2_file)
-
 val dirs = make("$/dirs")
 val strings = make("$/strings")
 
-// Run presto, results will be saved in the {results_bucket}/{run_name} directory.
+// Step 1. Presto. Results will be saved in the {results_bucket}/{run_name}/presto s3 directory.
 val presto = make("presto.rf")
-val presto_results = presto.PrestoRun(read1, read2, run_name)
-val presto_bucket = dirs.Copy(presto_results, strings.Join([results_bucket, run_name],"/"))
+val presto_results = presto.PrestoRun(file(read1_file), file(read2_file), run_name)
+val presto_bucket = dirs.Copy(presto_results, strings.Join(["s3:/", results_bucket, run_name, "presto"], "/"))
 
 val (fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-5.fastq")
-
-// Run split seq with the fastq file from presto
 val split_seq = make(
 	"split_seq.rf",
 	results_bucket := results_bucket)
-
 val split_seq_results = split_seq.SplitSeq(fastq, 2)
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = dirs.Copy(split_seq_results, results_bucket)
+val Main = dirs.Copy(split_seq_results, strings.Join(["s3:/", results_bucket, run_name], "/"))
