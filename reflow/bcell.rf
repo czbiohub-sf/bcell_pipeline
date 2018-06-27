@@ -11,10 +11,10 @@ val read2 = file(read2_file)
 val dirs = make("$/dirs")
 val strings = make("$/strings")
 
-// Run presto, results will be in the {results_bucket}/presto directory.
+// Run presto, results will be saved in the {results_bucket}/{run_name} directory.
 val presto = make("presto.rf")
 val presto_results = presto.PrestoRun(read1, read2, run_name)
-val presto_bucket = dirs.Copy(presto_results, strings.Join([results_bucket, "presto"],"/"))
+val presto_bucket = dirs.Copy(presto_results, strings.Join([results_bucket, run_name],"/"))
 
 val (fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-5.fastq")
 
