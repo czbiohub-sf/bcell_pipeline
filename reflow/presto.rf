@@ -1,13 +1,11 @@
 // Human or Mouse, or manually provide primers.
 param (
-	presto_abseq_script = "../src/presto-abseq.sh"
 	read1_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R1.fasta"
 	read2_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R2c.fasta"
 	docker_image = "kleinstein/immcantation:1.10.0"
 	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
 )
 
-val presto_abseq_script = file(presto_abseq_script)
 val read1_primers = file(read1_primers)
 val read2_primers = file(read2_primers)
 val metadata_file = file(metadata_file)
@@ -20,7 +18,7 @@ func PrestoRun(read1_file, read2_file file, run_name string) dir =
 	    mv {{read1_primers}} read1_primers.fasta
 	    mv {{read2_primers}} read2_primers.fasta
 
-	    sh {{presto_abseq_script}} \
+	    sh /usr/local/bin/presto-abseq \
 	    -1 read1.fastq \
 	    -2 read2.fastq \
 	    -j read1_primers.fasta \
