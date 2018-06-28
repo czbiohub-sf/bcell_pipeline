@@ -11,10 +11,14 @@ param (
 	results_bucket string
 	min_conscount = 2
 	distance_threshold = 0.18
+	shazam_method = "gmm"
+	shazam_model = "gamma-gamma"
 )
 
 val dirs = make("$/dirs")
 val strings = make("$/strings")
+
+/***************************************** RAW READ PROCESSING *********************************************/
 
 // Step 1a. Presto. Results will be saved in the {results_bucket}/{run_name}/presto s3 directory.
 val presto = make("presto.rf")
@@ -26,6 +30,8 @@ val split_seq = make("split_seq.rf")
 val (split_seq_fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-2.fastq")
 val split_seq_results = split_seq.SplitSeq(split_seq_fastq, min_conscount)
 val split_seq_bucket = dirs.Copy(split_seq_results, strings.Join(["s3:/", results_bucket, run_name, "splitSeq"], "/"))
+
+/************************************* V(D)J ANNOTATION/ALIGNMENT *****************************************/
 
 // Step 2. Change-O + IgBLAST.
 val changeo_igblast = make("changeo_igblast.rf")
@@ -39,11 +45,18 @@ val (tigger_tab, _) = dirs.Pick(changeo_igblast_results, "*parse-select.tab")
 val tigger_results = tigger.TiggerRun(tigger_tab, run_name)
 val tigger_bucket = dirs.Copy(tigger_results, strings.Join(["s3:/", results_bucket, run_name, "tigger"], "/"))
 
+// Optional. SHazaM Clonal Assignment Threshold Tuning. Set distance_threshold to shazam result. 
+val shazam = make("shazam.rf")
+val (genotyped_tab, _) = dirs.Pick(tigger_results, "*genotyped.tab")
+val shazam_results = shazam.ShazamRun(genotyped_tab, shazam_method, shazam_model, run_name)
+val shazam_bucket = dirs.Copy(shazam_results, strings.Join(["s3:/", results_bucket, run_name, "shazam"], "/"))
+
 // Step 4. Change-O Clonal Assignment.
 val changeo_clone = make("changeo_clone.rf")
-val (changeo_tab, _) = dirs.Pick(tigger_results, "*genotyped.tab")
-val changeo_clone_results = changeo_clone.ChangeoRun(changeo_tab, distance_threshold, run_name)
+val changeo_clone_results = changeo_clone.ChangeoRun(genotyped_tab, distance_threshold, run_name)
 val changeo_clone_bucket = dirs.Copy(changeo_clone_results, strings.Join(["s3:/", results_bucket, run_name, "changeo_clone"], "/"))
+
+/*********************************************** ANALYSIS **************************************************/
 
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
