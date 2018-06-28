@@ -1,0 +1,18 @@
+// Reflow module for Change-O Clonal assignment and germline reconstruction step.
+
+param (
+	docker_image = "kleinstein/immcantation:1.10.0"
+	num_sp = 4
+)
+
+func ChangeoRun(genotyped_tab file, distance_threshold float, run_name string) dir = 
+	exec(image := docker_image) (output dir) {"
+		mv {{genotyped_tab}} genotyped.tab
+
+    	sh /usr/local/bin/changeo-clone \
+    	-d genotyped.tab \
+    	-x {{distance_threshold}}
+    	-n {{run_name}} \
+    	-o {{output}} \
+    	-p {{num_sp}}
+	"}

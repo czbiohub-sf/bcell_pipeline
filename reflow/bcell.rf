@@ -10,6 +10,7 @@ param (
 	run_name string
 	results_bucket string
 	min_conscount = 2
+	distance_threshold = 0.18
 )
 
 val dirs = make("$/dirs")
@@ -21,21 +22,29 @@ val presto_results = presto.PrestoRun(file(read1_file), file(read2_file), run_na
 val presto_bucket = dirs.Copy(presto_results, strings.Join(["s3:/", results_bucket, run_name, "presto"], "/"))
 
 // Step 1b. SplitSeq. 
-val (split_seq_fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-5.fastq")
 val split_seq = make("split_seq.rf")
+val (split_seq_fastq, _) = dirs.Pick(presto_results, "*final_collapse-unique_atleast-2.fastq")
 val split_seq_results = split_seq.SplitSeq(split_seq_fastq, min_conscount)
 val split_seq_bucket = dirs.Copy(split_seq_results, strings.Join(["s3:/", results_bucket, run_name, "splitSeq"], "/"))
 
 // Step 2. Change-O + IgBLAST.
+val changeo_igblast = make("changeo_igblast.rf")
 val (changeo_fastq, _) = dirs.Pick(split_seq_results, "*atleast-2.fastq")
-val changeo = make("changeo_igblast.rf")
-val changeo_results = changeo.ChangeoRun(changeo_fastq, run_name)
-val changeo_bucket = dirs.Copy(changeo_results, strings.Join(["s3:/", results_bucket, run_name, "changeo"], "/"))
+val changeo_igblast_results = changeo_igblast.ChangeoRun(changeo_fastq, run_name)
+val changeo_igblast_bucket = dirs.Copy(changeo_igblast_results, strings.Join(["s3:/", results_bucket, run_name, "changeo_igblast"], "/"))
 
 // Step 3. TIgGER.
-val (tigger_tab, _) = dirs.Pick(changeo_results, "*parse-select.tab")
 val tigger = make("tigger.rf")
+val (tigger_tab, _) = dirs.Pick(changeo_igblast_results, "*parse-select.tab")
+val tigger_results = tigger.TiggerRun(tigger_tab, run_name)
+val tigger_bucket = dirs.Copy(tigger_results, strings.Join(["s3:/", results_bucket, run_name, "tigger"], "/"))
+
+// Step 4. Change-O Clonal Assignment.
+val changeo_clone = make("changeo_clone.rf")
+val (changeo_tab, _) = dirs.Pick(tigger_results, "*genotyped.tab")
+val changeo_clone_results = changeo_clone.ChangeoRun(changeo_tab, distance_threshold, run_name)
+val changeo_clone_bucket = dirs.Copy(changeo_clone_results, strings.Join(["s3:/", results_bucket, run_name, "changeo_clone"], "/"))
 
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = presto_bucket ~> split_seq_bucket ~> changeo_bucket
+val Main = presto_bucket ~> split_seq_bucket ~> changeo_igblast_bucket ~> tigger_bucket ~> changeo_clone_bucket
