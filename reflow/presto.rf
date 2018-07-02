@@ -1,22 +1,16 @@
 // Human or Mouse, or manually provide primers.
 
 param (
-	// presto_script = "s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh"
-	// read1_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R1.fasta"
-	// read2_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R2c.fasta"
-	read1_primers = "s3://gmeixiong-bucket/examples/input/CPrimers.fasta"
-	read2_primers = "s3://gmeixiong-bucket/examples/input/TS.fasta"
+	presto_script = "s3://gmeixiong-bucket/scripts/presto-abseq.sh"
 	docker_image = "kleinstein/immcantation:1.10.1"
-	// metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
-	metadata_file = "s3://gmeixiong-bucket/examples/input/HD07M.yaml"
+	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
+	// metadata_file = "s3://gmeixiong-bucket/examples/input/HD07M.yaml"
 )
 
-// val presto_script = file(presto_script)
-val read1_primers = file(read1_primers)
-val read2_primers = file(read2_primers)
+val presto_script = file(presto_script)
 val metadata_file = file(metadata_file)
 
-func PrestoRun(read1_file, read2_file file, run_name string) dir = 
+func PrestoRun(read1_file, read2_file, read1_primers, read2_primers file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
 	    mv {{read1_file}} read1.fastq
 	    mv {{read2_file}} read2.fastq
@@ -24,7 +18,7 @@ func PrestoRun(read1_file, read2_file file, run_name string) dir =
 	    mv {{read1_primers}} read1_primers.fasta
 	    mv {{read2_primers}} read2_primers.fasta
 
-	    sh /usr/local/bin/presto-abseq \
+	    sh {{presto_script}} \
 	    -1 read1.fastq \
 	    -2 read2.fastq \
 	    -j read1_primers.fasta \
@@ -34,3 +28,4 @@ func PrestoRun(read1_file, read2_file file, run_name string) dir =
 	    -n {{run_name}} \
 	    -o {{output}}
 	"}
+///usr/local/bin/presto-abseq
