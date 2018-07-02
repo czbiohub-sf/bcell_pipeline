@@ -349,3 +349,9 @@ TSWLatexianTemp*
 
 # standalone packages
 *.sta
+
+# Reflow runbatch files
+state.lock
+state.json
+state.bak
+log.*

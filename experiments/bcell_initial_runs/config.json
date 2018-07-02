@@ -1,0 +1,4 @@
+{
+  "program": "../../reflow/bcell.rf",
+  "runs_file": "bcell_test_run.csv"
+}
