@@ -1,9 +1,12 @@
 // Reflow module for Change-O IgBLAST step.
 
 param (
-	docker_image = "kleinstein/immcantation:1.10.0"
+	// changeo_script = "s3://gmeixiong-bucket/scripts/changeo_igblast.sh"
+	docker_image = "kleinstein/immcantation:1.10.1"
 	num_sp = 4
 )
+
+// val changeo_script = file(changeo_script)
 
 func ChangeoRun(fastq file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"

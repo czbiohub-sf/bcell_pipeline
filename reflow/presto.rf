@@ -1,12 +1,17 @@
 // Human or Mouse, or manually provide primers.
 
 param (
-	read1_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R1.fasta"
-	read2_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R2c.fasta"
-	docker_image = "kleinstein/immcantation:1.10.0"
-	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
+	// presto_script = "s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh"
+	// read1_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R1.fasta"
+	// read2_primers = "s3://eric.waltari-bucket/BX_miseq/presto/primers_R2c.fasta"
+	read1_primers = "s3://gmeixiong-bucket/examples/input/CPrimers.fasta"
+	read2_primers = "s3://gmeixiong-bucket/examples/input/TS.fasta"
+	docker_image = "kleinstein/immcantation:1.10.1"
+	// metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
+	metadata_file = "s3://gmeixiong-bucket/examples/input/HD07M.yaml"
 )
 
+// val presto_script = file(presto_script)
 val read1_primers = file(read1_primers)
 val read2_primers = file(read2_primers)
 val metadata_file = file(metadata_file)
