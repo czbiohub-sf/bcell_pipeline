@@ -31,17 +31,17 @@ val presto_bucket = dirs.Copy(presto_res,
 	strings.Join([results_bucket, name, "presto"], "/"))
 
 // Step 1b. SplitSeq.
-val split_seq = presto_bucket ~> make("../../reflow/split_seq.rf")
-val (split_seq_fastq, _) = dirs.Pick(presto_res, "*unique_atleast-2.fastq")
-val split_seq_res = split_seq.SplitSeq(split_seq_fastq, min_conscount)
-val split_seq_bucket = dirs.Copy(split_seq_res,
-	strings.Join([results_bucket, name, "splitSeq"], "/"))
+// val split_seq = presto_bucket ~> make("../../reflow/split_seq.rf")
+// val (split_seq_fastq, _) = dirs.Pick(presto_res, "*unique_atleast-2.fastq")
+// val split_seq_res = split_seq.SplitSeq(split_seq_fastq, min_conscount)
+// val split_seq_bucket = dirs.Copy(split_seq_res,
+// 	strings.Join([results_bucket, name, "splitSeq"], "/"))
 
 /************************** V(D)J ANNOTATION/ALIGNMENT ************************/
 
 // Step 2. Change-O + IgBLAST.
-val changeo_igblast = split_seq_bucket ~> make("../../reflow/changeo_igblast.rf")
-val (changeo_fastq, _) = dirs.Pick(split_seq_res, "*atleast-2.fastq")
+val changeo_igblast = presto_bucket ~> make("../../reflow/changeo_igblast.rf")
+val (changeo_fastq, _) = dirs.Pick(presto_res, "*atleast-2.fastq")
 val changeo_igblast_res = changeo_igblast.ChangeoRun(changeo_fastq, name)
 val changeo_igblast_bucket = dirs.Copy(changeo_igblast_res,
 	strings.Join([results_bucket, name, "changeo_igblast"], "/"))
