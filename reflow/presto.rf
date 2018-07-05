@@ -3,14 +3,20 @@
 param (
 	presto_script = "s3://gmeixiong-bucket/scripts/presto-abseq.sh"
 	docker_image = "kleinstein/immcantation:1.10.1"
-	metadata_file = "s3://aaron-bcell-data/apr18_full.yaml"
+	python_script = "s3://gmeixiong-bucket/scripts/createYaml.py"
 	// metadata_file = "s3://gmeixiong-bucket/examples/input/HD07M.yaml"
 )
 
 val presto_script = file(presto_script)
-val metadata_file = file(metadata_file)
+val python_script = file(python_script)
 
-func PrestoRun(read1_file, read2_file, read1_primers, read2_primers file, run_name string) dir = 
+func CreateYaml(read_file, run_name, author, description string) file = 
+	exec(image := docker_image, mem := GiB) (out file) {"
+		PRESTO_VERSION=$(python3 -c "import presto; print('%s' % (presto.__version__))")
+		python3 {{python_script}} "{{read_file}}" "{{run_name}}" "{{author}}" ${PRESTO_VERSION} "{{description}}" {{out}}
+	"}
+
+func PrestoRun(read1_file, read2_file, read1_primers, read2_primers, yaml file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
 	    mv {{read1_file}} read1.fastq
 	    mv {{read2_file}} read2.fastq
@@ -18,13 +24,15 @@ func PrestoRun(read1_file, read2_file, read1_primers, read2_primers file, run_na
 	    mv {{read1_primers}} read1_primers.fasta
 	    mv {{read2_primers}} read2_primers.fasta
 
+	    mv {{yaml}} yaml.yaml
+
 	    sh {{presto_script}} \
 	    -1 read1.fastq \
 	    -2 read2.fastq \
 	    -j read1_primers.fasta \
 	    -v read2_primers.fasta \
 	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
-	    -y {{metadata_file}} \
+	    -y yaml.yaml \
 	    -n {{run_name}} \
 	    -o {{output}}
 	"}

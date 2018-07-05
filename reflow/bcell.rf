@@ -11,6 +11,8 @@ param (
 	read2_primers string
 	name string
 	results_bucket string
+	author = "CZ Biohub"
+	description = "Initial MiSeq run"
 	min_conscount = 2
 	d_threshold = 0.18
 	shazam_method = "gmm"
@@ -24,13 +26,14 @@ val strings = make("$/strings")
 
 // Step 1a. Presto.
 val presto = make("../../reflow/presto.rf")
+val yaml = presto.CreateYaml(read1_file, name, author, description)
 val presto_res = presto.PrestoRun(file(read1_file), file(read2_file), 
-	file(read1_primers), file(read2_primers), name)
+	file(read1_primers), file(read2_primers), yaml, name)
 val presto_bucket = dirs.Copy(presto_res,
 	strings.Join([results_bucket, name, "presto"], "/"))
 
 // Step 1b. SplitSeq.
-val split_seq = make("../../reflow/split_seq.rf")
+val split_seq = presto_bucket ~> make("../../reflow/split_seq.rf")
 val (split_seq_fastq, _) = dirs.Pick(presto_res, "*unique_atleast-2.fastq")
 val split_seq_res = split_seq.SplitSeq(split_seq_fastq, min_conscount)
 val split_seq_bucket = dirs.Copy(split_seq_res,
@@ -39,28 +42,28 @@ val split_seq_bucket = dirs.Copy(split_seq_res,
 /************************** V(D)J ANNOTATION/ALIGNMENT ************************/
 
 // Step 2. Change-O + IgBLAST.
-val changeo_igblast = make("../../reflow/changeo_igblast.rf")
+val changeo_igblast = split_seq_bucket ~> make("../../reflow/changeo_igblast.rf")
 val (changeo_fastq, _) = dirs.Pick(split_seq_res, "*atleast-2.fastq")
 val changeo_igblast_res = changeo_igblast.ChangeoRun(changeo_fastq, name)
 val changeo_igblast_bucket = dirs.Copy(changeo_igblast_res,
 	strings.Join([results_bucket, name, "changeo_igblast"], "/"))
 
 // Step 3. TIgGER.
-val tigger = make("../../reflow/tigger.rf")
+val tigger = changeo_igblast_bucket ~> make("../../reflow/tigger.rf")
 val (tigger_tab, _) = dirs.Pick(changeo_igblast_res, "*db-pass.tab")
 val tigger_res = tigger.TiggerRun(tigger_tab, name)
 val tigger_bucket = dirs.Copy(tigger_res,
 	strings.Join([results_bucket, name, "tigger"], "/"))
 
 // Optional. SHazaM Clonal Assignment Threshold Tuning.
-val shazam = make("../../reflow/shazam.rf")
+val shazam = tigger_bucket ~> make("../../reflow/shazam.rf")
 val (gen_tab, _) = dirs.Pick(tigger_res, "*genotyped.tab")
 val shazam_res = shazam.ShazamRun(gen_tab, shazam_method, shazam_model, name)
 val shazam_bucket = dirs.Copy(shazam_res,
 	strings.Join([results_bucket, name, "shazam"], "/"))
 
 // Step 4. Change-O Clonal Assignment.
-val changeo_clone = make("../../reflow/changeo_clone.rf")
+val changeo_clone = shazam_bucket ~> make("../../reflow/changeo_clone.rf")
 val changeo_clone_res = changeo_clone.ChangeoRun(gen_tab, d_threshold, name)
 val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
 	strings.Join([results_bucket, name, "changeo_clone"], "/"))
@@ -69,5 +72,5 @@ val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
 
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = presto_bucket ~> split_seq_bucket ~> changeo_igblast_bucket ~>
-	tigger_bucket ~> shazam_bucket ~> changeo_clone_bucket
+val Main = changeo_clone_bucket
+
