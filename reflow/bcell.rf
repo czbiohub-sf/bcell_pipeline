@@ -37,7 +37,7 @@ val split_seq = presto_bucket ~> make("../../reflow/split_seq.rf")
 val (split_seq_fastq, _) = dirs.Pick(presto_res, "*unique_atleast-2.fastq")
 val split_seq_res = split_seq.SplitSeq(split_seq_fastq, min_conscount)
 val split_seq_bucket = dirs.Copy(split_seq_res,
-	strings.Join(["s3:/", results_bucket, name, "splitSeq"], "/"))
+	strings.Join([results_bucket, name, "splitSeq"], "/"))
 
 /************************** V(D)J ANNOTATION/ALIGNMENT ************************/
 
