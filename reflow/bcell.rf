@@ -50,7 +50,7 @@ val changeo_igblast_bucket = dirs.Copy(changeo_igblast_res,
 
 // Step 3. TIgGER.
 val tigger = changeo_igblast_bucket ~> make("../../reflow/tigger.rf")
-val (tigger_tab, _) = dirs.Pick(changeo_igblast_res, "*db-pass.tab")
+val (tigger_tab, _) = dirs.Pick(changeo_igblast_res, "*parse-select.tab")
 val tigger_res = tigger.TiggerRun(tigger_tab, name)
 val tigger_bucket = dirs.Copy(tigger_res,
 	strings.Join([results_bucket, name, "tigger"], "/"))

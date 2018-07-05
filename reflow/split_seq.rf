@@ -1,5 +1,5 @@
 param (
-	docker_image = "kleinstein/immcantation:1.10.1"
+	docker_image = "kleinstein/immcantation:1.10.2"
 )
 
 func SplitSeq(fastq_file file, min_conscount int) dir = {
