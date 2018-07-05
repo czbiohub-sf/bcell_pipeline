@@ -1,13 +1,13 @@
 // Human or Mouse, or manually provide primers.
 
 param (
-	// presto_script = "s3://gmeixiong-bucket/scripts/presto-abseq.sh"
+	presto_script = "s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh"
 	docker_image = "kleinstein/immcantation:1.10.2"
 	python_script = "s3://gmeixiong-bucket/scripts/createYaml.py"
 	// metadata_file = "s3://gmeixiong-bucket/examples/input/HD07M.yaml"
 )
 
-// val presto_script = file(presto_script)
+val presto_script = file(presto_script)
 val python_script = file(python_script)
 
 func CreateYaml(read_file, run_name, author, description string) file = 
@@ -26,7 +26,7 @@ func PrestoRun(read1_file, read2_file, read1_primers, read2_primers, yaml file, 
 
 	    mv {{yaml}} yaml.yaml
 
-	    sh /usr/local/bin/presto-abseq \
+	    sh {{presto_script}} \
 	    -1 read1.fastq \
 	    -2 read2.fastq \
 	    -j read1_primers.fasta \

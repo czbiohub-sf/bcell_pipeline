@@ -14,9 +14,7 @@ param (
 	author = "CZ Biohub"
 	description = "Initial MiSeq run"
 	min_conscount = 2
-	d_threshold = 0.18
-	shazam_method = "gmm"
-	shazam_model = "gamma-gamma"
+	d_threshold = 0.15
 )
 
 val dirs = make("$/dirs")
@@ -58,7 +56,7 @@ val tigger_bucket = dirs.Copy(tigger_res,
 // Optional. SHazaM Clonal Assignment Threshold Tuning.
 val shazam = tigger_bucket ~> make("../../reflow/shazam.rf")
 val (gen_tab, _) = dirs.Pick(tigger_res, "*genotyped.tab")
-val shazam_res = shazam.ShazamRun(gen_tab, shazam_method, shazam_model, name)
+val shazam_res = shazam.ShazamRun(gen_tab, name)
 val shazam_bucket = dirs.Copy(shazam_res,
 	strings.Join([results_bucket, name, "shazam"], "/"))
 
