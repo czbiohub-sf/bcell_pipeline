@@ -14,5 +14,4 @@ func TiggerRun(parse_select_tab file, run_name string) dir =
     	-n {{run_name}} \
     	-o {{output}} \
     	-p {{num_sp}} \
-    	-v
 	"}
