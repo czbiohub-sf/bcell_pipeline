@@ -1,0 +1,32 @@
+/* Reflow workflow for B-cell repertoire sequencing pipeline. Developed at Chan
+   Zuckerberg Biohub. BraCeR. */
+
+/* Input: file_1 and file_2 are FASTQ files containing #1 and #2 mates from paired-
+   end sequencing. file_1 can be all reads from single-end sequencing. In this case,
+   do not input a file_2.  */
+param (
+	file_1 string
+	file_2 string
+	cell_name string
+	results_bucket string
+	docker_image = "teichlab/bracer"
+)
+
+val dirs = make("$/dirs")
+val strings = make("$/strings")
+
+func Assemble(file_1, file_2 file, cell_name string) dir = 
+	exec(image := docker_image) (output dir) {"
+	    mv {{file_1}} file_1.fastq
+	    mv {{file_2}} file_2.fastq
+
+	    bracer assemble {{cell_name}} {{output}} file_1.fastq file_2.fastq
+	"}
+
+val bracer_assemble = Assemble(file(file_1), file(file_2), cell_name)
+val assemble_bucket = dirs.Copy(bracer_assemble,
+	strings.Join([results_bucket, cell_name], "/"))
+
+@requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
+val Main = assemble_bucket
+
