@@ -1,4 +1,4 @@
-// Reflow module for SHazaM Clonal Assignment Threshold Tuning step. 
+// Reflow module for Alakazam Analysis steps. Results bucket must begin with "s3://"
 
 param (
 	changeo_file string
@@ -6,7 +6,6 @@ param (
 	results_bucket string
 	docker_image = "kleinstein/immcantation:1.10.2"
 	alakazam_script = "s3://gmeixiong-bucket/scripts/alakazam.r"
-	num_sp = 4
 )
 
 val dirs = make("$/dirs")
@@ -21,12 +20,11 @@ func AlakazamRun(changeo_tab file, run_name string) dir =
     	Rscript {{alakazam_script}} \
     	-d changeo.tab \
     	-n {{run_name}} \
-    	-o {{output}} \
-    	-p {{num_sp}}
+    	-o {{output}}
 	"}
 
 val alakazam_res = AlakazamRun(file(changeo_file), name)
-val alakazam_bucket = dirs.Copy(alakazam_res, strings.Join([results_bucket, name, "alakazam"], "/"))
+val alakazam_bucket = dirs.Copy(alakazam_res, strings.Join([results_bucket, name], "/"))
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
 val Main = alakazam_bucket
