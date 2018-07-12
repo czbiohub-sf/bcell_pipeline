@@ -11,7 +11,7 @@ func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir =
 		d_threshold=$(python3 {{parse_tsv}} {{shazam_tsv}})
 		mv {{genotyped_tsv}} genotyped.tab
 
-    	sh /usr/local/bin/changeo-clone \
+		sh /usr/local/bin/changeo-clone \
     	-d genotyped.tab \
     	-x d_threshold \
     	-n {{run_name}} \

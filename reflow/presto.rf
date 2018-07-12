@@ -15,7 +15,7 @@ func CreateYaml(read_file, run_name string) file =
 
 func PrestoRun(read1_file, read2_file, read1_primers, read2_primers, yaml file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
-	    mv {{read1_file}} read1.fastq
+		mv {{read1_file}} read1.fastq
 	    mv {{read2_file}} read2.fastq
 
 	    mv {{read1_primers}} read1_primers.fasta

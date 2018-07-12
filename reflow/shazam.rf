@@ -9,7 +9,7 @@ func ShazamRun(genotyped_tsv file, run_name string) dir =
 	exec(image := docker_image) (output dir) {"
 		mv {{genotyped_tsv}} genotyped.tab
 
-    	Rscript /usr/local/bin/shazam-threshold \
+		Rscript /usr/local/bin/shazam-threshold \
     	-d genotyped.tab \
     	-n {{run_name}} \
     	-o {{output}} \

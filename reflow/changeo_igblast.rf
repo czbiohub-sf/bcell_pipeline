@@ -9,7 +9,7 @@ func ChangeoRun(fastq file, run_name string) dir =
 	exec(image := docker_image) (output dir) {"
 		mv {{fastq}} changeo_igblast.fastq
 
-    	sh /usr/local/bin/changeo-igblast \
+        sh /usr/local/bin/changeo-igblast \
     	-s changeo_igblast.fastq \
     	-n {{run_name}} \
     	-o {{output}} \

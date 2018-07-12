@@ -17,7 +17,7 @@ func AlakazamRun(changeo_tab file, run_name string) dir =
 	exec(image := docker_image) (output dir) {"
 		mv {{changeo_tab}} changeo.tab
 
-    	Rscript {{alakazam_script}} \
+		Rscript {{alakazam_script}} \
     	-d changeo.tab \
     	-n {{run_name}} \
     	-o {{output}}
