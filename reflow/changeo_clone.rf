@@ -1,20 +1,19 @@
 // Reflow module for Change-O Clonal assignment and germline reconstruction step.
 
 param (
-	// changeo_script = "s3://gmeixiong-bucket/scripts/changeoV3.7.sh"
 	docker_image = "kleinstein/immcantation:1.10.2"
+	parse_tsv = file("s3://gmeixiong-bucket/scripts/parse_tsv.py")
 	num_sp = 4
 )
 
-// val changeo_script = file(changeo_script)
-
-func ChangeoRun(genotyped_tab file, distance_threshold float, run_name string) dir = 
+func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
-		mv {{genotyped_tab}} genotyped.tab
+		d_threshold=$(python3 {{parse_tsv}} {{shazam_tsv}})
+		mv {{genotyped_tsv}} genotyped.tab
 
     	sh /usr/local/bin/changeo-clone \
     	-d genotyped.tab \
-    	-x {{distance_threshold}} \
+    	-x d_threshold \
     	-n {{run_name}} \
     	-o {{output}} \
     	-p {{num_sp}}

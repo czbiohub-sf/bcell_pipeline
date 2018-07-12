@@ -5,9 +5,9 @@ param (
 	num_sp = 4
 )
 
-func ShazamRun(genotyped_tab file, run_name string) dir = 
+func ShazamRun(genotyped_tsv file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
-		mv {{genotyped_tab}} genotyped.tab
+		mv {{genotyped_tsv}} genotyped.tab
 
     	Rscript /usr/local/bin/shazam-threshold \
     	-d genotyped.tab \

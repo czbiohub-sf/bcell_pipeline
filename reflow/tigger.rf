@@ -5,9 +5,9 @@ param (
 	num_sp = 4
 )
 
-func TiggerRun(parse_select_tab file, run_name string) dir = 
+func TiggerRun(parse_select_tsv file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
-		mv {{parse_select_tab}} parse_select.tab
+		mv {{parse_select_tsv}} parse_select.tab
 
     	Rscript /usr/local/bin/tigger-genotype \
     	-d parse_select.tab \

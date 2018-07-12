@@ -1,16 +1,13 @@
-// Human or Mouse, or manually provide primers.
 
 param (
-	presto_script = "s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh"
+	presto_script = file("s3://eric.waltari-bucket/BX_miseq/presto/presto-abseq.sh")
+	python_script = file("s3://gmeixiong-bucket/scripts/createYaml.py")
+	author = "CZ Biohub"
+	description = "Initial MiSeq run"
 	docker_image = "kleinstein/immcantation:1.10.2"
-	python_script = "s3://gmeixiong-bucket/scripts/createYaml.py"
-	// metadata_file = "s3://gmeixiong-bucket/examples/input/HD07M.yaml"
 )
 
-val presto_script = file(presto_script)
-val python_script = file(python_script)
-
-func CreateYaml(read_file, run_name, author, description string) file = 
+func CreateYaml(read_file, run_name string) file = 
 	exec(image := docker_image, mem := GiB) (out file) {"
 		PRESTO_VERSION=$(python3 -c "import presto; print('%s' % (presto.__version__))")
 		python3 {{python_script}} "{{read_file}}" "{{run_name}}" "{{author}}" ${PRESTO_VERSION} "{{description}}" {{out}}
@@ -36,4 +33,3 @@ func PrestoRun(read1_file, read2_file, read1_primers, read2_primers, yaml file, 
 	    -n {{run_name}} \
 	    -o {{output}}
 	"}
-///usr/local/bin/presto-abseq

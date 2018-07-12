@@ -1,8 +1,9 @@
 param (
 	docker_image = "kleinstein/immcantation:1.10.2"
+	min_conscount = 2
 )
 
-func SplitSeq(fastq_file file, min_conscount int) dir = {
+func SplitSeq(fastq_file file) dir = {
 	val split_seq_results = exec(image := docker_image) (output dir) {"
 	    cd {{output}}
 
