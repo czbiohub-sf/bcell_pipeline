@@ -1,4 +1,4 @@
 {
-  "program": "../../reflow/bcell.rf",
+  "program": "../../reflow/bcell_batch.rf",
   "runs_file": "bcell_test_run.csv"
 }
