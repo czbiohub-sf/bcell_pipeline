@@ -1,11 +1,20 @@
-// Reflow module for Change-O Clonal assignment and germline reconstruction step.
+/* Reflow module for changeo-clone step of the Immcantation pipeline. 
 
+   author: Gerry Meixiong, CZ Biohub
+   date: 7.12.18
+ */
+
+/* Parameters specify the docker image version and parse_tsv script
+   used to parse the distance threshold from shazam tuning output. */
 param (
 	docker_image = "kleinstein/immcantation:1.10.2"
 	parse_tsv = file("s3://gmeixiong-bucket/scripts/parse_tsv.py")
-	num_sp = 4
 )
 
+/* Input: genotyped_tsv is a tsv output from TigGER step. V segment genotypes 
+   have been inferred following changeo-igblast. shazam_tsv is a tsv output from
+   SHazaM containing the tuned distance threshold. Results will be saved under the
+   run_name/changeo-clone/ directory in the given bucket. */
 func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
 		d_threshold=$(python3 {{parse_tsv}} {{shazam_tsv}})
@@ -15,6 +24,5 @@ func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir =
     	-d genotyped.tab \
     	-x d_threshold \
     	-n {{run_name}} \
-    	-o {{output}} \
-    	-p {{num_sp}}
+    	-o {{output}}
 	"}

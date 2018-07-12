@@ -1,9 +1,8 @@
-/* Reflow workflow for B-cell repertoire sequencing pipeline. Developed at Chan
-   Zuckerberg Biohub. Follows Immcantation framework. Used for batch runs in
-   experiments/bcell_initial_runs/. For single runs, use bcell.rf from 
-   reflow/.
+/* Reflow workflow for B-cell repertoire sequencing pipeline. Follows Immcantation framework. 
+   Used for batch runs in experiments/bcell_initial_runs/. For single runs, use bcell.rf 
+   from reflow/.
 
-   author: Gerry Meixiong
+   author: Gerry Meixiong, CZ Biohub
    date: 7.12.18
  */
 

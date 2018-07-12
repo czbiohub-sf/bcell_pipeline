@@ -1,10 +1,17 @@
-// Reflow module for SHazaM Clonal Assignment Threshold Tuning step. 
+/* Reflow module for shazam tuning step of the Immcantation pipeline. 
 
+   author: Gerry Meixiong, CZ Biohub
+   date: 7.12.18
+ */
+
+/* Parameters specify the docker image version. */
 param (
 	docker_image = "kleinstein/immcantation:1.10.2"
-	num_sp = 4
 )
 
+/* Input: genotyped_tsv is tsv output from TigGER step. SHazaM finds 
+   the optimal tuning for the distance threshold input for changeo-clone.
+   Results are saved in the run_name/shazam/ directory in the given bucket. */
 func ShazamRun(genotyped_tsv file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
 		mv {{genotyped_tsv}} genotyped.tab
@@ -12,6 +19,5 @@ func ShazamRun(genotyped_tsv file, run_name string) dir =
 		Rscript /usr/local/bin/shazam-threshold \
     	-d genotyped.tab \
     	-n {{run_name}} \
-    	-o {{output}} \
-    	-p {{num_sp}}
+    	-o {{output}}
 	"}

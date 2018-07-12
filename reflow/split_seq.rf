@@ -1,3 +1,12 @@
+/* Reflow module for SplitSeq step of the Immcantation pipeline. 
+
+   author: Gerry Meixiong, CZ Biohub
+   date: 7.12.18
+ */
+
+/* Parameters specify the docker image version and the number to split on.
+   SplitSeq takes all sequences with CONSCOUNT >= min_conscount. Conscount
+   is the number of sequences that contributed to the consensus sequence. */
 param (
 	docker_image = "kleinstein/immcantation:1.10.2"
 	min_conscount = 2

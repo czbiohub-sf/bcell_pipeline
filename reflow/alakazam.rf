@@ -1,17 +1,23 @@
-// Reflow module for Alakazam Analysis steps. Results bucket must begin with "s3://"
+/* Reflow module for alakazam analysis step of the Immcantation pipeline. 
 
+   author: Gerry Meixiong, CZ Biohub
+   date: 7.12.18
+ */
+
+/* Parameters specify the changeo file output from changeo-clone to 
+   analyze as well as the docker image version and alakazam script
+   used for analysis. Results will be saved in the name directory
+   in the bucket results_bucket. */
 param (
 	changeo_file string
 	name string
 	results_bucket string
 	docker_image = "kleinstein/immcantation:1.10.2"
-	alakazam_script = "s3://gmeixiong-bucket/scripts/alakazam.r"
+	alakazam_script = file("s3://gmeixiong-bucket/scripts/alakazam.r")
 )
 
 val dirs = make("$/dirs")
 val strings = make("$/strings")
-
-val alakazam_script = file(alakazam_script)
 
 func AlakazamRun(changeo_tab file, run_name string) dir = 
 	exec(image := docker_image) (output dir) {"
