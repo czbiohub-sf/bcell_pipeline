@@ -63,7 +63,5 @@ val changeo_clone_res = changeo_clone.ChangeoRun(gen_tsv, shazam_tsv, run_name)
 val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
 	strings.Join([results_bucket, run_name, "changeo_clone"], "/"))
 
-/********************************** ANALYSIS **********************************/
-
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
 val Main = changeo_clone_bucket
