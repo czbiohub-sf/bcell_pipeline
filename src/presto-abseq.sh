@@ -256,9 +256,10 @@ AP_MINIDENT=0.5
 AP_EVALUE=1e-5
 AP_MAXHITS=100
 
-# CollapseSeq run parameters
+# CollapseSeq run parameters NOTE ADDING FINAL MINIMUM # OF CONSCOUNT - DEFAULT WAS 2, CHANGED TO 5 IN MAY BUT NOW TRYING 2 AGAIN
 CS_KEEP=true
 CS_MISS=0
+MIN_CONSCOUNT=2
 
 # Make output directory
 mkdir -p ${OUTDIR}; cd ${OUTDIR}
@@ -322,43 +323,45 @@ MaskPrimers.py score -s $MPR2_FILE -p $R2_PRIMERS --mode cut \
 check_error
 
 
-# Assign UIDs to read 1 sequences
+# Assign UIDs to read 1 sequences ALSO HERE ADDED COLLAPSE TO COMBINE R1 AND R2 BARCODES!
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "PairSeq"
 PairSeq.py -1 "${OUTNAME}-R1_primers-pass.fastq" -2 "${OUTNAME}-R2_primers-pass.fastq" \
     --1f BARCODE --2f BARCODE --coord $COORD >> $PIPELINE_LOG 2> $ERROR_LOG
-ParseHeaders.py collapse -s "${OUTNAME}-R1_primers-pass_pair-pass.fastq" -f BARCODE --act cat
-ParseHeaders.py collapse -s "${OUTNAME}-R2_primers-pass_pair-pass.fastq" -f BARCODE --act cat
+mv "${OUTNAME}-R1_primers-pass_pair-pass.fastq" "${OUTNAME}-R1_primers-pass_pair-pass00.fastq"
+mv "${OUTNAME}-R2_primers-pass_pair-pass.fastq" "${OUTNAME}-R2_primers-pass_pair-pass00.fastq"
+ParseHeaders.py collapse -s "${OUTNAME}-R1_primers-pass_pair-pass00.fastq" -f BARCODE --act cat
+ParseHeaders.py collapse -s "${OUTNAME}-R2_primers-pass_pair-pass00.fastq" -f BARCODE --act cat
+mv "${OUTNAME}-R1_primers-pass_pair-pass00_reheader.fastq" "${OUTNAME}-R1_primers-pass_pair-pass01.fastq"
+mv "${OUTNAME}-R2_primers-pass_pair-pass00_reheader.fastq" "${OUTNAME}-R2_primers-pass_pair-pass01.fastq"
+## ALSO ADDING NEW ANNOTATION COMBINING 08,12 PRIMERS HERE (RENAME BARCODE)
+ParseHeaders.py copy -s "${OUTNAME}-R1_primers-pass_pair-pass01.fastq" -f PRIMER -k PRIMERCLPSD --act first \
+    --outname "${OUTNAME}-R1" > /dev/null 2> $ERROR_LOG
+ParseHeaders.py copy -s "${OUTNAME}-R2_primers-pass_pair-pass01.fastq" -f PRIMER -k PRIMERCLPSD --act first \
+    --outname "${OUTNAME}-R2" > /dev/null 2> $ERROR_LOG
+mv "${OUTNAME}-R1_reheader.fastq" "${OUTNAME}-R1_primers-pass_pair-pass.fastq"
+mv "${OUTNAME}-R2_reheader.fastq" "${OUTNAME}-R2_primers-pass_pair-pass.fastq"
+BCR1_FILE="${OUTNAME}-R1_primers-pass_pair-pass.fastq"
+BCR2_FILE="${OUTNAME}-R2_primers-pass_pair-pass.fastq"
 check_error
 
 
 # Multiple align UID read groups
 if $ALIGN_SETS; then
     printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "AlignSets muscle"
-	AlignSets.py muscle -s "${OUTNAME}-R1_primers-pass_pair-pass_reheader.fastq" --exec $MUSCLE_EXEC \
+	AlignSets.py muscle -s "${OUTNAME}-R1_primers-pass_pair-pass.fastq" --exec $MUSCLE_EXEC \
 	    --nproc $NPROC --log "${LOGDIR}/align-1.log" --outname "${OUTNAME}-R1" \
 	    >> $PIPELINE_LOG 2> $ERROR_LOG
-	AlignSets.py muscle -s "${OUTNAME}-R2_primers-pass_pair-pass_reheader.fastq" --exec $MUSCLE_EXEC \
+	AlignSets.py muscle -s "${OUTNAME}-R2_primers-pass_pair-pass.fastq" --exec $MUSCLE_EXEC \
 	    --nproc $NPROC --log "${LOGDIR}/align-2.log" --outname "${OUTNAME}-R2" \
 	    >> $PIPELINE_LOG 2> $ERROR_LOG
 	BCR1_FILE="${OUTNAME}-R1_align-pass.fastq"
 	BCR2_FILE="${OUTNAME}-R2_align-pass.fastq"
 	check_error
 else
-	BCR1_FILE="${OUTNAME}-R1_primers-pass_pair-pass_reheader.fastq"
-	BCR2_FILE="${OUTNAME}-R2_primers-pass_pair-pass_reheader.fastq"
+	BCR1_FILE="${OUTNAME}-R1_primers-pass_pair-pass.fastq"
+	BCR2_FILE="${OUTNAME}-R2_primers-pass_pair-pass.fastq"
 fi
 
-
-## ADD NEW ANNOTATION COMBINING 08,12 PRIMERS HERE (RENAME BARCODE)
-printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders collapse 08N,12N primer field"
-ParseHeaders.py copy -s "${OUTNAME}-R1_primers-pass_pair-pass_reheader.fastq" -f PRIMER -k PRIMERCLPSD --act first \
-    --outname "${OUTNAME}-R1" > /dev/null 2> $ERROR_LOG
-ParseHeaders.py copy -s "${OUTNAME}-R2_primers-pass_pair-pass_reheader.fastq" -f PRIMER -k PRIMERCLPSD --act first \
-    --outname "${OUTNAME}-R2" > /dev/null 2> $ERROR_LOG
-BCR1_FILE="${OUTNAME}-R1_reheader.fastq"
-BCR2_FILE="${OUTNAME}-R2_reheader.fastq"
-
-check_error
 
 # Build UID consensus sequences - NOTE I CHANGED PRIMER TO PRIMERCLPSD AND ALSO ADDED --CF COMMAND TO LIST ALL ISOTYPES
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "BuildConsensus"
@@ -412,7 +415,7 @@ printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "AssemblePairs sequent
 if $BC_PRCONS_FLAG; then
     PRFIELD="PRCONS"
 else
-    PRFIELD=""
+    PRFIELD="PRCONS"
 fi
 
 AssemblePairs.py sequential -1 "${OUTNAME}-R2_consensus-pass_pair-pass.fastq" \
@@ -492,11 +495,18 @@ fi
 check_error
 
 
-# Filter to sequences with at least 5 supporting sources
+# Filter to sequences with at least $MIN_CONSCOUNT supporting sources
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "SplitSeq group"
-SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f CONSCOUNT --num 5 \
+SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f CONSCOUNT --num $MIN_CONSCOUNT \
     >> $PIPELINE_LOG 2> $ERROR_LOG
+## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
+IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
+MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
+    --mode tag --revpr --pf GandA_SUBTYPE
+MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
+    --mode tag --revpr --pf GandA_SUBTYPE
 check_error
+
 
 
 # Create table of final repertoire
@@ -507,8 +517,8 @@ ParseHeaders.py table -s "${OUTNAME}-final_total.fastq" \
 ParseHeaders.py table -s "${OUTNAME}-final_collapse-unique.fastq" \
     -f ID PRCONS $CREGION_FIELD CONSCOUNT DUPCOUNT --outname "final-unique" \
     --outdir ${LOGDIR} >> $PIPELINE_LOG 2> $ERROR_LOG
-ParseHeaders.py table -s "${OUTNAME}-final_collapse-unique_atleast-5.fastq" \
-    -f ID PRCONS $CREGION_FIELD CONSCOUNT DUPCOUNT --outname "final-unique-atleast5" \
+ParseHeaders.py table -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" \
+    -f ID PRCONS $CREGION_FIELD CONSCOUNT DUPCOUNT --outname "final-unique-atleast2" \
     --outdir ${LOGDIR} >> $PIPELINE_LOG 2> $ERROR_LOG
 check_error
 
@@ -549,7 +559,7 @@ fi
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "Compressing files"
 LOG_FILES=$(ls ${LOGDIR}/*.log | grep -v "pipeline")
 FILTER_FILES="$(basename ${R1_READS})\|$(basename ${R2_READS})\|$(basename ${R1_PRIMERS})\|$(basename ${R2_PRIMERS})"
-FILTER_FILES+="\|final_total.fastq\|final_collapse-unique.fastq\|final_collapse-unique_atleast-5.fastq"
+FILTER_FILES+="\|final_total.fastq\|final_collapse-unique.fastq\|final_collapse-unique_atleast-2.fastq\|primers-pass.fastq\|primers-fail.fastq"
 TEMP_FILES=$(ls *.fastq | grep -v ${FILTER_FILES})
 if $ZIP_FILES; then
     tar -zcf log_files.tar.gz $LOG_FILES
