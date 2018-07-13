@@ -26,7 +26,7 @@ func CreateYaml(read_file, run_name string) file =
 	"}
 
 /* Input: read1_file is a fastq sequence file beginning with C-region or J-segment. 
-   read2_file is the matching fastq sequence file beginning with the leader of V-segment.
+   read2_file is the matching fastq sequence file beginning with the leader V-segment.
    read1_primers and read2_primers enumerate the primer sequences for read1_file and 
    read2_file, respectively. yaml is the yaml file containing metadata for this run.
    Results will be saved under the run_name/presto/ directory in the given bucket. 
