@@ -1,19 +1,26 @@
-Immcantation B-cell Repertoire Sequencing Pipeline adapted for Reflow. 
+#Immcantation B-cell Repertoire Sequencing Pipeline adapted for Reflow. 
 
 Author: Gerry Meixiong, CZ Biohub
 Date: 7.13.18
 
-Introduction
+## Contents ##
+1. [Introduction](#introduction)
+2. [Setup](#setup)
+3. [Usage](#usage)
+4. [Questions](#questions)
+
+## Introduction
 
 The Immcantation framework is a start-to-finish pipeline going from raw reads 
 to repertoire analysis. It encompasses pre-processing of fastq files, pRESTO, 
 changeo-igblast, tigger, shazam, changeo-clone, and alakazam. The steps leading
 up to analysis are included in bcell.rf. The resulting output from changeo-clone,
-the end stage of bcell.rf, is used as input for alakazam analysis steps. 
+the end stage of bcell.rf, is used as input for alakazam analysis steps. The reflow
+pipeline currently uses the 1.10.2 version of kleinstein/immcantation.
 
 
 
-Setup
+## Setup
 
 To run locally, install reflow from https://github.com/grailbio/reflow. Reflow is
 implemented in Go, so you want to install that as well. 
@@ -39,7 +46,7 @@ Copy your read fastqs and primers fastas to the reflow/ directory in this repo. 
 
 
 
-Usage
+## Usage
 
 For single runs (two read files with corresponding primers), cd to the reflow/ directory. 
 
@@ -73,6 +80,6 @@ reflow run alakazam.rf -changeo_file <germ-pass.tab> -run_name <name> -results_b
 Results will be saved to the s3 bucket under the run_name/alakazam/ directory. 
 
 
-Questions
+## Questions
 
 For questions, please contact gerry.meixiong@czbiohub.org or aaron.mcgeever@czbiohub.org. 
