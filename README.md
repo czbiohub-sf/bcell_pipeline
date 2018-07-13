@@ -1,7 +1,7 @@
-#Immcantation B-cell Repertoire Sequencing Pipeline adapted for Reflow. 
+## Immcantation B-cell Repertoire Sequencing Pipeline adapted for Reflow. 
 
-Author: Gerry Meixiong, CZ Biohub
-Date: 7.13.18
+##Author: Gerry Meixiong, CZ Biohub
+##Date: 7.13.18
 
 ## Contents ##
 1. [Introduction](#introduction)
