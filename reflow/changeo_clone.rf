@@ -22,7 +22,7 @@ func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir =
 
 		sh /usr/local/bin/changeo-clone \
     	-d genotyped.tab \
-    	-x d_threshold \
+    	-x $d_threshold \
     	-n {{run_name}} \
     	-o {{output}}
 	"}
