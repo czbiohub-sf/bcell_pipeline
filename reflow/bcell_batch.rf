@@ -55,7 +55,7 @@ val tigger_bucket = dirs.Copy(tigger_res,
 	strings.Join([results_bucket, run_name, "tigger"], "/"))
 
 // Step 3b. SHazaM Clonal Assignment Threshold Tuning.
-val shazam = make("../../reflow/shazam.rf")
+val shazam = tigger_bucket ~> make("../../reflow/shazam.rf")
 val (gen_tsv, _) = dirs.Pick(tigger_res, "*genotyped.tab")
 val shazam_res = shazam.ShazamRun(gen_tsv, run_name)
 val shazam_bucket = dirs.Copy(shazam_res,
