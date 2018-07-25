@@ -16,6 +16,8 @@ param (
 	description = "Initial MiSeq run"
 )
 
+val dirs = make("$/dirs")
+
 /* Creates yaml file for the current run. Feel free to change author and
    description parameters. */
 func CreateYaml(read_file, run_name string) file = 
@@ -32,23 +34,17 @@ func CreateYaml(read_file, run_name string) file =
    Results will be saved under the run_name/presto/ directory in the given bucket. 
    Optional -r flag is the V-segment reference file. Optional -c flag is C-region
    fasta sequences; if unspecified, C-region alignment is not performed. */
-func PrestoRun(read1_file, read2_file, read1_primers, read2_primers, yaml file, run_name string) dir = 
+func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name string) dir = 
+	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers,
+					"read2_primers.fasta": read2_primers, "yaml.yaml": yaml])
 	exec(image := docker_image) (output dir) {"
-		mv {{read1_file}} read1.fastq
-	    mv {{read2_file}} read2.fastq
-
-	    mv {{read1_primers}} read1_primers.fasta
-	    mv {{read2_primers}} read2_primers.fasta
-
-	    mv {{yaml}} yaml.yaml
-
 	    sh {{presto_script}} \
-	    -1 read1.fastq \
-	    -2 read2.fastq \
-	    -j read1_primers.fasta \
-	    -v read2_primers.fasta \
+	    -1 {{d}}/read1.fastq \
+	    -2 {{d}}/read2.fastq \
+	    -j {{d}}/read1_primers.fasta \
+	    -v {{d}}/read2_primers.fasta \
 	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
-	    -y yaml.yaml \
+	    -y {{d}}/yaml.yaml \
 	    -n {{run_name}} \
 	    -o {{output}}
 	"}

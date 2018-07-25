@@ -9,6 +9,8 @@ param (
 	docker_image = "kleinstein/immcantation:1.10.2"
 )
 
+val dirs = make("$/dirs")
+
 /* Input: fastq is fastq output from pRESTO step. The pipeline uses
    sequences that have consensus from 2 or more input sequences as 
    input for changeo-igblast. Results will be saved under the
@@ -16,11 +18,10 @@ param (
    flag analyzes just the functional sequences. Remove the flag to 
    analyze all sequences, including non-functional ones. */
 func ChangeoRun(fastq file, run_name string) dir = 
+  d := dirs.Make(["changeo_igblast.fastq": fastq])
 	exec(image := docker_image) (output dir) {"
-		mv {{fastq}} changeo_igblast.fastq
-
-        sh /usr/local/bin/changeo-igblast \
-    	-s changeo_igblast.fastq \
+    sh /usr/local/bin/changeo-igblast \
+    	-s {{d}}/changeo_igblast.fastq \
     	-n {{run_name}} \
     	-o {{output}} \
     	-f
