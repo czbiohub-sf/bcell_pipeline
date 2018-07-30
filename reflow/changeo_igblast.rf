@@ -17,7 +17,7 @@ val dirs = make("$/dirs")
    run_name/changeo-igblast/ directory in the given bucket. The -f
    flag analyzes just the functional sequences. Remove the flag to 
    analyze all sequences, including non-functional ones. */
-func ChangeoRun(fastq file, run_name string) dir = 
+func ChangeoRun(fastq file, run_name string) dir = {
   d := dirs.Make(["changeo_igblast.fastq": fastq])
 	exec(image := docker_image) (output dir) {"
     sh /usr/local/bin/changeo-igblast \
@@ -26,3 +26,4 @@ func ChangeoRun(fastq file, run_name string) dir =
     	-o {{output}} \
     	-f
 	"}
+}

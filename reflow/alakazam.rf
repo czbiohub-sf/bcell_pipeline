@@ -10,26 +10,29 @@
    in the bucket results_bucket. */
 param (
 	changeo_file string
-	run_name string
+	clone int
 	results_bucket string
+	run_name string
 	docker_image = "kleinstein/immcantation:1.10.2"
-	alakazam_script = file("s3://gmeixiong-bucket/scripts/alakazam.r")
+	// analysis_script = file("s3://gmeixiong-bucket/scripts/alakazam.r")
+	analysis_script = "../src/analysis.R"
 )
 
 val dirs = make("$/dirs")
 val strings = make("$/strings")
 
-func AlakazamRun(changeo_tab file, run_name string) dir = 
+func AlakazamRun(changeo_tab, analysis_script file, clone int) dir = {
 	d := dirs.Make(["changeo.tab": changeo_tab])
 	exec(image := docker_image) (output dir) {"
-		Rscript {{alakazam_script}} \
+		Rscript {{analysis_script}} \
     	-d {{d}}/changeo.tab \
-    	-n {{run_name}} \
+    	-c {{clone}} \
     	-o {{output}}
 	"}
+}
 
-val alakazam_res = AlakazamRun(file(changeo_file), run_ame)
-val alakazam_bucket = dirs.Copy(alakazam_res, strings.Join([results_bucket, run_name], "/"))
+val alakazam_res = AlakazamRun(file(changeo_file), file(analysis_script), clone)
+val alakazam_bucket = dirs.Copy(alakazam_res, strings.Join([results_bucket, run_name, "analysis"], "/"))
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
 val Main = alakazam_bucket

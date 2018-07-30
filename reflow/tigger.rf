@@ -16,7 +16,7 @@ val dirs = make("$/dirs")
    segments carried by an inidivual from V(D)J-rearrange sequences. TigGER then 
    infers a subject's genotype and uses it to correct the initial V(D)J allele
    assignments. Results are saved in the run_name/tigger/ directory in the given bucket. */
-func TiggerRun(parse_select_tsv file, run_name string) dir = 
+func TiggerRun(parse_select_tsv file, run_name string) dir = {
   d := dirs.Make(["parse_select.tab": parse_select_tsv])
 	exec(image := docker_image) (output dir) {"
 		Rscript /usr/local/bin/tigger-genotype \
@@ -24,3 +24,4 @@ func TiggerRun(parse_select_tsv file, run_name string) dir =
     	-n {{run_name}} \
     	-o {{output}}
 	"}
+}

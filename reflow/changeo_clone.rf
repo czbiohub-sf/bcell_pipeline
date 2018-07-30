@@ -17,7 +17,7 @@ val dirs = make("$/dirs")
    have been inferred following changeo-igblast. shazam_tsv is a tsv output from
    SHazaM containing the tuned distance threshold. Results will be saved under the
    run_name/changeo-clone/ directory in the given bucket. */
-func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir = 
+func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir = {
   d := dirs.Make(["genotyped.tab": genotyped_tsv])
 	exec(image := docker_image) (output dir) {"
 		d_threshold=$(python3 {{parse_tsv}} {{shazam_tsv}})
@@ -27,3 +27,4 @@ func ChangeoRun(genotyped_tsv, shazam_tsv file, run_name string) dir =
     	-n {{run_name}} \
     	-o {{output}}
 	"}
+}

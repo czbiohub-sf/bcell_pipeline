@@ -34,7 +34,7 @@ func CreateYaml(read_file, run_name string) file =
    Results will be saved under the run_name/presto/ directory in the given bucket. 
    Optional -r flag is the V-segment reference file. Optional -c flag is C-region
    fasta sequences; if unspecified, C-region alignment is not performed. */
-func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name string) dir = 
+func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name string) dir = {
 	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers,
 					"read2_primers.fasta": read2_primers, "yaml.yaml": yaml])
 	exec(image := docker_image) (output dir) {"
@@ -48,3 +48,4 @@ func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name s
 	    -n {{run_name}} \
 	    -o {{output}}
 	"}
+}
