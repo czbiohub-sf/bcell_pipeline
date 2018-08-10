@@ -48,7 +48,7 @@ val presto_bucket = dirs.Copy(presto_res,
 
 // Step 2. Change-O + IgBLAST.
 val changeo_igblast = presto_bucket ~> make("changeo_igblast.rf")
-val (changeo_fastq, _) = dirs.Pick(presto_res, "*atleast-2.fastq")
+val (changeo_fastq, _) = dirs.Pick(presto_res, "*atleast-2_primers-pass.fastq")
 val changeo_igblast_res = changeo_igblast.ChangeoRun(changeo_fastq, run_name)
 val changeo_igblast_bucket = dirs.Copy(changeo_igblast_res,
 	strings.Join([results_bucket, run_name, "changeo_igblast"], "/"))

@@ -47,5 +47,7 @@ func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name s
 	    -y {{d}}/yaml.yaml \
 	    -n {{run_name}} \
 	    -o {{output}}
+
+	    cat {{output}}/*_atleast-2_primers-fail.fastq {{output}}/*_atleast-2_primers-pass.fastq
 	"}
 }
