@@ -23,6 +23,7 @@ val strings = make("$/strings")
 
 /**************************** RAW READ PROCESSING *****************************/
 
+
 // Step 1. Presto.
 val presto = make("presto.rf")
 val yaml = presto.CreateYaml(read1_file, run_name)
@@ -38,7 +39,12 @@ val presto_bucket = dirs.Copy(presto_res,
 // val split_seq_bucket = dirs.Copy(split_seq_res,
 // 	strings.Join([results_bucket, run_name, "splitSeq"], "/"))
 
+
 /************************** V(D)J ANNOTATION/ALIGNMENT ************************/
+
+
+
+// RUn change o on both full dataset and reads that contain special sequences (gotten from bowtie2?)
 
 // Step 2. Change-O + IgBLAST.
 val changeo_igblast = presto_bucket ~> make("changeo_igblast.rf")
@@ -56,17 +62,26 @@ val tigger_bucket = dirs.Copy(tigger_res,
 
 // Step 3b. SHazaM Clonal Assignment Threshold Tuning.
 val shazam = tigger_bucket ~> make("shazam.rf")
-val (gen_tsv, _) = dirs.Pick(tigger_res, "*genotyped.tab")
-val shazam_res = shazam.ShazamRun(gen_tsv, run_name)
+val (shazam_tsv, _) = dirs.Pick(tigger_res, "*genotyped.tab")
+val shazam_res = shazam.ShazamRun(shazam_tsv, run_name)
 val shazam_bucket = dirs.Copy(shazam_res,
 	strings.Join([results_bucket, run_name, "shazam"], "/"))
 
 // Step 4. Change-O Clonal Assignment.
-val (shazam_tsv, _) = dirs.Pick(shazam_res, "*threshold-values.tab")
 val changeo_clone = shazam_bucket ~> make("changeo_clone.rf")
-val changeo_clone_res = changeo_clone.ChangeoRun(gen_tsv, shazam_tsv, run_name)
+val (changeo_tsv, _) = dirs.Pick(shazam_res, "*threshold-values.tab")
+val changeo_clone_res = changeo_clone.ChangeoRun(shazam_tsv, changeo_tsv, run_name)
 val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
 	strings.Join([results_bucket, run_name, "changeo_clone"], "/"))
 
+// Analysis Step.
+// Construct Gene and Gene Family Plots.
+// TODO: Read Clone number and run Lineage Reconstruction for a given clone.
+val alakazam = changeo_clone_bucket ~> make("alakazam.rf")
+val (alakazam_tsv, _) = dirs.Pick(changeo_clone_res, "*clone-pass.tab")
+val alakazam_res = alakazam.AlakazamRun(alakazam_tsv)
+val alakazam_bucket = dirs.Copy(alakazam_res,
+	strings.Join([results_bucket, run_name, "alakazam1"], "/"))
+
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = changeo_clone_bucket
+val Main = alakazam_bucket

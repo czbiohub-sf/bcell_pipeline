@@ -2,22 +2,21 @@
 
 # Import required packages
 install.packages("gridExtra")
-library(alakazam)
-library(shazam)
-library(dplyr)
-library(ggplot2)
-library(scales)
-library(igraph)
-library(plyr)
-library(grid)
-library(gridExtra)
-library(lattice)
+suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(alakazam))
+suppressPackageStartupMessages(library(shazam))
+suppressPackageStartupMessages(library(plyr))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(scales))
+suppressPackageStartupMessages(library(igraph))
+suppressPackageStartupMessages(library(grid))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(lattice))
 
 #################################################################################################
 ################################ GENERIC COMMANDS FOR ALL ANALYSES ##############################
 #################################################################################################
-
-
 
 
 # Define commmandline arguments
@@ -399,21 +398,21 @@ ghmutvs <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, str
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(1,1,1,1), "cm"))
 #plot(gmutvs)
 
-ghmutv <- ggplot(BX_obs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=CLONE_WEIGHT)) +
-  theme_bw() + ggtitle("Total mutations") +
-  xlab("Gene") + ylab("Mutation frequency") +
-  scale_fill_discrete(name="Family") + scale_color_discrete(name="Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
-  geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(1,1,1,1), "cm"))
+# ghmutv <- ggplot(BX_obs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=CLONE_WEIGHT)) +
+#   theme_bw() + ggtitle("Total mutations") +
+#   xlab("Gene") + ylab("Mutation frequency") +
+#   scale_fill_discrete(name="Family") + scale_color_discrete(name="Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
+#   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(1,1,1,1), "cm"))
 #plot(gmutv) + scale_y_continuous(labels = scales::percent)
 
 ## saving as 1800 x 900
 
 
-ghcdr3v <- ggplot(BX_obs, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=CLONE_WEIGHT)) +
-  theme_bw() + ggtitle("CDRH3 Length") +
-  xlab("Gene") + ylab("CDRH3 Length, Kabat (aa)") +
-  scale_fill_discrete(name="Family") + scale_color_discrete(name="Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
-  geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(1,1,1,1), "cm"))
+# ghcdr3v <- ggplot(BX_obs, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=CLONE_WEIGHT)) +
+#   theme_bw() + ggtitle("CDRH3 Length") +
+#   xlab("Gene") + ylab("CDRH3 Length, Kabat (aa)") +
+#   scale_fill_discrete(name="Family") + scale_color_discrete(name="Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
+#   geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(1,1,1,1), "cm"))
 #plot(gcdr3v) + scale_y_continuous(labels = scales::percent)
 
 ### LC plots
@@ -449,13 +448,13 @@ glcdr3v <- ggplot(BX_lobs, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FA
 
 layouthkl <- rbind(c(1,1,2),
                    c(1,1,3))
-mutplots1 <- grid.arrange(ghmutv,gkmutv,glmutv, layout_matrix = layouthkl)
+mutplots1 <- grid.arrange(ghmutvs,gkmutv,glmutv, layout_matrix = layouthkl)
 ggsave("mutation_bysample.png", mutplots1, width = 24, height = 8, units = "in")
 ggsave("mutation_bysample.pdf", mutplots1, width = 24, height = 8, units = "in")
 
-cdr3plots1 <- grid.arrange(ghcdr3v,gkcdr3v,glcdr3v, layout_matrix = layouthkl)
-ggsave("CDR3_bysample.png", cdr3plots1, width = 24, height = 8, units = "in")
-ggsave("CDR3_bysample.pdf", cdr3plots1, width = 24, height = 8, units = "in")
+# cdr3plots1 <- grid.arrange(ghcdr3v,gkcdr3v,glcdr3v, layout_matrix = layouthkl)
+# ggsave("CDR3_bysample.png", cdr3plots1, width = 24, height = 8, units = "in")
+# ggsave("CDR3_bysample.pdf", cdr3plots1, width = 24, height = 8, units = "in")
 
 
 ##########################################################################################################
@@ -466,7 +465,7 @@ ggsave("CDR3_bysample.pdf", cdr3plots1, width = 24, height = 8, units = "in")
 
 
 #### FOR PARTICULAR CLONE
-BX <- read.delim(opt$DB)
+# BX <- read.delim(opt$DB)
 # BX <- read.delim("/users/eric.waltari/immcantation_pipeline/BX_min5/changeo/BXjan5_matcheswithss_clone-pass.tab")
 #BX2 <- read.delim("/users/eric.waltari/immcantation_pipeline/BX_min5/changeo/BXjan5_matcheswithss_clone-pass2.tab")
 #BX2s <- read.delim("/users/eric.waltari/immcantation_pipeline/BX_min5/changeo/BXjan5_matcheswithss_clone-pass2_min2b.tab")
@@ -479,150 +478,150 @@ BX <- read.delim(opt$DB)
 
 # BX.sub <- subset(BX, CLONE == 27281)
 # BX.sub <- subset(BX, CLONE == 114872)
-BX.sub <- subset(BX, CLONE == OPT$CLONE)
+# BX.sub <- subset(BX, CLONE == opt$CLONE)
 
-BX.sub$PRCONS <- as.character(BX.sub$PRCONS)
-BX.sub$SEQUENCE_IMGT <- as.character(BX.sub$SEQUENCE_IMGT)
-BX.sub$GERMLINE_IMGT_D_MASK <- as.character(BX.sub$GERMLINE_IMGT_D_MASK)
+# BX.sub$PRCONS <- as.character(BX.sub$PRCONS)
+# BX.sub$SEQUENCE_IMGT <- as.character(BX.sub$SEQUENCE_IMGT)
+# BX.sub$GERMLINE_IMGT_D_MASK <- as.character(BX.sub$GERMLINE_IMGT_D_MASK)
 
-BX.sub$JUNCTION_LENGTH2 <- round(BX.sub$JUNCTION_LENGTH/3)*3
-BX.sub$CDR3KABAT_LENGTH <- (BX.sub$JUNCTION_LENGTH2) / 3
+# BX.sub$JUNCTION_LENGTH2 <- round(BX.sub$JUNCTION_LENGTH/3)*3
+# BX.sub$CDR3KABAT_LENGTH <- (BX.sub$JUNCTION_LENGTH2) / 3
 
-BX.sub.H <- subset(BX.sub, PRCONS %in% c("IgM", "IgD", "IgG", "IgA"))
-BX.sub.L <- subset(BX.sub, PRCONS %in% c("Kappa", "Lambda"))
-BX.sub.kappa <- subset(BX.sub, PRCONS %in% c("Kappa"))
-BX.sub.lambda <- subset(BX.sub, PRCONS %in% c("Lambda"))
+# BX.sub.H <- subset(BX.sub, PRCONS %in% c("IgM", "IgD", "IgG", "IgA"))
+# BX.sub.L <- subset(BX.sub, PRCONS %in% c("Kappa", "Lambda"))
+# BX.sub.kappa <- subset(BX.sub, PRCONS %in% c("Kappa"))
+# BX.sub.lambda <- subset(BX.sub, PRCONS %in% c("Lambda"))
 
-BX.sub.H <- BX.sub.H[ grep("IGKV", BX.sub.H$V_CALL, invert = TRUE) , ]
-BX.sub.H <- BX.sub.H[ grep("IGLV", BX.sub.H$V_CALL, invert = TRUE) , ]
-BX.sub.L <- BX.sub.L[ grep("IGHV", BX.sub.L$V_CALL, invert = TRUE) , ]
-BX.sub.kappa <- BX.sub.kappa[ grep("IGHV", BX.sub.kappa$V_CALL, invert = TRUE) , ]
-BX.sub.lambda <- BX.sub.lambda[ grep("IGHV", BX.sub.lambda$V_CALL, invert = TRUE) , ]
-
-
-
-## now plotting sizes of clonal members based on barcode count
-## but using 2 x ln of count, then rounded to nearest five...
-### if including single sequences
-
-BX.sub$CONSCOUNT2 <- (2 * log(BX.sub$CONSCOUNT)) + 1
-BX.sub$CONSCOUNT2 <- round(BX.sub$CONSCOUNT2)
-
-## if only >5...
-#BXt.sub$CONSCOUNT2 <- (2 * log(BXt.sub$CONSCOUNT))
-#BXt.sub$CONSCOUNT2 <- round(BXt.sub$CONSCOUNT2/5)*5
-
-## ---- eval=TRUE----------------------------------------------------------
-# This example data set does not have ragged ends
-# Preprocess clone without ragged end masking (default)
-clone2 <- makeChangeoClone(BX.sub, max_mask = NULL, pad_end = TRUE, text_fields=c("PRCONS"), 
-                           num_fields="CONSCOUNT2")
-
-# Show combined annotations
-clone2@data[, c("PRCONS", "CONSCOUNT2")]
-
-## ---- eval=FALSE---------------------------------------------------------
-#  # Run PHYLIP and parse output
-#  dnapars_exec <- "~/apps/phylip-3.69/dnapars"
-#  graph <- buildPhylipLineage(clone, dnapars_exec, rm_temp=TRUE)
-
-## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
-# Load data insted of running phylip
-# Clone 3138 is at index 23
-#graph <- ExampleTrees[[23]]
-# dnapars_exec <- "~/phylip/exe/dnapars"
-dnapars_exec <= "/usr/local/bin/dnapars"
-graph <- buildPhylipLineage(clone2, dnapars_exec, rm_temp=TRUE)
-
-## ---- eval=TRUE, warning=FALSE, message=FALSE----------------------------
-# The graph has shared annotations for the clone
-data.frame(CLONE=graph$clone,
-           JUNCTION_LENGTH=graph$junc_len,
-           V_GENE=graph$v_gene,
-           J_GENE=graph$j_gene)
-
-# The vertices have sequence specific annotations
-data.frame(SEQUENCE_ID=V(graph)$name, 
-           PRCONS=V(graph)$PRCONS,
-           CONSCOUNT2=V(graph)$CONSCOUNT2)
-
-## ---- eval=TRUE----------------------------------------------------------
-# Plot graph with defaults
-plot(graph)
-
-## ---- eval=TRUE----------------------------------------------------------
-# Modify graph and plot attributes
-V(graph)$color <- "salmon"
-V(graph)$color[V(graph)$name == "Germline"] <- "black"
-V(graph)$color[V(graph)$PRCONS == "IgD"] <- "purple"
-V(graph)$color[V(graph)$PRCONS == "IgD,IgM"] <- "purple"
-V(graph)$color[V(graph)$PRCONS == "IgG"] <- "steelblue"
-V(graph)$color[V(graph)$PRCONS == "IgG1"] <- "cyan"
-V(graph)$color[V(graph)$PRCONS == "IgG1,IgG3"] <- "cyan"
-V(graph)$color[V(graph)$PRCONS == "IgG2"] <- "green"
-V(graph)$color[V(graph)$PRCONS == "IgG2,IgG3"] <- "steelblue"
-V(graph)$color[V(graph)$PRCONS == "IgG3"] <- "steelblue"
-V(graph)$color[V(graph)$PRCONS == "IgG4"] <- "green"
-V(graph)$color[V(graph)$PRCONS == "IgGmil"] <- "darkblue"
-V(graph)$color[V(graph)$PRCONS == "IgM,IgG"] <- "salmon"
-V(graph)$color[V(graph)$PRCONS == "IgM,IgG3"] <- "salmon"
-V(graph)$color[V(graph)$PRCONS == "IgG3,IgM"] <- "salmon"
-V(graph)$color[V(graph)$PRCONS == "IgA"] <- "orange"
-V(graph)$color[V(graph)$PRCONS == "IgA,IgG"] <- "orange"
-V(graph)$color[V(graph)$PRCONS == "IgA,IgG3"] <- "orange"
-V(graph)$color[V(graph)$PRCONS == "IgA,IgG4"] <- "orange"
-V(graph)$color[V(graph)$PRCONS == "IgA,IgG1,IgG2,IgG3"] <- "orange"
-#V(graph)$color[V(graph)$PRCONS == "INF17_H"] <- "grey"
-V(graph)$color[V(graph)$PRCONS == "CTB_32A"] <- "grey"
-V(graph)$color[grepl("Inferred", V(graph)$name)] <- "white"
-V(graph)$color[grepl("INF", V(graph)$name)] <- "grey"
-V(graph)$label <- V(graph)$PRCONS
-E(graph)$label <- ""
+# BX.sub.H <- BX.sub.H[ grep("IGKV", BX.sub.H$V_CALL, invert = TRUE) , ]
+# BX.sub.H <- BX.sub.H[ grep("IGLV", BX.sub.H$V_CALL, invert = TRUE) , ]
+# BX.sub.L <- BX.sub.L[ grep("IGHV", BX.sub.L$V_CALL, invert = TRUE) , ]
+# BX.sub.kappa <- BX.sub.kappa[ grep("IGHV", BX.sub.kappa$V_CALL, invert = TRUE) , ]
+# BX.sub.lambda <- BX.sub.lambda[ grep("IGHV", BX.sub.lambda$V_CALL, invert = TRUE) , ]
 
 
 
-V(graph)$size <- 5
-#V(graph)$size[V(graph)$CONSCOUNT2 == 5] <- 5
-#V(graph)$size[V(graph)$CONSCOUNT2 == 10] <- 10
-#V(graph)$size[V(graph)$CONSCOUNT2 == 15] <- 15
-#V(graph)$size[V(graph)$CONSCOUNT2 == 20] <- 20
-#V(graph)$size[V(graph)$CONSCOUNT2 == 25] <- 25
-#V(graph)$size[V(graph)$CONSCOUNT2 == 30] <- 30
-V(graph)$size[V(graph)$CONSCOUNT2 == 3] <- 8
-V(graph)$size[V(graph)$CONSCOUNT2 == 4] <- 8
-V(graph)$size[V(graph)$CONSCOUNT2 == 5] <- 8
-V(graph)$size[V(graph)$CONSCOUNT2 == 6] <- 12
-V(graph)$size[V(graph)$CONSCOUNT2 == 7] <- 12
-V(graph)$size[V(graph)$CONSCOUNT2 == 8] <- 12
-V(graph)$size[V(graph)$CONSCOUNT2 == 9] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 10] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 11] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 12] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 13] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 14] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 16] <- 16
-V(graph)$size[V(graph)$CONSCOUNT2 == 17] <- 16
+# ## now plotting sizes of clonal members based on barcode count
+# ## but using 2 x ln of count, then rounded to nearest five...
+# ### if including single sequences
 
-V(graph)$size[V(graph)$name == "Germline"] <- 4
-V(graph)$size[V(graph)$name == "CTB.32A"] <- 4
-V(graph)$size[grepl("Inferred", V(graph)$name)] <- 2 
-V(graph)$size[grepl("INF", V(graph)$name)] <- 4 
+# BX.sub$CONSCOUNT2 <- (2 * log(BX.sub$CONSCOUNT)) + 1
+# BX.sub$CONSCOUNT2 <- round(BX.sub$CONSCOUNT2)
 
-#V(graph)$size[grepl("TATATGTAGCGTGGCG", V(graph)$name)] <- 2 
-#V(graph)$size[grepl("CCTGGAAGCTTCCCGT", V(graph)$name)] <- 2 
+# ## if only >5...
+# #BXt.sub$CONSCOUNT2 <- (2 * log(BXt.sub$CONSCOUNT))
+# #BXt.sub$CONSCOUNT2 <- round(BXt.sub$CONSCOUNT2/5)*5
+
+# ## ---- eval=TRUE----------------------------------------------------------
+# # This example data set does not have ragged ends
+# # Preprocess clone without ragged end masking (default)
+# clone2 <- makeChangeoClone(BX.sub, max_mask = NULL, pad_end = TRUE, text_fields=c("PRCONS"), 
+#                            num_fields="CONSCOUNT2")
+
+# # Show combined annotations
+# clone2@data[, c("PRCONS", "CONSCOUNT2")]
+
+# ## ---- eval=FALSE---------------------------------------------------------
+# #  # Run PHYLIP and parse output
+# #  dnapars_exec <- "~/apps/phylip-3.69/dnapars"
+# #  graph <- buildPhylipLineage(clone, dnapars_exec, rm_temp=TRUE)
+
+# ## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
+# # Load data insted of running phylip
+# # Clone 3138 is at index 23
+# #graph <- ExampleTrees[[23]]
+# # dnapars_exec <- "~/phylip/exe/dnapars"
+# dnapars_exec <- "/usr/local/bin/dnapars"
+# graph <- buildPhylipLineage(clone2, dnapars_exec, rm_temp=TRUE)
+
+# ## ---- eval=TRUE, warning=FALSE, message=FALSE----------------------------
+# # The graph has shared annotations for the clone
+# data.frame(CLONE=graph$clone,
+#            JUNCTION_LENGTH=graph$junc_len,
+#            V_GENE=graph$v_gene,
+#            J_GENE=graph$j_gene)
+
+# # The vertices have sequence specific annotations
+# data.frame(SEQUENCE_ID=V(graph)$name, 
+#            PRCONS=V(graph)$PRCONS,
+#            CONSCOUNT2=V(graph)$CONSCOUNT2)
+
+# ## ---- eval=TRUE----------------------------------------------------------
+# # Plot graph with defaults
+# plot(graph)
+
+# ## ---- eval=TRUE----------------------------------------------------------
+# # Modify graph and plot attributes
+# V(graph)$color <- "salmon"
+# V(graph)$color[V(graph)$name == "Germline"] <- "black"
+# V(graph)$color[V(graph)$PRCONS == "IgD"] <- "purple"
+# V(graph)$color[V(graph)$PRCONS == "IgD,IgM"] <- "purple"
+# V(graph)$color[V(graph)$PRCONS == "IgG"] <- "steelblue"
+# V(graph)$color[V(graph)$PRCONS == "IgG1"] <- "cyan"
+# V(graph)$color[V(graph)$PRCONS == "IgG1,IgG3"] <- "cyan"
+# V(graph)$color[V(graph)$PRCONS == "IgG2"] <- "green"
+# V(graph)$color[V(graph)$PRCONS == "IgG2,IgG3"] <- "steelblue"
+# V(graph)$color[V(graph)$PRCONS == "IgG3"] <- "steelblue"
+# V(graph)$color[V(graph)$PRCONS == "IgG4"] <- "green"
+# V(graph)$color[V(graph)$PRCONS == "IgGmil"] <- "darkblue"
+# V(graph)$color[V(graph)$PRCONS == "IgM,IgG"] <- "salmon"
+# V(graph)$color[V(graph)$PRCONS == "IgM,IgG3"] <- "salmon"
+# V(graph)$color[V(graph)$PRCONS == "IgG3,IgM"] <- "salmon"
+# V(graph)$color[V(graph)$PRCONS == "IgA"] <- "orange"
+# V(graph)$color[V(graph)$PRCONS == "IgA,IgG"] <- "orange"
+# V(graph)$color[V(graph)$PRCONS == "IgA,IgG3"] <- "orange"
+# V(graph)$color[V(graph)$PRCONS == "IgA,IgG4"] <- "orange"
+# V(graph)$color[V(graph)$PRCONS == "IgA,IgG1,IgG2,IgG3"] <- "orange"
+# #V(graph)$color[V(graph)$PRCONS == "INF17_H"] <- "grey"
+# V(graph)$color[V(graph)$PRCONS == "CTB_32A"] <- "grey"
+# V(graph)$color[grepl("Inferred", V(graph)$name)] <- "white"
+# V(graph)$color[grepl("INF", V(graph)$name)] <- "grey"
+# V(graph)$label <- V(graph)$PRCONS
+# E(graph)$label <- ""
 
 
-getPathLengths(graph, root="Germline")
-# Remove large default margins
-par(mar=c(0, 0, 0, 0) + 0.1)
-# Plot graph
-#layout <- layout.reingold.tilford(graph, circular=F)
-plot(graph, layout=layout_as_tree, mode="out", edge.arrow.mode=0, edge.width=1, edge.label.cex=4, vertex.frame.color="grey",
-     vertex.label.color="black", edge.label.color="black")
 
-V(graph)$label <- ""
-plot(graph, layout=layout_as_tree, mode="out", edge.arrow.mode=0, edge.width=1, edge.label.cex=4, vertex.frame.color="grey",
-     vertex.label.color="white", edge.label.color="white")
+# V(graph)$size <- 5
+# #V(graph)$size[V(graph)$CONSCOUNT2 == 5] <- 5
+# #V(graph)$size[V(graph)$CONSCOUNT2 == 10] <- 10
+# #V(graph)$size[V(graph)$CONSCOUNT2 == 15] <- 15
+# #V(graph)$size[V(graph)$CONSCOUNT2 == 20] <- 20
+# #V(graph)$size[V(graph)$CONSCOUNT2 == 25] <- 25
+# #V(graph)$size[V(graph)$CONSCOUNT2 == 30] <- 30
+# V(graph)$size[V(graph)$CONSCOUNT2 == 3] <- 8
+# V(graph)$size[V(graph)$CONSCOUNT2 == 4] <- 8
+# V(graph)$size[V(graph)$CONSCOUNT2 == 5] <- 8
+# V(graph)$size[V(graph)$CONSCOUNT2 == 6] <- 12
+# V(graph)$size[V(graph)$CONSCOUNT2 == 7] <- 12
+# V(graph)$size[V(graph)$CONSCOUNT2 == 8] <- 12
+# V(graph)$size[V(graph)$CONSCOUNT2 == 9] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 10] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 11] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 12] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 13] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 14] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 16] <- 16
+# V(graph)$size[V(graph)$CONSCOUNT2 == 17] <- 16
+
+# V(graph)$size[V(graph)$name == "Germline"] <- 4
+# V(graph)$size[V(graph)$name == "CTB.32A"] <- 4
+# V(graph)$size[grepl("Inferred", V(graph)$name)] <- 2 
+# V(graph)$size[grepl("INF", V(graph)$name)] <- 4 
+
+# #V(graph)$size[grepl("TATATGTAGCGTGGCG", V(graph)$name)] <- 2 
+# #V(graph)$size[grepl("CCTGGAAGCTTCCCGT", V(graph)$name)] <- 2 
+
+
+# getPathLengths(graph, root="Germline")
+# # Remove large default margins
+# par(mar=c(0, 0, 0, 0) + 0.1)
+# # Plot graph
+# #layout <- layout.reingold.tilford(graph, circular=F)
+# plot(graph, layout=layout_as_tree, mode="out", edge.arrow.mode=0, edge.width=1, edge.label.cex=4, vertex.frame.color="grey",
+#      vertex.label.color="black", edge.label.color="black")
+
+# V(graph)$label <- ""
+# plot(graph, layout=layout_as_tree, mode="out", edge.arrow.mode=0, edge.width=1, edge.label.cex=4, vertex.frame.color="grey",
+#      vertex.label.color="white", edge.label.color="white")
 
 # Add legend
 #legend("topright", c("Germline", "Inferred", "Sample"), 
@@ -633,35 +632,35 @@ plot(graph, layout=layout_as_tree, mode="out", edge.arrow.mode=0, edge.width=1, 
 #############################
 ## ---- eval=TRUE, warning=FALSE, results="hide"---------------------------
 # Preprocess clones
-clones <- BX %>%
-  group_by(CLONE) %>%
-  do(CHANGEO=makeChangeoClone(., text_fields=c("PRCONS"), 
-                              num_fields="DUPCOUNT"))
+# clones <- BX %>%
+#   group_by(CLONE) %>%
+#   do(CHANGEO=makeChangeoClone(., text_fields=c("PRCONS"), 
+#                               num_fields="DUPCOUNT"))
 
-## ---- eval=FALSE---------------------------------------------------------
-#  # Build lineages
-#  dnapars_exec <- "~/apps/phylip-3.69/dnapars"
-#  graphs <- lapply(clones$CHANGEO, buildPhylipLineage,
-#                   dnapars_exec=dnapars_exec, rm_temp=TRUE)
+# ## ---- eval=FALSE---------------------------------------------------------
+# #  # Build lineages
+# #  dnapars_exec <- "~/apps/phylip-3.69/dnapars"
+# #  graphs <- lapply(clones$CHANGEO, buildPhylipLineage,
+# #                   dnapars_exec=dnapars_exec, rm_temp=TRUE)
 
-## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
-# Load data insted of running phylip
-graphs <- ExampleTrees
+# ## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
+# # Load data insted of running phylip
+# graphs <- ExampleTrees
 
-## ---- eval=TRUE----------------------------------------------------------
-# Note, clones with only a single sequence will not be processed.
-# A warning will be generated and NULL will be returned by buildPhylipLineage
-# These entries may be removed for clarity
-graphs[sapply(graphs, is.null)] <- NULL
+# ## ---- eval=TRUE----------------------------------------------------------
+# # Note, clones with only a single sequence will not be processed.
+# # A warning will be generated and NULL will be returned by buildPhylipLineage
+# # These entries may be removed for clarity
+# graphs[sapply(graphs, is.null)] <- NULL
 
-# The set of tree may then be subset by node count for further 
-# analysis, if desired.
-graphs <- graphs[sapply(graphs, vcount) >= 5]
+# # The set of tree may then be subset by node count for further 
+# # analysis, if desired.
+# graphs <- graphs[sapply(graphs, vcount) >= 5]
 
 
-#####################################################################
-#####################################################################
-##################       TOPOLOGY ANALYSIS              #############
-#####################################################################
-#####################################################################
+# #####################################################################
+# #####################################################################
+# ##################       TOPOLOGY ANALYSIS              #############
+# #####################################################################
+# #####################################################################
 
