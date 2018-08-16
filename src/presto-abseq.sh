@@ -69,7 +69,7 @@ COORD_SET=false
 BARCODE_LENGTH_SET=false
 
 # Get commandline arguments
-while getopts "1:2:j:v:c:r:y:n:o:x:p:b:h" OPT; do
+while getopts "1:2:j:v:c:r:s:y:n:o:x:p:b:h" OPT; do
     case "$OPT" in
     1)  R1_READS=${OPTARG}
         R1_READS_SET=true
@@ -88,6 +88,8 @@ while getopts "1:2:j:v:c:r:y:n:o:x:p:b:h" OPT; do
         ;;
     r)  VREF_SEQ=${OPTARG}
         VREF_SEQ_SET=true
+        ;;
+    s)  IGGIGA_SUBTYPES=${OPTARG}
         ;;
     y)  YAML=$OPTARG
         YAML_SET=true
@@ -348,18 +350,18 @@ check_error
 # Multiple align UID read groups
 if $ALIGN_SETS; then
     printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "AlignSets muscle"
-	AlignSets.py muscle -s "${OUTNAME}-R1_primers-pass_pair-pass.fastq" --exec $MUSCLE_EXEC \
-	    --nproc $NPROC --log "${LOGDIR}/align-1.log" --outname "${OUTNAME}-R1" \
-	    >> $PIPELINE_LOG 2> $ERROR_LOG
-	AlignSets.py muscle -s "${OUTNAME}-R2_primers-pass_pair-pass.fastq" --exec $MUSCLE_EXEC \
-	    --nproc $NPROC --log "${LOGDIR}/align-2.log" --outname "${OUTNAME}-R2" \
-	    >> $PIPELINE_LOG 2> $ERROR_LOG
-	BCR1_FILE="${OUTNAME}-R1_align-pass.fastq"
-	BCR2_FILE="${OUTNAME}-R2_align-pass.fastq"
-	check_error
+    AlignSets.py muscle -s "${OUTNAME}-R1_primers-pass_pair-pass.fastq" --exec $MUSCLE_EXEC \
+        --nproc $NPROC --log "${LOGDIR}/align-1.log" --outname "${OUTNAME}-R1" \
+        >> $PIPELINE_LOG 2> $ERROR_LOG
+    AlignSets.py muscle -s "${OUTNAME}-R2_primers-pass_pair-pass.fastq" --exec $MUSCLE_EXEC \
+        --nproc $NPROC --log "${LOGDIR}/align-2.log" --outname "${OUTNAME}-R2" \
+        >> $PIPELINE_LOG 2> $ERROR_LOG
+    BCR1_FILE="${OUTNAME}-R1_align-pass.fastq"
+    BCR2_FILE="${OUTNAME}-R2_align-pass.fastq"
+    check_error
 else
-	BCR1_FILE="${OUTNAME}-R1_primers-pass_pair-pass.fastq"
-	BCR2_FILE="${OUTNAME}-R2_primers-pass_pair-pass.fastq"
+    BCR1_FILE="${OUTNAME}-R1_primers-pass_pair-pass.fastq"
+    BCR2_FILE="${OUTNAME}-R2_primers-pass_pair-pass.fastq"
 fi
 
 
@@ -378,10 +380,10 @@ if $BC_ERR_FLAG; then
             --outname "${OUTNAME}-R1" >> $PIPELINE_LOG 2> $ERROR_LOG
     fi
 
-	BuildConsensus.py -s $BCR2_FILE --bf BARCODE --pf PRIMERCLPSD \
-	    -n $BC_MINCOUNT -q $BC_QUAL --maxerror $BC_MAXERR --maxgap $BC_MAXGAP \
-	    --cf PRIMERCLPSD --act set --nproc $NPROC --log "${LOGDIR}/consensus-2.log" \
-	    --outname "${OUTNAME}-R2" >> $PIPELINE_LOG 2> $ERROR_LOG
+    BuildConsensus.py -s $BCR2_FILE --bf BARCODE --pf PRIMERCLPSD \
+        -n $BC_MINCOUNT -q $BC_QUAL --maxerror $BC_MAXERR --maxgap $BC_MAXGAP \
+        --cf PRIMERCLPSD --act set --nproc $NPROC --log "${LOGDIR}/consensus-2.log" \
+        --outname "${OUTNAME}-R2" >> $PIPELINE_LOG 2> $ERROR_LOG
 else
     if $BC_PRCONS_FLAG; then
         BuildConsensus.py -s $BCR1_FILE --bf BARCODE --pf PRIMERCLPSD --prcons $BC_PRCONS \
@@ -395,10 +397,10 @@ else
             --outname "${OUTNAME}-R1" >> $PIPELINE_LOG 2> $ERROR_LOG
     fi
 
-	BuildConsensus.py -s $BCR2_FILE --bf BARCODE --pf PRIMERCLPSD \
-    	-n $BC_MINCOUNT -q $BC_QUAL --maxgap $BC_MAXGAP \
-    	--cf PRIMERCLPSD --act set --nproc $NPROC --log "${LOGDIR}/consensus-2.log" \
-    	--outname "${OUTNAME}-R2" >> $PIPELINE_LOG 2> $ERROR_LOG
+    BuildConsensus.py -s $BCR2_FILE --bf BARCODE --pf PRIMERCLPSD \
+        -n $BC_MINCOUNT -q $BC_QUAL --maxgap $BC_MAXGAP \
+        --cf PRIMERCLPSD --act set --nproc $NPROC --log "${LOGDIR}/consensus-2.log" \
+        --outname "${OUTNAME}-R2" >> $PIPELINE_LOG 2> $ERROR_LOG
 fi
 check_error
 
@@ -500,7 +502,7 @@ printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "SplitSeq group"
 SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f CONSCOUNT --num $MIN_CONSCOUNT \
     >> $PIPELINE_LOG 2> $ERROR_LOG
 ## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
-IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
+# IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
     --mode tag --revpr --pf GandA_SUBTYPE
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
