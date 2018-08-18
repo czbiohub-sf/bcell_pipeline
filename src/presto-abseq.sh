@@ -15,6 +15,7 @@
 #       If unspecified internal C-region alignment is not performed.
 #   -r  V-segment reference file.
 #       Defaults to /usr/local/share/germlines/igblast/fasta/imgt_human_ig_v.fasta
+#   -s  Ig subtype reference file.
 #   -y  YAML file providing description fields for report generation.
 #   -n  Sample name or run identifier which will be used as the output file prefix.
 #       Defaults to a truncated version of the read 1 filename.
@@ -41,6 +42,7 @@ print_usage() {
             "     If unspecified internal C-region alignment is not performed."
     echo -e "  -r  V-segment reference file.\n" \
             "     Defaults to /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta."
+    echo -e "  -s  V-segment reference file.\n"
     echo -e "  -y  YAML file providing description fields for report generation."
     echo -e "  -n  Sample identifier which will be used as the output file prefix.\n" \
             "     Defaults to a truncated version of the read 1 filename."
