@@ -511,9 +511,9 @@ ggsave("mutation_histogram_rawcounts.pdf", mutplotshistcounts, width = 24, heigh
 #  summarize(cloneshm = mean (MU_FREQ))
 
 ####
-# clonestatsh1 <- BX_hobs %>%
-#   group_by(CLONE) %>%
-#   summarize_at(c("PRCONS2","GENE","V_CALL","D_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","GANDA_SUBTYPE","JUNCTION_LENGTH2","CDR3KABAT_LENGTH","FAMILY"), first)
+clonestatsh1 <- BX_hobs %>%
+  group_by(CLONE) %>%
+  summarize_at(c("PRCONS2","GENE","V_CALL","D_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","GANDA_SUBTYPE","JUNCTION_LENGTH2","CDR3KABAT_LENGTH","FAMILY"), first)
 clonestatsh2 <- BX_hobs %>%
   group_by(CLONE) %>%
   summarize_if(is.numeric, mean)
