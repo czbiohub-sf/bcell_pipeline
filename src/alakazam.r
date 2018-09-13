@@ -394,6 +394,12 @@ BX_hobs <- BX_hobs %>% add_count(CLONE)
 BX_kobs <- BX_kobs %>% add_count(CLONE)
 BX_lobs <- BX_lobs %>% add_count(CLONE)
 
+## removing GF.x and GF.y
+BX_hobs$GF.x <- NULL
+BX_hobs$GF.y <- NULL
+BX_kobs$GF.x <- NULL
+BX_kobs$GF.y <- NULL
+
 ### creating lists per clone not per read
 clonestatsh1 <- BX_hobs %>%
   group_by(CLONE) %>%
