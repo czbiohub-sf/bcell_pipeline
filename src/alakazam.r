@@ -806,6 +806,10 @@ gkmuthistogram <- ggplot(BX_kobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*
 glmuthistogram <- ggplot(BX_lobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
 #plot(glmuthistogram)
+### free y axis for % and not just counts below
+ghmuthistogramfree <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol = 1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
+#plot(ghmuthistogramfree)
 
 ghmuthistogramcounts <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Reads")
@@ -825,6 +829,9 @@ mutplotshistcounts <- grid.arrange(ghmuthistogramcounts,gkmuthistogramcounts,glm
 ggsave("mutation_histogram_rawcounts_hlseparatepanels.png", mutplotshistcounts, width = 16, height = 12, units = "in")
 ggsave("mutation_histogram_rawcounts_hlseparatepanels.pdf", mutplotshistcounts, width = 16, height = 12, units = "in")
 
+mutplotshistfree <- grid.arrange(ghmuthistogramfree,gkmuthistogram,glmuthistogram, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_hlseparatefreepanels.png", mutplotshistfree, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_hlseparatefreepanels.pdf", mutplotshistfree, width = 16, height = 12, units = "in")
 
 ## same mutation plots but by clone
 ghmuthistogrambyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
@@ -839,6 +846,11 @@ gkmuthistogrambyclone <- ggplot(clonestatsk, aes(x = MU_FREQ)) + geom_histogram(
 glmuthistogrambyclone <- ggplot(clonestatsl, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(glmuthistogrambyclone)
+### free y axis for % and not just counts below
+ghmuthistogrambyclonefree <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
+#plot(ghmuthistogrambyclonefree)
+
 
 ghmuthistogramcountsbyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
   scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Clones")
@@ -860,6 +872,10 @@ mutplotshistcountsbyclone <- grid.arrange(ghmuthistogramcountsbyclone,gkmuthisto
 ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanels.png", mutplotshistcountsbyclone, width = 16, height = 12, units = "in")
 ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanels.pdf", mutplotshistcountsbyclone, width = 16, height = 12, units = "in")
 
+mutplotshistbyclonefree <- grid.arrange(ghmuthistogrambyclonefree,gkmuthistogrambyclone,glmuthistogrambyclone, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_byclone_hlseparatefreepanels.png", mutplotshistbyclonefree, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_byclone_hlseparatefreepanels.pdf", mutplotshistbyclonefree, width = 16, height = 12, units = "in")
+
 ###################
 ## now clone plots but filter so leaving out all single clones!
 ghmuthistogrambyclonef <- ggplot(clonestatshf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
@@ -871,6 +887,10 @@ gkmuthistogrambyclonef <- ggplot(clonestatskf, aes(x = MU_FREQ)) + geom_histogra
 glmuthistogrambyclonef <- ggplot(clonestatslf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
 #plot(glmuthistogrambyclonef)
+### free y axis for % and not just counts below
+ghmuthistogrambycloneffree <- ggplot(clonestatshf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
+#plot(ghmuthistogrambycloneffree)
 
 ghmuthistogramcountsbyclonef <- ggplot(clonestatshf, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Clones with ≥ 2 Members")
@@ -888,6 +908,10 @@ ggsave("mutation_histogram_byclone_filtered_hlseparatepanels.pdf", mutplotshistb
 mutplotshistcountsbyclonef <- grid.arrange(ghmuthistogramcountsbyclonef,gkmuthistogramcountsbyclonef,glmuthistogramcountsbyclonef, layout_matrix = layouthkl3)
 ggsave("mutation_histogram_rawcounts_byclone_filtered_hlseparatepanels.png", mutplotshistcountsbyclonef, width = 16, height = 12, units = "in")
 ggsave("mutation_histogram_rawcounts_byclone_filtered_hlseparatepanels.pdf", mutplotshistcountsbyclonef, width = 16, height = 12, units = "in")
+
+mutplotshistbycloneffree <- grid.arrange(ghmuthistogrambycloneffree,gkmuthistogrambyclonef,glmuthistogrambyclonef, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_byclone_filtered_hlseparatefreepanels.png", mutplotshistbycloneffree, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_byclone_filtered_hlseparatefreepanels.pdf", mutplotshistbycloneffree, width = 16, height = 12, units = "in")
 
 gmutviolinhf <- ggplot(clonestatshf, aes(x=PRCONS2, y=MU_FREQ, stroke = 0.001)) +
   theme_bw() + ggtitle("% Somatic Hypermutation by Clone") +
@@ -1457,10 +1481,10 @@ ggsave("piechart_hcisosub_clones_blank.png", piecharthcisosubclones2b, width = 8
 ggsave("piechart_hcisosub_clones_blank.pdf", piecharthcisosubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
 
 ### PDFS
-pdfset1b <- c(list(piechartallcounts2b, piechartsub1counts2b, piecharthccounts2b, piechartlccounts2b, piechartisosubcounts2b, piecharthcisosubcounts2b, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshist, mutplotshistcounts))
+pdfset1b <- c(list(piechartallcounts2b, piechartsub1counts2b, piecharthccounts2b, piechartlccounts2b, piechartisosubcounts2b, piecharthcisosubcounts2b, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshistfree, mutplotshistcounts))
 manypdfs1b <- marrangeGrob(pdfset1b, nrow=1, ncol=1)
 ggsave("results_byreads_blankpies.pdf", manypdfs1b, width = 16, height = 12, units = "in")
-pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclone, mutplotshistcountsbyclone))
+pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclonefree, mutplotshistcountsbyclone))
 manypdfs2b <- marrangeGrob(pdfset2b, nrow=1, ncol=1)
 ggsave("results_byclones_blankpies.pdf", manypdfs2b, width = 16, height = 12, units = "in")
 
