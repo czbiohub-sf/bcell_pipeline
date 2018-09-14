@@ -81,7 +81,7 @@ val alakazam = changeo_clone_bucket ~> make("alakazam.rf")
 val (alakazam_tsv, _) = dirs.Pick(changeo_clone_res, "*clone-pass.tab")
 val alakazam_res = alakazam.AlakazamRun(alakazam_tsv)
 val alakazam_bucket = dirs.Copy(alakazam_res,
-	strings.Join([results_bucket, run_name, "alakazam1"], "/"))
+	strings.Join([results_bucket, run_name, "alakazam"], "/"))
 
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
-val Main = alakazam1_bucket
+val Main = alakazam_bucket
