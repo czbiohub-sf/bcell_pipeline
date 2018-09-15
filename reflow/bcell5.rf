@@ -78,7 +78,7 @@ val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
 // Construct Gene and Gene Family Plots.
 // TODO: Read Clone number and run Lineage Reconstruction for a given clone.
 val alakazam = changeo_clone_bucket ~> make("alakazam.rf")
-val (alakazam_tsv, _) = dirs.Pick(changeo_clone_res, "*clone-pass.tab")
+val (alakazam_tsv, _) = dirs.Pick(changeo_clone_res, "*germ-pass.tab")
 val alakazam_res = alakazam.AlakazamRun(alakazam_tsv)
 val alakazam_bucket = dirs.Copy(alakazam_res,
 	strings.Join([results_bucket, run_name, "alakazam"], "/"))
