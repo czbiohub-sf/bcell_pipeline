@@ -505,6 +505,7 @@ SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f CONSCOUNT --num
     >> $PIPELINE_LOG 2> $ERROR_LOG
 ## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
 # IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
+mv "${OUTNAME}-final_collapse-unique_atleast-5.fastq" "${OUTNAME}-final_collapse-unique_atleast-2.fastq"
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
     --mode tag --revpr --pf GandA_SUBTYPE
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
