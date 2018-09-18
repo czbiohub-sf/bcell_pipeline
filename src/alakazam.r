@@ -497,7 +497,7 @@ lsds3 <- clonestatslf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
 lmeans_and_sds <- cbind(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
-allmeans_and_sds <- rbind.fill(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
+allmeans_and_sds <- bind_rows(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
 
 ### do same for subtype
 submeans1 <- BX_hobs %>%
@@ -522,7 +522,7 @@ submeans_and_sds <- cbind(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
 
 ###################################
 ### stats for pie charts
-lcmeans_and_sds0 <- rbind.fill(kmeans_and_sds,lmeans_and_sds)
+lcmeans_and_sds0 <- bind_rows(kmeans_and_sds,lmeans_and_sds)
 hcmeans_and_sdswithd <- subset(allmeans_and_sds, PRCONS2 %in% c("IgM", "IgD", "IgG", "IgA"))
 hcmeans_and_sds <- subset(allmeans_and_sds, PRCONS2 %in% c("IgM", "IgG", "IgA"))
 
@@ -570,11 +570,11 @@ subtypemeans_and_sds <- subtypemeans_and_sds0 %>%
   unite(GANDA_SUBTYPE, n1, col="subtypeandn1", sep=", ", remove = FALSE) %>%
   unite(GANDA_SUBTYPE, n2, col="subtypeandn2", sep=", ", remove = FALSE)
 #rm(isotypeandsubtypemeans_and_sds)
-isotypeandsubtypemeans_and_sds <- rbind.fill(allmeans_and_sds,subtypemeans_and_sds)
+isotypeandsubtypemeans_and_sds <- bind_rows(allmeans_and_sds,subtypemeans_and_sds)
 
 ### MAKING NEW TABLE COMBINING ISOTYPES AND SUBTYPES
 mumeans_and_sds <- subset(allmeans_and_sds0, PRCONS2 %in% c("IgM"))
-mulcmeans_and_sds <- rbind.fill(mumeans_and_sds,lcmeans_and_sds0)
+mulcmeans_and_sds <- bind_rows(mumeans_and_sds,lcmeans_and_sds0)
 #mulcmeans_and_sds <- rename(mulcmeans_and_sds, subtypeandn1 = isotypeandn1)
 #mulcmeans_and_sds <- rename(mulcmeans_and_sds, subtypeandn2 = isotypeandn2)
 mulcmeans_and_sds <- rename(mulcmeans_and_sds, GANDA_SUBTYPE = PRCONS2)
@@ -582,7 +582,7 @@ mumeans_and_sds <- rename(mumeans_and_sds, GANDA_SUBTYPE = PRCONS2)
 #rm(isosubmeans_and_sds)
 
 ### NOTE IF NO IgG4, need another set of subytpe plots - alternately try replacing all NAs with 0s
-isosubmeans_and_sds0 <- rbind.fill(subtypemeans_and_sds0,mulcmeans_and_sds)
+isosubmeans_and_sds0 <- bind_rows(subtypemeans_and_sds0,mulcmeans_and_sds)
 isosubmeans_and_sds0$GANDA_SUBTYPE <- factor(isosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
 isosubmeans_and_sds1 <- isosubmeans_and_sds0
 ### this re-orders the rows...
@@ -613,7 +613,7 @@ subtypemeans_and_sds1 <- subtypemeans_and_sds1 %>%
 subtypemeans_and_sds1$GANDA_SUBTYPE <- factor(subtypemeans_and_sds1$GANDA_SUBTYPE, levels = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 
 ## now HC isotypes and subtypes
-hcisosubmeans_and_sds0 <- rbind.fill(subtypemeans_and_sds0,mumeans_and_sds)
+hcisosubmeans_and_sds0 <- bind_rows(subtypemeans_and_sds0,mumeans_and_sds)
 hcisosubmeans_and_sds0$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 hcisosubmeans_and_sds1 <- hcisosubmeans_and_sds0
 ### this re-orders the rows...
@@ -950,7 +950,7 @@ ggsave("mutation_histogram_gmkl.pdf", ggmklmuthistogram, width = 16, height = 12
 ggsave("mutation_histogram_rawcounts_gmkl.png", ggmklmuthistogramcounts, width = 16, height = 12, units = "in")
 ggsave("mutation_histogram_rawcounts_gmkl.pdf", ggmklmuthistogramcounts, width = 16, height = 12, units = "in")
 ###
-clonestatsall <- rbind.fill(clonestatsh, clonestatsk, clonestatsl)
+clonestatsall <- bind_rows(clonestatsh, clonestatsk, clonestatsl)
 clonestatsall$PRCONS3 <- factor(clonestatsall$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
 gallmuthistogrambyclone <- ggplot(clonestatsall, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
@@ -995,7 +995,7 @@ ggsave("mutation_histogram_byclone_gmkl_4panels.pdf", mutplotshistbyclonegmkl, w
 #plot(ggmmuthistogrambyclone)
 
 ####
-clonestatsallf <- rbind.fill(clonestatshf, clonestatskf, clonestatslf)
+clonestatsallf <- bind_rows(clonestatshf, clonestatskf, clonestatslf)
 clonestatsallf$PRCONS3 <- factor(clonestatsallf$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
 gallmuthistogrambyclonef <- ggplot(clonestatsallf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
@@ -1103,7 +1103,7 @@ ggsave("mutationvsCDR3_byclone_filtered_hlseparatepanels.png", mutvsCDR3f, width
 ggsave("mutationvsCDR3_byclone_filtered_hlseparatepanels.pdf", mutvsCDR3f, width = 16, height = 12, units = "in")
 
 ### SINGLE PANELS & GMKL ONLY
-clonestatsall <- rbind.fill(clonestatsh, clonestatsk, clonestatsl)
+clonestatsall <- bind_rows(clonestatsh, clonestatsk, clonestatsl)
 clonestatsall$PRCONS3 <- factor(clonestatsall$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
 gmutandcdr3hexall <- ggplot(clonestatsall, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
@@ -1126,7 +1126,7 @@ ggsave("mutationvsCDR3_byclone_gmkl.png", gmutandcdr3hexgmkl, width = 16, height
 ggsave("mutationvsCDR3_byclone_gmkl.pdf", gmutandcdr3hexgmkl, width = 16, height = 12, units = "in")
 
 ### 
-clonestatsallf <- rbind.fill(clonestatshf, clonestatskf, clonestatslf)
+clonestatsallf <- bind_rows(clonestatshf, clonestatskf, clonestatslf)
 clonestatsallf$PRCONS3 <- factor(clonestatsallf$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
 gmutandcdr3hexallf <- ggplot(clonestatsallf, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
