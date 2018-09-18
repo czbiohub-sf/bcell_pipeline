@@ -498,6 +498,7 @@ lsds3 <- clonestatslf %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
 lmeans_and_sds <- cbind(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
 allmeans_and_sds <- bind_rows(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
+allmeans_and_sds$PRCONS2 <- factor(allmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
 
 ### do same for subtype
 submeans1 <- BX_hobs %>%
