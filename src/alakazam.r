@@ -1149,6 +1149,107 @@ ggsave("mutationvsCDR3_byclone_filtered_gmkl.png", gmutandcdr3hexgmkl, width = 1
 ggsave("mutationvsCDR3_byclone_filtered_gmkl.pdf", gmutandcdr3hexgmkl, width = 16, height = 12, units = "in")
 
 #################################################################################################
+################################## HISTOGRAMS OF CLONES #########################################
+#################################################################################################
+ghnreadshistogrambyclone <- ggplot(clonestatsh, aes(x = n)) + geom_histogram(aes(y=0.1*..density..), binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2, ncol=1) + scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family") + xlab("# Reads per Clonal Family") + ylab("Proportion of clones")
+#plot(ghnreadshistogrambyclone)
+### free y axis for % and not just counts below
+ghnreadshistogrambyclonefree <- ggplot(clonestatsh, aes(x = n)) + geom_histogram(aes(y=0.1*..density..), binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family") + xlab("# Reads per Clonal Family") + ylab("Proportion of clones")
+#plot(ghnreadshistogrambyclonefree)
+ghnreadshistogramcountsbyclone <- ggplot(clonestatsh, aes(x = n)) + geom_histogram(binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_log10(breaks = c(1, 10, 100, 1000)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family, Raw Counts") + xlab("# Reads per Clonal Family") + ylab("Clones")
+#plot(ghnreadshistogramcountsbyclone)
+
+gknreadshistogrambyclone <- ggplot(clonestatsk, aes(x = n)) + geom_histogram(aes(y=0.1*..density..), binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2) + scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("# Reads per Clonal Family") + ylab("Proportion of clones")
+#plot(gknreadshistogrambyclone)
+glnreadshistogrambyclone <- ggplot(clonestatsl, aes(x = n)) + geom_histogram(aes(y=0.1*..density..), binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2) + scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("# Reads per Clonal Family") + ylab("Proportion of clones")
+#plot(glnreadshistogrambyclone)
+gknreadshistogramcountsbyclone <- ggplot(clonestatsk, aes(x = n)) + geom_histogram(binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2) + scale_x_log10(breaks = c(1, 10, 100, 1000)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("# Reads per Clonal Family") + ylab("Clones")
+#plot(gknreadshistogramcountsbyclone)
+glnreadshistogramcountsbyclone <- ggplot(clonestatsl, aes(x = n)) + geom_histogram(binwidth = 0.1) + 
+  facet_wrap(~ PRCONS2) + scale_x_log10(breaks = c(1, 10, 100, 1000)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("# Reads per Clonal Family") + ylab("Clones")
+#plot(glnreadshistogramcountsbyclone)
+
+nreadshistogrambyclone <- grid.arrange(ghnreadshistogrambyclone,gknreadshistogrambyclone,glnreadshistogrambyclone, layout_matrix = layouthkl3)
+ggsave("clonalfamily_n_histogram_byclone_hlseparatepanels.png", nreadshistogrambyclone, width = 16, height = 12, units = "in")
+ggsave("clonalfamily_n_histogram_byclone_hlseparatepanels.pdf", nreadshistogrambyclone, width = 16, height = 12, units = "in")
+nreadshistogrambyclonefree <- grid.arrange(ghnreadshistogrambyclonefree,gknreadshistogrambyclone,glnreadshistogrambyclone, layout_matrix = layouthkl3)
+ggsave("clonalfamily_n_histogram_byclone_hlfreeseparatepanels.png", nreadshistogrambyclonefree, width = 16, height = 12, units = "in")
+ggsave("clonalfamily_n_histogram_byclone_hlfreeseparatepanels.pdf", nreadshistogrambyclonefree, width = 16, height = 12, units = "in")
+nreadshistogramcountsbyclone <- grid.arrange(ghnreadshistogramcountsbyclone,gknreadshistogramcountsbyclone,glnreadshistogramcountsbyclone, layout_matrix = layouthkl3)
+ggsave("clonalfamily_n_histogram_byclone_hlseparatepanels_counts.png", nreadshistogramcountsbyclone, width = 16, height = 12, units = "in")
+ggsave("clonalfamily_n_histogram_byclone_hlseparatepanels_counts.pdf", nreadshistogramcountsbyclone, width = 16, height = 12, units = "in")
+
+## HC plots combining all isotypes
+ghnreadshistogrambycloneallh <- ggplot(clonestatsh, aes(x = n)) + geom_histogram(aes(y=0.1*..density..), binwidth = 0.1) + 
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = percent_format()) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family") + xlab("# Reads per Clonal Family") + ylab("Proportion of clones")
+#plot(ghnreadshistogrambycloneallh)
+ghnreadshistogramcountsbycloneallh <- ggplot(clonestatsh, aes(x = n)) + geom_histogram(binwidth = 0.1) + 
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family, Raw Counts") + xlab("# Reads per Clonal Family") + ylab("Clones")
+#plot(ghnreadshistogramcountsbycloneallh)
+ggsave("clonalfamily_n__allHC_reads.png", ghnreadshistogrambycloneallh, width = 8, height = 6, units = "in")
+ggsave("clonalfamily_n__allHC_readcounts.png", ghnreadshistogramcountsbycloneallh, width = 8, height = 6, units = "in")
+## EXCLUDING IgM
+clonestatsga <- subset(clonestatsh, PRCONS2 != "IgM")
+ghnreadshistogrambyclonega <- ggplot(clonestatsga, aes(x = n)) + geom_histogram(aes(y=0.1*..density..), binwidth = 0.1) + 
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = percent_format()) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family") + xlab("# Reads per Clonal Family") + ylab("Proportion of clones")
+#plot(ghnreadshistogrambyclonega)
+ghnreadshistogramcountsbyclonega <- ggplot(clonestatsga, aes(x = n)) + geom_histogram(binwidth = 0.1) + 
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("# Reads per Clonal Family, Raw Counts") + xlab("# Reads per Clonal Family") + ylab("Clones")
+#plot(ghnreadshistogramcountsbyclonega)
+ggsave("clonalfamily_n_IgGIgA_reads.png", ghnreadshistogrambyclonega, width = 8, height = 6, units = "in")
+ggsave("clonalfamily_n_IgGIgA_readcounts.png", ghnreadshistogramcountsbyclonega, width = 8, height = 6, units = "in")
+
+## Hex plots of avg mutation vs. number of reads
+gmutandnhexhbyisotypeh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
+  theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
+  xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandnhexhbyisotypeh)
+gmutandnhexhbyisotypek <- ggplot(clonestatsk, aes(x=n, y=MU_FREQ)) +
+  theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
+  xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandnhexhbyisotypek)
+gmutandnhexhbyisotypel <- ggplot(clonestatsl, aes(x=n, y=MU_FREQ)) +
+  theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
+  xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandnhexhbyisotypel)
+gmutandnhexhbyisotype <- grid.arrange(gmutandnhexhbyisotypeh,gmutandnhexhbyisotypek,gmutandnhexhbyisotypel, layout_matrix = layouthkl3)
+ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.png", gmutandnhexhbyisotype, width = 16, height = 12, units = "in")
+ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.pdf", gmutandnhexhbyisotype, width = 16, height = 12, units = "in")
+
+## HC plots combining all isotypes
+gmutandnhexallh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
+  theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation, HC Reads") +
+  xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
+  geom_hex(aes(fill=log10(..count..))) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandnhexallh)
+ggsave("clonalfamily_n_vs_mutation_allHC_reads.png", gmutandnhexallh, width = 8, height = 6, units = "in")
+## EXCLUDING IgM
+gmutandnhexga <- ggplot(clonestatsga, aes(x=n, y=MU_FREQ)) +
+  theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation, IgG & IgA Reads") +
+  xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
+  geom_hex(aes(fill=log10(..count..))) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandnhexga)
+ggsave("clonalfamily_n_vs_mutation_IgGIgA_reads.png", gmutandnhexga, width = 8, height = 6, units = "in")
+
+gmutandnhexallga <- grid.arrange(gmutandnhexallh,gmutandnhexga, layout_matrix = layout2)
+ggsave("clonalfamily_n_vs_mutation_2HCformats.png", gmutandnhexallga, width = 16, height = 12, units = "in")
+ggsave("clonalfamily_n_vs_mutation_2HCformats.pdf", gmutandnhexallga, width = 16, height = 12, units = "in")
+
+#################################################################################################
 ################################## PIE CHARTS OF ISOTYPES #######################################
 #################################################################################################
 piechartallcounts <- ggplot(allmeans_and_sds, aes(x = "", y = n1, fill = PRCONS2, label = scales::percent(pern1))) +
@@ -1335,7 +1436,7 @@ ggsave("piechart_hcisosub_clones.pdf", piecharthcisosubclones2, width = 8, heigh
 pdfset1 <- c(list(piechartallcounts2, piechartsub1counts2, piecharthccounts2, piechartlccounts2, piechartisosubcounts2, piecharthcisosubcounts2, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshist, mutplotshistcounts))
 manypdfs1 <- marrangeGrob(pdfset1, nrow=1, ncol=1)
 ggsave("results_byreads.pdf", manypdfs1, width = 16, height = 12, units = "in")
-pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclone, mutplotshistcountsbyclone))
+pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclone, mutplotshistcountsbyclone, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotype))
 manypdfs2 <- marrangeGrob(pdfset2, nrow=1, ncol=1)
 ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
@@ -1484,7 +1585,7 @@ ggsave("piechart_hcisosub_clones_blank.pdf", piecharthcisosubclones2b, width = 8
 pdfset1b <- c(list(piechartallcounts2b, piechartsub1counts2b, piecharthccounts2b, piechartlccounts2b, piechartisosubcounts2b, piecharthcisosubcounts2b, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshistfree, mutplotshistcounts))
 manypdfs1b <- marrangeGrob(pdfset1b, nrow=1, ncol=1)
 ggsave("results_byreads_blankpies.pdf", manypdfs1b, width = 16, height = 12, units = "in")
-pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclonefree, mutplotshistcountsbyclone))
+pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclonefree, mutplotshistcountsbyclone, nreadshistogrambyclonefree, nreadshistogramcountsbyclone, gmutandnhexallga))
 manypdfs2b <- marrangeGrob(pdfset2b, nrow=1, ncol=1)
 ggsave("results_byclones_blankpies.pdf", manypdfs2b, width = 16, height = 12, units = "in")
 
