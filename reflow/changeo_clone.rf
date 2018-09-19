@@ -8,7 +8,7 @@
    used to parse the distance threshold from shazam tuning output. */
 param (
 	docker_image = "kleinstein/immcantation:2.0.0"
-	parse_tsv = file("s3://gmeixiong-bucket/scripts/parse_tsv.py")
+	parse_tsv = file("../src/parse_tsv.py")
 )
 
 val dirs = make("$/dirs")
