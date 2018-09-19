@@ -59,6 +59,7 @@ BX <- read.delim(opt$DB)
 
 ### NOW UNIVERSAL COMMANDS - UNTIL LINEAGE SECTION
 BX$PRCONS <- as.character(BX$PRCONS)
+BX$CREGION <- as.character(BX$CREGION)
 BX$SEQUENCE_IMGT <- as.character(BX$SEQUENCE_IMGT)
 BX$GERMLINE_IMGT_D_MASK <- as.character(BX$GERMLINE_IMGT_D_MASK)
 BX$JUNCTION_LENGTH2 <- round(BX$JUNCTION_LENGTH/3)*3
@@ -69,10 +70,15 @@ BX$GENE <- getGene(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$FAMILY <- as.character(BX$FAMILY)
 BX$GENE <- as.character(BX$GENE)
 
-BX.H <- subset(BX, PRCONS %in% c("IgM", "IgG", "IgA"))
-BX.L <- subset(BX, PRCONS %in% c("Kappa", "Lambda"))
-BX.kappa <- subset(BX, PRCONS %in% c("Kappa"))
-BX.lambda <- subset(BX, PRCONS %in% c("Lambda"))
+## CHANGING TO REFLECT NEW CREGION ANNOTATION AND USING THAT TO DETERMINE PRCONS2
+#BX.H <- subset(BX, PRCONS %in% c("IgM", "IgG", "IgA"))
+#BX.L <- subset(BX, PRCONS %in% c("Kappa", "Lambda"))
+#BX.kappa <- subset(BX, PRCONS %in% c("Kappa"))
+#BX.lambda <- subset(BX, PRCONS %in% c("Lambda"))
+BX.H <- subset(BX, CREGION %in% c("IgM", "IgG", "IgA"))
+BX.L <- subset(BX, CREGION %in% c("Kappa", "Lambda"))
+BX.kappa <- subset(BX, CREGION %in% c("Kappa"))
+BX.lambda <- subset(BX, CREGION %in% c("Lambda"))
 
 BX.H <- BX.H[ grep("IGKV", BX.H$V_CALL, invert = TRUE) , ]
 BX.H <- BX.H[ grep("IGLV", BX.H$V_CALL, invert = TRUE) , ]
@@ -82,11 +88,16 @@ BX.kappa <- BX.kappa[ grep("IGLV", BX.kappa$V_CALL, invert = TRUE) , ]
 BX.lambda <- BX.lambda[ grep("IGHV", BX.lambda$V_CALL, invert = TRUE) , ]
 BX.lambda <- BX.lambda[ grep("IGKV", BX.lambda$V_CALL, invert = TRUE) , ]
 
-BX$PRCONS2 <- factor(BX$PRCONS, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
-BX.H$PRCONS2 <- factor(BX.H$PRCONS, levels = c("IgM", "IgG", "IgA"))
-BX.L$PRCONS2 <- factor(BX.L$PRCONS, levels = c("Kappa", "Lambda"))
-BX.kappa$PRCONS2 <- factor(BX.kappa$PRCONS, levels = c("Kappa"))
-BX.lambda$PRCONS2 <- factor(BX.lambda$PRCONS, levels = c("Lambda"))
+#BX$PRCONS2 <- factor(BX$PRCONS, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
+#BX.H$PRCONS2 <- factor(BX.H$PRCONS, levels = c("IgM", "IgG", "IgA"))
+#BX.L$PRCONS2 <- factor(BX.L$PRCONS, levels = c("Kappa", "Lambda"))
+#BX.kappa$PRCONS2 <- factor(BX.kappa$PRCONS, levels = c("Kappa"))
+#BX.lambda$PRCONS2 <- factor(BX.lambda$PRCONS, levels = c("Lambda"))
+BX$PRCONS2 <- factor(BX$CREGION, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
+BX.H$PRCONS2 <- factor(BX.H$CREGION, levels = c("IgM", "IgG", "IgA"))
+BX.L$PRCONS2 <- factor(BX.L$CREGION, levels = c("Kappa", "Lambda"))
+BX.kappa$PRCONS2 <- factor(BX.kappa$CREGION, levels = c("Kappa"))
+BX.lambda$PRCONS2 <- factor(BX.lambda$CREGION, levels = c("Lambda"))
 
 #################################################################################################
 ################################### GENE AND GENE FAMILY PLOTS ##################################
