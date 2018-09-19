@@ -11,7 +11,7 @@
 param (
 	docker_image = "kleinstein/immcantation:2.0.0"
 	presto_script = file("../src/presto-abseq.sh")
-	python_script = file("s3://gmeixiong-bucket/scripts/createYaml.py")
+	python_script = file("../src/createYaml.py")
 	subtypes = file("s3://eric.waltari-bucket/BX_miseq/presto/IgGIgAsubtypes.fasta")
 	author = "CZ Biohub"
 	description = "Initial MiSeq run"
