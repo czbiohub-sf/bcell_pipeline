@@ -83,5 +83,5 @@ val alakazam_res = alakazam.AlakazamRun(alakazam_tsv)
 val alakazam_bucket = dirs.Copy(alakazam_res,
 	strings.Join([results_bucket, run_name, "alakazam"], "/"))
 
-@requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
+@requires(cpu := 8, mem := 96*GiB, disk := 800*GiB)
 val Main = alakazam_bucket
