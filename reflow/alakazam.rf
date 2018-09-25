@@ -10,7 +10,7 @@
    in the bucket results_bucket. */
 param (
 	// clone int
-	docker_image = "kleinstein/immcantation:2.0.0"
+	docker_image = "kleinstein/immcantation:2.1.0"
 	analysis_script = file("../src/alakazam.r")
 )
 
