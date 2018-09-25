@@ -6,7 +6,7 @@
 
 /* Parameters specify the docker image version. */
 param (
-	docker_image = "kleinstein/immcantation:2.0.0"
+	docker_image = "kleinstein/immcantation:2.1.0"
 )
 
 val dirs = make("$/dirs")
