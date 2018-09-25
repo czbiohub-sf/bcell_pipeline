@@ -453,13 +453,14 @@ if $ALIGN_CREGION; then
         --mode tag --revpr --skiprc \
         --log "${LOGDIR}/cregion.log" --outname "${OUTNAME}-CR" --nproc $NPROC \
         >> $PIPELINE_LOG 2> $ERROR_LOG
+    PH_FILE="${OUTNAME}-CR_primers-pass.fastq"
 
-    # Rename primer field
-    printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders rename"
-    ParseHeaders.py rename -s "${OUTNAME}-CR_primers-pass.fastq" -f CONSCOUNT -k CREGION \
-        --outname "${OUTNAME}-CR" > /dev/null 2> $ERROR_LOG
-
-    PH_FILE="${OUTNAME}-CR_reheader.fastq"
+    # Rename primer field - WE DO NOT WANT THIS - ALSO CHANGED PH_FILE NAME
+#    printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders rename"
+#    ParseHeaders.py rename -s "${OUTNAME}-CR_primers-pass.fastq" -f CONSCOUNT -k CREGION \
+#        --outname "${OUTNAME}-CR" > /dev/null 2> $ERROR_LOG
+#
+#    PH_FILE="${OUTNAME}-CR_reheader.fastq"
 
     check_error
 else
