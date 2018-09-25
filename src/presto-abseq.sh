@@ -454,29 +454,11 @@ if $ALIGN_CREGION; then
         --log "${LOGDIR}/cregion.log" --outname "${OUTNAME}-CR" --nproc $NPROC \
         >> $PIPELINE_LOG 2> $ERROR_LOG
     PH_FILE="${OUTNAME}-CR_primers-pass.fastq"
-
-    # Rename primer field - WE DO NOT WANT THIS - ALSO CHANGED PH_FILE NAME
-#    printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders rename"
-#    ParseHeaders.py rename -s "${OUTNAME}-CR_primers-pass.fastq" -f CONSCOUNT -k CREGION \
-#        --outname "${OUTNAME}-CR" > /dev/null 2> $ERROR_LOG
-#
-#    PH_FILE="${OUTNAME}-CR_reheader.fastq"
-
     check_error
 else
     CREGION_FIELD=""
 fi
 
-
-# ADDING NEW FIELD COMBINING 08 AND 12N PRIMERS - APRIL 25, REMOVING STEP HERE AND MOVING TO EARLIER
-#printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders rename"
-#ParseHeaders.py copy -s $PH_FILE -f PRCONS -k CREGION --act first \
-#    --outname "${OUTNAME}-CR" > /dev/null 2> $ERROR_LOG
-#
-#PH_FILE="${OUTNAME}-CR_reheader.fastq"
-#CREGION_FIELD="CREGION"
-#
-#check_error
 
 # Rewrite header with minimum of CONSCOUNT
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders collapse"
@@ -511,7 +493,6 @@ MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $I
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
     --mode tag --revpr --pf GandA_SUBTYPE
 check_error
-
 
 
 # Create table of final repertoire
@@ -564,7 +545,7 @@ fi
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "Compressing files"
 LOG_FILES=$(ls ${LOGDIR}/*.log | grep -v "pipeline")
 FILTER_FILES="$(basename ${R1_READS})\|$(basename ${R2_READS})\|$(basename ${R1_PRIMERS})\|$(basename ${R2_PRIMERS})"
-FILTER_FILES+="\|final_total.fastq\|final_collapse-unique.fastq\|final_collapse-unique_atleast-2.fastq\|primers-pass.fastq\|primers-fail.fastq"
+FILTER_FILES+="\|final_total.fastq\|final_collapse-unique.fastq\|final_collapse-unique_atleast-2.fastq\|final_collapse-unique_atleast-2_primers-pass.fastq\|final_collapse-unique_atleast-2_primers-fail.fastq|final_collapse-unique_primers-pass.fastq|final_collapse-unique_primers-fail.fastq"
 TEMP_FILES=$(ls *.fastq | grep -v ${FILTER_FILES})
 if $ZIP_FILES; then
     tar -zcf log_files.tar.gz $LOG_FILES
