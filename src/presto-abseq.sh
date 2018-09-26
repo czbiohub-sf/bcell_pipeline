@@ -470,14 +470,14 @@ check_error
 
 # Remove duplicate sequences
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "CollapseSeq"
-if $CS_KEEP; then
+if $ALIGN_CREGION; then
     CollapseSeq.py -s "${OUTNAME}-final_total.fastq" -n $CS_MISS \
-        --uf PRCONS $CREGION_FIELD --cf CONSCOUNT --act sum --inner \
+        --uf $CREGION_FIELD --cf CONSCOUNT --act sum --inner \
         --keepmiss --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
 else
     CollapseSeq.py -s "${OUTNAME}-final_total.fastq" -n $CS_MISS \
-        --uf PRCONS $CREGION_FIELD --cf CONSCOUNT --act sum --inner \
-        --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
+        --uf PRCONS --cf CONSCOUNT --act sum --inner \
+        --keepmiss --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
 fi
 check_error
 
