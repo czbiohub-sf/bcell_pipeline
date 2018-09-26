@@ -527,10 +527,10 @@ if $MASK_LOWQUAL; then
     ParseLog.py -l "${LOGDIR}/maskqual.log" -f ID MASKED \
         --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
 fi
-if $ALIGN_CREGION; then
-    ParseLog.py -l "${LOGDIR}/cregion.log" -f ID PRIMERCLPSD ERROR \
-        --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
-fi
+#if $ALIGN_CREGION; then
+#    ParseLog.py -l "${LOGDIR}/cregion.log" -f ID PRIMERCLPSD ERROR \
+#        --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
+#fi
 wait
 check_error
 
