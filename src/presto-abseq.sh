@@ -450,7 +450,7 @@ if $ALIGN_CREGION; then
     CREGION_FIELD="CREGION"
     MaskPrimers.py align -s $PH_FILE -p $CREGION_SEQ \
         --maxlen $CREGION_MAXLEN --maxerror $CREGION_MAXERR \
-        --mode tag --revpr --skiprc \
+        --mode tag --revpr --skiprc --pf $CREGION_FIELD \
         --log "${LOGDIR}/cregion.log" --outname "${OUTNAME}-CR" --nproc $NPROC \
         >> $PIPELINE_LOG 2> $ERROR_LOG
     PH_FILE="${OUTNAME}-CR_primers-pass.fastq"
