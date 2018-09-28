@@ -3,17 +3,18 @@
 # Import required packages
 install.packages("gdata")
 install.packages("tidyverse")
+install.packages("gridExtra")
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(alakazam))
 suppressPackageStartupMessages(library(shazam))
 suppressPackageStartupMessages(library(scales))
 suppressPackageStartupMessages(library(igraph))
 suppressPackageStartupMessages(library(grid))
-suppressPackageStartupMessages(library(gridExtra))
 suppressPackageStartupMessages(library(lattice))
 suppressPackageStartupMessages(library(gdata))
-suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(gridExtra))
+suppressPackageStartupMessages(library(dplyr))
 
 #################################################################################################
 ################################ GENERIC COMMANDS FOR ALL ANALYSES ##############################
