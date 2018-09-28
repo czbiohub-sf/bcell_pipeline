@@ -1,9 +1,8 @@
 # Gerry Meixiong's script to parse the distance threshold from shazam tuning output.
 
-import csv
 import sys
 
-tsv = open(sys.argv[1], 'r')
-values = list(csv.reader(tsv, dialect="excel-tab"))
-threshold = [y for x,y in values if x == 'threshold']
-print(float(threshold[0]))
+import pandas as pd
+
+tsv = pd.read_csv(sys.argv[1], delimiter="\t")
+print(tsv["threshold"][0])
