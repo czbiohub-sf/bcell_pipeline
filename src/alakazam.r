@@ -603,8 +603,8 @@ target <- tibble(GANDA_SUBTYPE = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1"
 isosubmeans_and_sds <- left_join(data.frame(GANDA_SUBTYPE=target),isosubmeans_and_sds0,by="GANDA_SUBTYPE")
 isosubmeans_and_sds <- replace_na(isosubmeans_and_sds, list(n1 = 0))
 isosubmeans_and_sds <- replace_na(isosubmeans_and_sds, list(n2 = 0))
-isosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn1)
-isosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn2)
+## isosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn1)
+## isosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn2)
 isosubmeans_and_sds <- isosubmeans_and_sds %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
@@ -616,8 +616,8 @@ target2 <- tibble(GANDA_SUBTYPE = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA
 subtypemeans_and_sds1 <- left_join(data.frame(GANDA_SUBTYPE=target2),subtypemeans_and_sds0,by="GANDA_SUBTYPE")
 subtypemeans_and_sds1 <- replace_na(subtypemeans_and_sds1, list(n1 = 0))
 subtypemeans_and_sds1 <- replace_na(subtypemeans_and_sds1, list(n2 = 0))
-subtypemeans_and_sds1$subtypeandn1 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn1)
-subtypemeans_and_sds1$subtypeandn2 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn2)
+## subtypemeans_and_sds1$subtypeandn1 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn1)
+## subtypemeans_and_sds1$subtypeandn2 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn2)
 subtypemeans_and_sds1 <- subtypemeans_and_sds1 %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
@@ -634,8 +634,8 @@ htarget <- tibble(GANDA_SUBTYPE = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1
 hcisosubmeans_and_sds <- left_join(data.frame(GANDA_SUBTYPE=htarget),hcisosubmeans_and_sds0,by="GANDA_SUBTYPE")
 hcisosubmeans_and_sds <- replace_na(hcisosubmeans_and_sds, list(n1 = 0))
 hcisosubmeans_and_sds <- replace_na(hcisosubmeans_and_sds, list(n2 = 0))
-hcisosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn1)
-hcisosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn2)
+## hcisosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn1)
+## hcisosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn2)
 hcisosubmeans_and_sds <- hcisosubmeans_and_sds %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
