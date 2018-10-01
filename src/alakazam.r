@@ -468,7 +468,7 @@ hmeans3 <- clonestatshf %>%
 hsds3 <- clonestatshf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-hmeans_and_sds <- cbind(hmeans1,hsds1,hmeans2,hsds2,hmeans3,hsds3)
+hmeans_and_sds <- bind_cols(hmeans1,hsds1,hmeans2,hsds2,hmeans3,hsds3)
 
 kmeans1 <- BX_kobs %>%
   group_by(PRCONS2) %>%
@@ -488,7 +488,7 @@ kmeans3 <- clonestatskf %>%
 ksds3 <- clonestatskf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-kmeans_and_sds <- cbind(kmeans1,ksds1,kmeans2,ksds2,kmeans3,ksds3)
+kmeans_and_sds <- bind_cols(kmeans1,ksds1,kmeans2,ksds2,kmeans3,ksds3)
 
 lmeans1 <- BX_lobs %>%
   group_by(PRCONS2) %>%
@@ -508,7 +508,7 @@ lmeans3 <- clonestatslf %>%
 lsds3 <- clonestatslf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-lmeans_and_sds <- cbind(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
+lmeans_and_sds <- bind_cols(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
 allmeans_and_sds <- bind_rows(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
 allmeans_and_sds$PRCONS2 <- factor(allmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
 
@@ -531,7 +531,7 @@ submeans3 <- clonestatshf %>%
 subsds3 <- clonestatshf %>%
   group_by(GANDA_SUBTYPE) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-submeans_and_sds <- cbind(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
+submeans_and_sds <- bind_cols(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
 
 ###################################
 ### stats for pie charts
