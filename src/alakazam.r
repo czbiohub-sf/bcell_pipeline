@@ -522,12 +522,15 @@ lsds3 <- clonestatslf %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
 lmeans_and_sds <- bind_cols(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
 allmeans_and_sds <- bind_rows(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
-allmeans_and_sds$PRCONS2 <- factor(allmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
+## ONLY FACTOR AFTER ALL CALCULATIONS ARE DONE BEFORE GRAPHING!!
+#allmeans_and_sds$PRCONS2 <- factor(allmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
 
 ### do same for subtype
 submeans1 <- BX_hobs %>%
   group_by(GANDA_SUBTYPE) %>%
   summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n())
+#  summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n()) %>%
+#  replace_na(GANDA_SUBTYPE = "OTHER")
 subsds1 <- BX_hobs %>%
   group_by(GANDA_SUBTYPE) %>%
   summarize(mutation_sd_reads = sd(MU_FREQ), n1b = n())
@@ -550,7 +553,12 @@ submeans3 <- replace_na(submeans3, list(GANDA_SUBTYPE = "other"))
 subsds1 <- replace_na(subsds1, list(GANDA_SUBTYPE = "other"))
 subsds2 <- replace_na(subsds2, list(GANDA_SUBTYPE = "other"))
 subsds3 <- replace_na(subsds3, list(GANDA_SUBTYPE = "other"))
+
 submeans_and_sds <- bind_cols(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
+## Oct 1 Alakazam errors occurring around here...first replacing cbind with bind_cols
+## after this replacement the bind_cols for lmeans_and_sds works, but the second one just here gives error:
+## PROBABABLY BECAUSE OF NA IN SUBTYPES (EVERYTHING NOT IGG OR IGA) - TRY SET_NAMES TO RENAME NA TO OTHER...
+##        Error in cbind_all(x) : Argument 5 must be length 7, not 6     Calls: bind_cols -> cbind_all -> .Call
 
 ###################################
 ### stats for pie charts
@@ -602,11 +610,13 @@ subtypemeans_and_sds <- subtypemeans_and_sds0 %>%
   unite(GANDA_SUBTYPE, n1, col="subtypeandn1", sep=", ", remove = FALSE) %>%
   unite(GANDA_SUBTYPE, n2, col="subtypeandn2", sep=", ", remove = FALSE)
 #rm(isotypeandsubtypemeans_and_sds)
+## taking this out in reflow version - just save the two files separately...
 isotypeandsubtypemeans_and_sds <- bind_rows(allmeans_and_sds,subtypemeans_and_sds)
 
 ### MAKING NEW TABLE COMBINING ISOTYPES AND SUBTYPES
 mumeans_and_sds <- subset(allmeans_and_sds0, PRCONS2 %in% c("IgM"))
 mulcmeans_and_sds <- bind_rows(mumeans_and_sds,lcmeans_and_sds0)
+## NOTE WARNING MESSAGE HERE "IN BIND_ROWS_ BINDING FACTOR AND CHARACTER VECTOR, COERCING INTO CHARACTER VECTOR..."
 #mulcmeans_and_sds <- rename(mulcmeans_and_sds, subtypeandn1 = isotypeandn1)
 #mulcmeans_and_sds <- rename(mulcmeans_and_sds, subtypeandn2 = isotypeandn2)
 mulcmeans_and_sds <- rename(mulcmeans_and_sds, GANDA_SUBTYPE = PRCONS2)
@@ -615,52 +625,54 @@ mumeans_and_sds <- rename(mumeans_and_sds, GANDA_SUBTYPE = PRCONS2)
 
 ### NOTE IF NO IgG4, need another set of subytpe plots - alternately try replacing all NAs with 0s
 isosubmeans_and_sds0 <- bind_rows(subtypemeans_and_sds0,mulcmeans_and_sds)
-isosubmeans_and_sds0$GANDA_SUBTYPE <- factor(isosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
+#isosubmeans_and_sds0$GANDA_SUBTYPE <- factor(isosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
 isosubmeans_and_sds1 <- isosubmeans_and_sds0
 ### this re-orders the rows...
 target <- tibble(GANDA_SUBTYPE = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
 isosubmeans_and_sds <- left_join(data.frame(GANDA_SUBTYPE=target),isosubmeans_and_sds0,by="GANDA_SUBTYPE")
+## NOTE WARNING MESSAGE: "Column `GANDA_SUBTYPE` joining character vector and factor, coercing into character vector"
 isosubmeans_and_sds <- replace_na(isosubmeans_and_sds, list(n1 = 0))
 isosubmeans_and_sds <- replace_na(isosubmeans_and_sds, list(n2 = 0))
-## isosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn1)
-## isosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn2)
+#isosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn1)
+#isosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn2)
 isosubmeans_and_sds <- isosubmeans_and_sds %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
   unite(GANDA_SUBTYPE, n1, col="subtypeandn1", sep=", ", remove = FALSE) %>%
   unite(GANDA_SUBTYPE, n2, col="subtypeandn2", sep=", ", remove = FALSE)
-isosubmeans_and_sds$GANDA_SUBTYPE <- factor(isosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
+#isosubmeans_and_sds$GANDA_SUBTYPE <- factor(isosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
 ### same color scheme for subtypes
 target2 <- tibble(GANDA_SUBTYPE = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 subtypemeans_and_sds1 <- left_join(data.frame(GANDA_SUBTYPE=target2),subtypemeans_and_sds0,by="GANDA_SUBTYPE")
 subtypemeans_and_sds1 <- replace_na(subtypemeans_and_sds1, list(n1 = 0))
 subtypemeans_and_sds1 <- replace_na(subtypemeans_and_sds1, list(n2 = 0))
-## subtypemeans_and_sds1$subtypeandn1 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn1)
-## subtypemeans_and_sds1$subtypeandn2 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn2)
+### THIS MIGHT BE WHERE RSCRIPT IN REFLOW CRASHES??!?? - do not need if replace_na is just before it??
+#subtypemeans_and_sds1$subtypeandn1 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn1)
+#subtypemeans_and_sds1$subtypeandn2 <- gsub("NA", "0", subtypemeans_and_sds1$subtypeandn2)
 subtypemeans_and_sds1 <- subtypemeans_and_sds1 %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
   unite(GANDA_SUBTYPE, n1, col="subtypeandn1", sep=", ", remove = FALSE) %>%
   unite(GANDA_SUBTYPE, n2, col="subtypeandn2", sep=", ", remove = FALSE)
-subtypemeans_and_sds1$GANDA_SUBTYPE <- factor(subtypemeans_and_sds1$GANDA_SUBTYPE, levels = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
+#subtypemeans_and_sds1$GANDA_SUBTYPE <- factor(subtypemeans_and_sds1$GANDA_SUBTYPE, levels = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 
 ## now HC isotypes and subtypes
 hcisosubmeans_and_sds0 <- bind_rows(subtypemeans_and_sds0,mumeans_and_sds)
-hcisosubmeans_and_sds0$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
+#hcisosubmeans_and_sds0$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 hcisosubmeans_and_sds1 <- hcisosubmeans_and_sds0
 ### this re-orders the rows...
 htarget <- tibble(GANDA_SUBTYPE = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 hcisosubmeans_and_sds <- left_join(data.frame(GANDA_SUBTYPE=htarget),hcisosubmeans_and_sds0,by="GANDA_SUBTYPE")
 hcisosubmeans_and_sds <- replace_na(hcisosubmeans_and_sds, list(n1 = 0))
 hcisosubmeans_and_sds <- replace_na(hcisosubmeans_and_sds, list(n2 = 0))
-## hcisosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn1)
-## hcisosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn2)
+#hcisosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn1)
+#hcisosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", hcisosubmeans_and_sds$subtypeandn2)
 hcisosubmeans_and_sds <- hcisosubmeans_and_sds %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
   unite(GANDA_SUBTYPE, n1, col="subtypeandn1", sep=", ", remove = FALSE) %>%
   unite(GANDA_SUBTYPE, n2, col="subtypeandn2", sep=", ", remove = FALSE)
-hcisosubmeans_and_sds$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
+#hcisosubmeans_and_sds$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
 
 ## saving all created files as .tsv files..
 write.table(BX_hobs, "mutstats_h.tsv", sep = "\t", row.names = FALSE)
@@ -680,11 +692,18 @@ write.table(isotypeandsubtypemeans_and_sds, "summary_mutationstats_all.tsv", sep
 #clonestatshf$N_WEIGHT <- rescale(clonestatshf$n)
 #clonestatskf$N_WEIGHT <- rescale(clonestatskf$n)
 #clonestatslf$N_WEIGHT <- rescale(clonestatslf$n)
-#BX.H$PRCONS2 <- factor(BX.H$PRCONS2, levels = c("IgM", "IgG", "IgA"))
-#BX_hobs$PRCONS2 <- factor(BX_hobs$PRCONS2, levels = c("IgM", "IgG", "IgA"))
-#clonestatsh$PRCONS2 <- factor(clonestatsh$PRCONS2, levels = c("IgM", "IgG", "IgA"))
-#clonestatshf$PRCONS2 <- factor(clonestatshf$PRCONS2, levels = c("IgM", "IgG", "IgA"))
 
+## NOW FACTOR EVERYTHING FOR GRAPHING
+allmeans_and_sds$PRCONS2 <- factor(allmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
+isosubmeans_and_sds0$GANDA_SUBTYPE <- factor(isosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
+isosubmeans_and_sds$GANDA_SUBTYPE <- factor(isosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
+subtypemeans_and_sds1$GANDA_SUBTYPE <- factor(subtypemeans_and_sds1$GANDA_SUBTYPE, levels = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
+hcisosubmeans_and_sds0$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
+hcisosubmeans_and_sds$GANDA_SUBTYPE <- factor(hcisosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
+BX.H$PRCONS2 <- factor(BX.H$PRCONS2, levels = c("IgM", "IgG", "IgA"))
+BX_hobs$PRCONS2 <- factor(BX_hobs$PRCONS2, levels = c("IgM", "IgG", "IgA"))
+clonestatsh$PRCONS2 <- factor(clonestatsh$PRCONS2, levels = c("IgM", "IgG", "IgA"))
+clonestatshf$PRCONS2 <- factor(clonestatshf$PRCONS2, levels = c("IgM", "IgG", "IgA"))
 
 ####################################################################
 ################## NOW REST OF ALL PLOTS ###########################
