@@ -543,6 +543,13 @@ submeans3 <- clonestatshf %>%
 subsds3 <- clonestatshf %>%
   group_by(GANDA_SUBTYPE) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
+## TRYING REPLACE_NA - DOESN'T SEEM TO WORK - PLAN B TO USE DROP_NA, BUT INSTEAD JUST SUBSET EARLIER...AFTER ADDING AS.CHARACTER REPLACE_NA WORKS!
+submeans1 <- replace_na(submeans1, list(GANDA_SUBTYPE = "other"))
+submeans2 <- replace_na(submeans2, list(GANDA_SUBTYPE = "other"))
+submeans3 <- replace_na(submeans3, list(GANDA_SUBTYPE = "other"))
+subsds1 <- replace_na(subsds1, list(GANDA_SUBTYPE = "other"))
+subsds2 <- replace_na(subsds2, list(GANDA_SUBTYPE = "other"))
+subsds3 <- replace_na(subsds3, list(GANDA_SUBTYPE = "other"))
 submeans_and_sds <- bind_cols(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
 
 ###################################
