@@ -418,6 +418,12 @@ BX_hobs$GF.y <- NULL
 BX_kobs$GF.x <- NULL
 BX_kobs$GF.y <- NULL
 
+## TRY ADDING AS.CHARACTER HERE TO PRCONS2, GANDA_SUBTYPE (PRCONS AND CREGION ALREADY ARE)
+BX_hobs$PRCONS2 <- as.character(BX_hobs$PRCONS2)
+BX_hobs$GANDA_SUBTYPE <- as.character(BX_hobs$GANDA_SUBTYPE)
+BX_kobs$PRCONS2 <- as.character(BX_kobs$PRCONS2)
+BX_lobs$PRCONS2 <- as.character(BX_lobs$PRCONS2)
+
 ### creating lists per clone not per read
 clonestatsh1 <- BX_hobs %>%
   group_by(CLONE) %>%
