@@ -3,12 +3,12 @@
 # Import required packages
 install.packages("gdata")
 install.packages("tidyverse")
-install.packages("alakazam")
-install.packages("shazam")
-install.packages("scales")
-install.packages("igraph")
-install.packages("grid")
-install.packages("lattice")
+#install.packages("alakazam")
+#install.packages("shazam")
+#install.packages("scales")
+#install.packages("igraph")
+#install.packages("grid")
+#install.packages("lattice")
 install.packages("gridExtra")
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(alakazam))
@@ -20,7 +20,7 @@ suppressPackageStartupMessages(library(lattice))
 suppressPackageStartupMessages(library(gdata))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(gridExtra))
-suppressPackageStartupMessages(library(dplyr))
+#suppressPackageStartupMessages(library(dplyr))
 
 #################################################################################################
 ################################ GENERIC COMMANDS FOR ALL ANALYSES ##############################
