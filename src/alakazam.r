@@ -611,7 +611,7 @@ subtypemeans_and_sds <- subtypemeans_and_sds0 %>%
   unite(GANDA_SUBTYPE, n2, col="subtypeandn2", sep=", ", remove = FALSE)
 #rm(isotypeandsubtypemeans_and_sds)
 ## taking this out in reflow version - just save the two files separately...
-isotypeandsubtypemeans_and_sds <- bind_rows(allmeans_and_sds,subtypemeans_and_sds)
+#isotypeandsubtypemeans_and_sds <- bind_rows(allmeans_and_sds,subtypemeans_and_sds)
 
 ### MAKING NEW TABLE COMBINING ISOTYPES AND SUBTYPES
 mumeans_and_sds <- subset(allmeans_and_sds0, PRCONS2 %in% c("IgM"))
@@ -684,7 +684,9 @@ write.table(clonestatsl, "mutclonestats_l.tsv", sep = "\t", row.names = FALSE)
 write.table(clonestatshf, "mutclonestatsfiltered_h.tsv", sep = "\t", row.names = FALSE)
 write.table(clonestatskf, "mutclonestatsfiltered_k.tsv", sep = "\t", row.names = FALSE)
 write.table(clonestatslf, "mutclonestatsfiltered_l.tsv", sep = "\t", row.names = FALSE)
-write.table(isotypeandsubtypemeans_and_sds, "summary_mutationstats_all.tsv", sep = "\t", row.names = FALSE)
+write.table(allmeans_and_sds, "summary_mutationstats_isotypes.tsv", sep = "\t", row.names = FALSE)
+write.table(subtypemeans_and_sds, "summary_mutationstats_subtypes.tsv", sep = "\t", row.names = FALSE)
+#write.table(isotypeandsubtypemeans_and_sds, "summary_mutationstats_all.tsv", sep = "\t", row.names = FALSE)
 
 #clonestatsh$N_WEIGHT <- rescale(clonestatsh$n)
 #clonestatsk$N_WEIGHT <- rescale(clonestatsk$n)
