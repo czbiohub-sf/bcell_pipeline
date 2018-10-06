@@ -646,7 +646,7 @@ isosubmeans_and_sds <- left_join(data.frame(GANDA_SUBTYPE=target),isosubmeans_an
 #isosubmeans_and_sds <- replace_na(isosubmeans_and_sds, list(n2 = 0))
 #isosubmeans_and_sds$subtypeandn1 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn1)
 #isosubmeans_and_sds$subtypeandn2 <- gsub("NA", "0", isosubmeans_and_sds$subtypeandn2)
-isosubmeans_and_sds <- isosubmeans_and_sds %>% mutate_at(vars(n1,n2,n3,mutation_sd_reads,mutation_mean_reads,mutation_sd_clones,mutation_mean_clones,mutation_sd_filteredclones,mutation_mean_filteredclones), replace_na, 0)
+#isosubmeans_and_sds <- isosubmeans_and_sds %>% mutate_at(vars(n1,n2,n3,mutation_sd_reads,mutation_mean_reads,mutation_sd_clones,mutation_mean_clones,mutation_sd_filteredclones,mutation_mean_filteredclones), replace_na, 0)
 isosubmeans_and_sds <- isosubmeans_and_sds %>%
   mutate(pern1 = n1/sum(n1)) %>%
   mutate(pern2 = n2/sum(n2)) %>%
