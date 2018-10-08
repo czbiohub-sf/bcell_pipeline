@@ -843,49 +843,7 @@ ggsave("CDR3_bygene_byclone.png", cdr3plots1c, width = 16, height = 12, units = 
 ggsave("CDR3_bygene_byclone.pdf", cdr3plots1c, width = 16, height = 12, units = "in")
 ###
 
-ghmutvcf <- ggplot(clonestatshf, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
-  theme_bw() + ggtitle("Mutation distribution by Gene") +
-  xlab("Gene") + ylab("% Somatic Hypermutation") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent) +
-  geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
-#plot(gmutv) + scale_y_continuous(labels = scales::percent)
-ghcdr3vcf <- ggplot(clonestatshf, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
-  theme_bw() + ggtitle("CDR3 Length by gene") +
-  xlab("Gene") + ylab("CDRH3 Length, Kabat (aa)") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) +
-  geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
-#plot(gcdr3v) + scale_y_continuous(labels = scales::percent)
-gkmutvcf <- ggplot(clonestatskf, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
-  theme_bw() +
-  xlab("Gene") + ylab("% Somatic Hypermutation") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
-  geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
-#plot(gkmutv)
-gkcdr3vcf <- ggplot(clonestatskf, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
-  theme_bw() +
-  xlab("Gene") + ylab("CDRL3 Length, Kabat (aa)") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
-  geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
-#plot(gkcdr3v) + scale_y_continuous(labels = scales::percent)
-glmutvcf <- ggplot(clonestatslf, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
-  theme_bw() +
-  xlab("Gene") + ylab("% Somatic Hypermutation") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
-  geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
-#plot(glmutv)
-glcdr3vcf <- ggplot(clonestatslf, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
-  theme_bw() +
-  xlab("Gene") + ylab("CDRL3 Length, Kabat (aa)") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
-  geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
-#plot(glcdr3v) + scale_y_continuous(labels = scales::percent)
-
-mutplots1cf <- grid.arrange(ghmutvcf,gkmutvcf,glmutvcf, layout_matrix = layouthkl3)
-ggsave("mutation_bygene_byclone_filtered.png", mutplots1cf, width = 16, height = 12, units = "in")
-ggsave("mutation_bygene_byclone_filtered.pdf", mutplots1cf, width = 16, height = 12, units = "in")
-cdr3plots1cf <- grid.arrange(ghcdr3vcf,gkcdr3vcf,glcdr3vcf, layout_matrix = layouthkl3)
-ggsave("CDR3_bygene_byclone_filtered.png", cdr3plots1cf, width = 16, height = 12, units = "in")
-ggsave("CDR3_bygene_byclone_filtered.pdf", cdr3plots1cf, width = 16, height = 12, units = "in")
+## filtered clone steps removed
 
 ###################################
 ### histograms of mutation
@@ -972,49 +930,7 @@ ggsave("mutation_histogram_byclone_hlseparatefreepanels.pdf", mutplotshistbyclon
 
 ###################
 ## now clone plots but filter so leaving out all single clones!
-ghmuthistogrambyclonef <- ggplot(clonestatshf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2, ncol=1) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
-#plot(ghmuthistogrambyclonef)
-gkmuthistogrambyclonef <- ggplot(clonestatskf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
-#plot(gkmuthistogrambyclonef)
-glmuthistogrambyclonef <- ggplot(clonestatslf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
-#plot(glmuthistogrambyclonef)
-### free y axis for % and not just counts below
-ghmuthistogrambycloneffree <- ggplot(clonestatshf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
-#plot(ghmuthistogrambycloneffree)
-
-ghmuthistogramcountsbyclonef <- ggplot(clonestatshf, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Clones with ≥ 2 Members")
-#plot(ghmuthistogramcountsbyclonef)
-gkmuthistogramcountsbyclonef <- ggplot(clonestatskf, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Clones with ≥ 2 Members")
-#plot(gkmuthistogramcountsbyclonef)
-glmuthistogramcountsbyclonef <- ggplot(clonestatslf, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Clones with ≥ 2 Members")
-#plot(glmuthistogramcountsbyclonef)
-
-mutplotshistbyclonef <- grid.arrange(ghmuthistogrambyclonef,gkmuthistogrambyclonef,glmuthistogrambyclonef, layout_matrix = layouthkl3)
-ggsave("mutation_histogram_byclone_filtered_hlseparatepanels.png", mutplotshistbyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_hlseparatepanels.pdf", mutplotshistbyclonef, width = 16, height = 12, units = "in")
-mutplotshistcountsbyclonef <- grid.arrange(ghmuthistogramcountsbyclonef,gkmuthistogramcountsbyclonef,glmuthistogramcountsbyclonef, layout_matrix = layouthkl3)
-ggsave("mutation_histogram_rawcounts_byclone_filtered_hlseparatepanels.png", mutplotshistcountsbyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_rawcounts_byclone_filtered_hlseparatepanels.pdf", mutplotshistcountsbyclonef, width = 16, height = 12, units = "in")
-
-mutplotshistbycloneffree <- grid.arrange(ghmuthistogrambycloneffree,gkmuthistogrambyclonef,glmuthistogrambyclonef, layout_matrix = layouthkl3)
-ggsave("mutation_histogram_byclone_filtered_hlseparatefreepanels.png", mutplotshistbycloneffree, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_hlseparatefreepanels.pdf", mutplotshistbycloneffree, width = 16, height = 12, units = "in")
-
-gmutviolinhf <- ggplot(clonestatshf, aes(x=PRCONS2, y=MU_FREQ, stroke = 0.001)) +
-  theme_bw() + ggtitle("% Somatic Hypermutation by Clone") +
-  xlab("Isotype") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + scale_y_continuous(labels = scales::percent) +
-  geom_violin(fill = "gray") + theme(axis.text.x = element_text(angle=45, hjust=1))
-#plot(gmutviolinhf)
-ggsave("mutation_violinplot_byclone_filtered_h.png", gmutviolinhf, width = 16, height = 8, units = "in")
-
+## removed this also for reflow
 
 ################
 ### RBIND ALL HC AND LC IN SINGLE PANELS - DO NOT LOOK AS GOOD THOUGH
@@ -1070,36 +986,10 @@ ggsave("mutationvsCDR3_byclone_hlseparatepanels.png", mutvsCDR3, width = 16, hei
 ggsave("mutationvsCDR3_byclone_hlseparatepanels.pdf", mutvsCDR3, width = 16, height = 12, units = "in")
 
 ## test violin plot
-gmutviolinh <- ggplot(clonestatsh, aes(x=PRCONS2, y=MU_FREQ, stroke = 0.001)) +
-  theme_bw() + ggtitle("% Somatic Hypermutation by Clone") +
-  xlab("Isotype") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + scale_y_continuous(labels = scales::percent) +
-  geom_violin() + theme(axis.text.x = element_text(angle=45, hjust=1))
-#plot(gmutviolinh)
-ggsave("mutation_violinplot_byclone_h.png", gmutviolinh, width = 16, height = 12, units = "in")
+## removed for reflow version
 
 ## by filtered clone
-gmutandcdr3hexhf <- ggplot(clonestatshf, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
-  xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
-#plot(gmutandcdr3hexhf)
-gmutandcdr3hexkf <- ggplot(clonestatskf, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() +
-  xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
-#plot(gmutandcdr3hexkf)
-gmutandcdr3hexlf <- ggplot(clonestatslf, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() +
-  xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
-#plot(gmutandcdr3hexlf)
-mutvsCDR3f <- grid.arrange(gmutandcdr3hexhf,gmutandcdr3hexkf,gmutandcdr3hexlf, layout_matrix = layouthkl3)
-ggsave("mutationvsCDR3_byclone_filtered_hlseparatepanels.png", mutvsCDR3f, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_filtered_hlseparatepanels.pdf", mutvsCDR3f, width = 16, height = 12, units = "in")
+## removed for reflow version
 
 ### SINGLE PANELS & GMKL ONLY
 ## removed for reflow version
