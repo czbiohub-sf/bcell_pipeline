@@ -3,6 +3,7 @@
 # Import required packages
 install.packages("gdata")
 install.packages("tidyverse")
+install.packages("hexbin")
 install.packages("alakazam")
 install.packages("shazam")
 install.packages("scales")
@@ -10,6 +11,7 @@ install.packages("igraph")
 #install.packages("grid")
 install.packages("lattice")
 install.packages("gridExtra")
+suppressPackageStartupMessages(library(hexbin))
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(alakazam))
 suppressPackageStartupMessages(library(shazam))
@@ -991,102 +993,7 @@ ggsave("mutation_violinplot_byclone_filtered_h.png", gmutviolinhf, width = 16, h
 
 ################
 ### RBIND ALL HC AND LC IN SINGLE PANELS - DO NOT LOOK AS GOOD THOUGH
-BX_allobs <- rbind(BX_hobs, BX_kobs, BX_lobs)
-BX_allobs$PRCONS3 <- factor(BX_allobs$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
-gallmuthistogram <- ggplot(BX_allobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of reads")
-#plot(gallmuthistogram)
-gallmuthistogramcounts <- ggplot(BX_allobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Reads")
-#plot(gallmuthistogramcounts)
-BX_allobs4 <- BX_allobs[ grep("IgD", BX_allobs$PRCONS2, invert = TRUE) , ]
-BX_allobs4 <- BX_allobs[ grep("IgA", BX_allobs$PRCONS2, invert = TRUE) , ]
-BX_allobs4$PRCONS4 <- factor(BX_allobs4$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda"))
-ggmklmuthistogram <- ggplot(BX_allobs4, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS4, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of reads")
-#plot(ggmklmuthistogram)
-ggmklmuthistogramcounts <- ggplot(BX_allobs4, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS4, ncol=2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Reads")
-#plot(ggmklmuthistogramcounts)
-ggsave("mutation_histogram_onepanel.png", gallmuthistogram, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_onepanel.pdf", gallmuthistogram, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_rawcounts_onepanel.png", gallmuthistogramcounts, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_rawcounts_onepanel.pdf", gallmuthistogramcounts, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_gmkl.png", ggmklmuthistogram, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_gmkl.pdf", ggmklmuthistogram, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_rawcounts_gmkl.png", ggmklmuthistogramcounts, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_rawcounts_gmkl.pdf", ggmklmuthistogramcounts, width = 16, height = 12, units = "in")
-###
-clonestatsall <- bind_rows(clonestatsh, clonestatsk, clonestatsl)
-clonestatsall$PRCONS3 <- factor(clonestatsall$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
-gallmuthistogrambyclone <- ggplot(clonestatsall, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
-#plot(gallmuthistogrambyclone)
-gallmuthistogramcountsbyclone <- ggplot(clonestatsall, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Clones")
-#plot(gallmuthistogramcountsbyclone)
-clonestatsall4 <- clonestatsall[ grep("IgD", clonestatsall$PRCONS2, invert = TRUE) , ]
-clonestatsall4 <- clonestatsall[ grep("IgA", clonestatsall$PRCONS2, invert = TRUE) , ]
-clonestatsall4$PRCONS4 <- factor(clonestatsall4$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda"))
-ggmklmuthistogrambyclone <- ggplot(clonestatsall4, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS4, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
-#plot(ggmklmuthistogrambyclone)
-ggmklmuthistogramcountsbyclone <- ggplot(clonestatsall4, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS4, ncol=2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Clones")
-#plot(ggmklmuthistogramcountsbyclone)
-ggsave("mutation_histogram_byclone_onepanel.png", gallmuthistogrambyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_onepanel.pdf", gallmuthistogrambyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_rawcounts_onepanel.png", gallmuthistogramcountsbyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_rawcounts_onepanel.pdf", gallmuthistogramcountsbyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_gmkl.png", ggmklmuthistogrambyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_gmkl.pdf", ggmklmuthistogrambyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_rawcounts_gmkl.png", ggmklmuthistogramcountsbyclone, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_rawcounts_gmkl.pdf", ggmklmuthistogramcountsbyclone, width = 16, height = 12, units = "in")
-
-## HC plots with only IgM & IgG - THIS MAKES 4 SEPARATE PLOTS EACH WITH OWN RANGE AND LABEL
-clonestatsgm <- clonestatsh
-clonestatsg <- clonestatsgm[ grep("IgG", clonestatsgm$PRCONS2, invert = FALSE) , ]
-clonestatsm <- clonestatsgm[ grep("IgM", clonestatsgm$PRCONS2, invert = FALSE) , ]
-ggmuthistogrambyclone <- ggplot(clonestatsg, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
-#plot(ggmuthistogrambyclone)
-gmmuthistogrambyclone <- ggplot(clonestatsm, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
-#plot(ggmuthistogrambyclone)
-
-mutplotshistbyclonegmkl <- grid.arrange(gmmuthistogrambyclone,ggmuthistogrambyclone,gkmuthistogrambyclone,glmuthistogrambyclone, layout_matrix = layoutgmkl)
-ggsave("mutation_histogram_byclone_gmkl_4panels.png", mutplotshistbyclonegmkl, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_gmkl_4panels.pdf", mutplotshistbyclonegmkl, width = 16, height = 12, units = "in")
-#ggmmuthistogrambyclone <- ggplot(clonestatsgm, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-#  facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
-#plot(ggmmuthistogrambyclone)
-
-####
-clonestatsallf <- bind_rows(clonestatshf, clonestatskf, clonestatslf)
-clonestatsallf$PRCONS3 <- factor(clonestatsallf$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
-gallmuthistogrambyclonef <- ggplot(clonestatsallf, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
-#plot(gallfmuthistogrambyclonef)
-gallmuthistogramcountsbyclonef <- ggplot(clonestatsallf, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS3, ncol=2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Clones with ≥ 2 Members")
-#plot(gallfmuthistogramcountsbyclonef)
-clonestatsallf4 <- clonestatsallf[ grep("IgD", clonestatsallf$PRCONS2, invert = TRUE) , ]
-clonestatsallf4 <- clonestatsallf[ grep("IgA", clonestatsallf$PRCONS2, invert = TRUE) , ]
-clonestatsallf4$PRCONS4 <- factor(clonestatsallf4$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda"))
-ggmklmuthistogrambyclonef <- ggplot(clonestatsallf4, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS4, ncol=2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of clones with ≥ 2 Members")
-#plot(ggmklmuthistogrambyclonef)
-ggmklmuthistogramcountsbyclonef <- ggplot(clonestatsallf4, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
-  facet_wrap(~ PRCONS4, ncol=2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Clones with ≥ 2 Members")
-#plot(ggmklmuthistogramcountsbyclonef)
-ggsave("mutation_histogram_byclone_filtered_onepanel.png", gallmuthistogrambyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_onepanel.pdf", gallmuthistogrambyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_rawcounts_onepanel.png", gallmuthistogramcountsbyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_rawcounts_onepanel.pdf", gallmuthistogramcountsbyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_gmkl.png", ggmklmuthistogrambyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_gmkl.pdf", ggmklmuthistogrambyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_rawcounts_gmkl.png", ggmklmuthistogramcountsbyclonef, width = 16, height = 12, units = "in")
-ggsave("mutation_histogram_byclone_filtered_rawcounts_gmkl.pdf", ggmklmuthistogramcountsbyclonef, width = 16, height = 12, units = "in")
+## REMOVING THIS FOR REFLOW VERSION
 
 
 ###################################
@@ -1170,50 +1077,7 @@ ggsave("mutationvsCDR3_byclone_filtered_hlseparatepanels.png", mutvsCDR3f, width
 ggsave("mutationvsCDR3_byclone_filtered_hlseparatepanels.pdf", mutvsCDR3f, width = 16, height = 12, units = "in")
 
 ### SINGLE PANELS & GMKL ONLY
-clonestatsall <- bind_rows(clonestatsh, clonestatsk, clonestatsl)
-clonestatsall$PRCONS3 <- factor(clonestatsall$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
-gmutandcdr3hexall <- ggplot(clonestatsall, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
-  xlab("CDR3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS3, ncol=2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
-#plot(gmutandcdr3hexall)
-clonestatsall4 <- clonestatsall[ grep("IgD", clonestatsall$PRCONS2, invert = TRUE) , ]
-clonestatsall4 <- clonestatsall[ grep("IgA", clonestatsall$PRCONS2, invert = TRUE) , ]
-clonestatsall4$PRCONS4 <- factor(clonestatsall4$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda"))
-gmutandcdr3hexgmkl <- ggplot(clonestatsall4, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
-  xlab("CDR3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS4, ncol=2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
-#plot(gmutandcdr3hexgmkl)
-ggsave("mutationvsCDR3_byclone_onepanel.png", gmutandcdr3hexall, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_onepanel.pdf", gmutandcdr3hexall, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_gmkl.png", gmutandcdr3hexgmkl, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_gmkl.pdf", gmutandcdr3hexgmkl, width = 16, height = 12, units = "in")
-
-### 
-clonestatsallf <- bind_rows(clonestatshf, clonestatskf, clonestatslf)
-clonestatsallf$PRCONS3 <- factor(clonestatsallf$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda", "IgA"))
-gmutandcdr3hexallf <- ggplot(clonestatsallf, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
-  xlab("CDR3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS3, ncol=2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
-#plot(gmutandcdr3hexallf)
-clonestatsallf4 <- clonestatsallf[ grep("IgD", clonestatsallf$PRCONS2, invert = TRUE) , ]
-clonestatsallf4 <- clonestatsallf[ grep("IgA", clonestatsallf$PRCONS2, invert = TRUE) , ]
-clonestatsallf4$PRCONS4 <- factor(clonestatsallf4$PRCONS2, levels = c("IgM", "Kappa", "IgG", "Lambda"))
-gmutandcdr3hexgmkl <- ggplot(clonestatsallf4, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
-  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
-  xlab("CDR3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
-  scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS4, ncol=2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
-#plot(gmutandcdr3hexgmkl)
-ggsave("mutationvsCDR3_byclone_filtered_onepanel.png", gmutandcdr3hexallf, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_filtered_onepanel.pdf", gmutandcdr3hexallf, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_filtered_gmkl.png", gmutandcdr3hexgmkl, width = 16, height = 12, units = "in")
-ggsave("mutationvsCDR3_byclone_filtered_gmkl.pdf", gmutandcdr3hexgmkl, width = 16, height = 12, units = "in")
+## removed for reflow version
 
 #################################################################################################
 ################################## HISTOGRAMS OF CLONES #########################################
