@@ -7,7 +7,7 @@ install.packages("alakazam")
 install.packages("shazam")
 install.packages("scales")
 install.packages("igraph")
-install.packages("grid")
+#install.packages("grid")
 install.packages("lattice")
 install.packages("gridExtra")
 suppressPackageStartupMessages(library(optparse))
@@ -633,7 +633,7 @@ subtypemeans_and_sds1 <- subtypemeans_and_sds1 %>%
 subtypemeans_and_sds5 <- select(subtypemeans_and_sds0, GANDA_SUBTYPE,n1,n2,n3,mutation_sd_reads,mutation_mean_reads,mutation_sd_clones,mutation_mean_clones,mutation_sd_filteredclones,mutation_mean_filteredclones)
 isosubmeans_and_sds0 <- bind_rows(subtypemeans_and_sds5,mulcmeans_and_sds5)
 
-isosubmeans_and_sds0 <- isosubmeans_and_sds0 %>% mutate_at(vars(GANDA_SUBTYPE1,GANDA_SUBTYPE2,GANDA_SUBTYPE3,GANDA_SUBTYPE4,GANDA_SUBTYPE5,PRCONS21,PRCONS22,PRCONS23,PRCONS24,PRCONS25), replace_na, "other")
+#isosubmeans_and_sds0 <- isosubmeans_and_sds0 %>% mutate_at(vars(GANDA_SUBTYPE1,GANDA_SUBTYPE2,GANDA_SUBTYPE3,GANDA_SUBTYPE4,GANDA_SUBTYPE5,PRCONS21,PRCONS22,PRCONS23,PRCONS24,PRCONS25), replace_na, "other")
 #isosubmeans_and_sds0 <- isosubmeans_and_sds0 %>% replace(is.na(.), "other")
 
 #isosubmeans_and_sds0$GANDA_SUBTYPE <- factor(isosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
