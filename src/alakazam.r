@@ -572,7 +572,7 @@ subsds1 <- replace_na(subsds1, list(GANDA_SUBTYPE = "other"))
 subsds2 <- replace_na(subsds2, list(GANDA_SUBTYPE = "other"))
 subsds3 <- replace_na(subsds3, list(GANDA_SUBTYPE = "other"))
 
-submeans_and_sds <- bind_cols(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
+#submeans_and_sds <- bind_cols(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
 submeans_and_sds <- submeans1 %>%
   left_join(subsds1, by='GANDA_SUBTYPE') %>%
   left_join(submeans2, by='GANDA_SUBTYPE') %>%
