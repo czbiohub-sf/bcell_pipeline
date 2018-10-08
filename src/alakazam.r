@@ -482,7 +482,14 @@ hmeans3 <- clonestatshf %>%
 hsds3 <- clonestatshf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-hmeans_and_sds <- bind_cols(hmeans1,hsds1,hmeans2,hsds2,hmeans3,hsds3)
+#hmeans_and_sds <- bind_cols(hmeans1,hsds1,hmeans2,hsds2,hmeans3,hsds3)
+hmeans_and_sds <- hmeans1 %>%
+  left_join(hsds1, by='PRCONS2') %>%
+  left_join(hmeans2, by='PRCONS2') %>%
+  left_join(hsds2, by='PRCONS2') %>%
+  left_join(hmeans3, by='PRCONS2') %>%
+  left_join(hsds3, by='PRCONS2')
+
 kmeans1 <- BX_kobs %>%
   group_by(PRCONS2) %>%
   summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n())
@@ -501,7 +508,13 @@ kmeans3 <- clonestatskf %>%
 ksds3 <- clonestatskf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-kmeans_and_sds <- bind_cols(kmeans1,ksds1,kmeans2,ksds2,kmeans3,ksds3)
+#kmeans_and_sds <- bind_cols(kmeans1,ksds1,kmeans2,ksds2,kmeans3,ksds3)
+kmeans_and_sds <- kmeans1 %>%
+  left_join(ksds1, by='PRCONS2') %>%
+  left_join(kmeans2, by='PRCONS2') %>%
+  left_join(ksds2, by='PRCONS2') %>%
+  left_join(kmeans3, by='PRCONS2') %>%
+  left_join(ksds3, by='PRCONS2')
 
 lmeans1 <- BX_lobs %>%
   group_by(PRCONS2) %>%
@@ -521,7 +534,13 @@ lmeans3 <- clonestatslf %>%
 lsds3 <- clonestatslf %>%
   group_by(PRCONS2) %>%
   summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
-lmeans_and_sds <- bind_cols(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
+#lmeans_and_sds <- bind_cols(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
+lmeans_and_sds <- lmeans1 %>%
+  left_join(lsds1, by='PRCONS2') %>%
+  left_join(lmeans2, by='PRCONS2') %>%
+  left_join(lsds2, by='PRCONS2') %>%
+  left_join(lmeans3, by='PRCONS2') %>%
+  left_join(lsds3, by='PRCONS2')
 allmeans_and_sds <- bind_rows(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
 
 ### do same for subtype
@@ -554,6 +573,12 @@ subsds2 <- replace_na(subsds2, list(GANDA_SUBTYPE = "other"))
 subsds3 <- replace_na(subsds3, list(GANDA_SUBTYPE = "other"))
 
 submeans_and_sds <- bind_cols(submeans1,subsds1,submeans2,subsds2,submeans3,subsds3)
+submeans_and_sds <- submeans1 %>%
+  left_join(subsds1, by='GANDA_SUBTYPE') %>%
+  left_join(submeans2, by='GANDA_SUBTYPE') %>%
+  left_join(subsds2, by='GANDA_SUBTYPE') %>%
+  left_join(submeans3, by='GANDA_SUBTYPE') %>%
+  left_join(subsds3, by='GANDA_SUBTYPE')
 ## Oct 1 Alakazam errors occurring around here...first replacing cbind with bind_cols
 ## after this replacement the bind_cols for lmeans_and_sds works, but the second one just here gives error:
 ## PROBABABLY BECAUSE OF NA IN SUBTYPES (EVERYTHING NOT IGG OR IGA) - TRY SET_NAMES TO RENAME NA TO OTHER...
