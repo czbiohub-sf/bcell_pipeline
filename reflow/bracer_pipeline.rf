@@ -27,7 +27,7 @@ param (
 
 // Declare GLOBAL variables
 val bracer = "teichlab/bracer"
-val gatk = "broadinstitute/gatk" // hoping this guy has gunzip
+// val gatk = "broadinstitute/gatk" // hoping this guy has gunzip
 // Initiate the system modules "files" (system modules begin
 // with $), assigning its instance to the "files" identifier.
 val files = make("$/files")
@@ -37,16 +37,16 @@ val dirs = make("$/dirs")
 
 // Unzip()
 //		gunzip the the gzipped fastqs
-func Unzip(gzipped file) = 
-	exec(image := gatk, cpu := 4, mem := 16*GiB) (output file) {"
-		gunzip -c {{gzipped}} > {{output}}
-	"}
+// func Unzip(gzipped file) = 
+// 	exec(image := gatk, cpu := 4, mem := 16*GiB) (output file) {"
+// 		gunzip -c {{gzipped}} > {{output}}
+// 	"}
 
 // Assemble()
 //		Run Bracer assemble
-func Assemble(sample_id string, fq1_unzipped file, fq2_unzipped file) dir = {
+func Assemble(sample_id string, fq1 file, fq2 file) dir = {
 
-	d := dirs.Make(["read1.fq": fq1_unzipped, "read2.fq": fq2_unzipped])
+	d := dirs.Make(["read1.fq": fq1, "read2.fq": fq2])
 
 	exec(image := bracer, cpu := threads, mem := 16*GiB) (out_dir dir) {"
 
@@ -61,9 +61,9 @@ func Assemble(sample_id string, fq1_unzipped file, fq2_unzipped file) dir = {
 val fq1 = file(input_fq1) // initialized as a string, need to convert to file
 val fq2 = file(input_fq2) // initialized as a string, need to convert to file
 
-fq1_unzipped := Unzip(fq1)
-fq2_unzipped := Unzip(fq2)
-assembled_dir := Assemble(sample_id, fq1_unzipped, fq2_unzipped)
+// fq1_unzipped := Unzip(fq1)
+// fq2_unzipped := Unzip(fq2)
+assembled_dir := Assemble(sample_id, fq1, fq2)
 
 // Main()
 @requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
