@@ -1,0 +1,70 @@
+// TAKING LINCOLN'S TRACER PIPELINE AND MODIFYING FOR BRACER...
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// script: tracer_pipeline.rf
+// author: Lincoln Harris
+// date: 10.11.18
+// 
+// Can I implement my existing TCR assembly pipeline in reflow? 
+//
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+// command line params
+param (
+	// cell ID
+	sample_id string
+	// s3 path to fastq file r1
+	input_fq1 string
+	// s3 path to fastq file r2
+	input_fq2 string
+	// s3 path to output dir
+	output_dir string
+	// how many threads to execute Bracer assemble with
+	threads = 8
+)
+
+// Declare GLOBAL variables
+val bracer = "teichlab/bracer"
+val gatk = "broadinstitute/gatk" // hoping this guy has gunzip
+// Initiate the system modules "files" (system modules begin
+// with $), assigning its instance to the "files" identifier.
+val files = make("$/files")
+// Instantiate Go system module "strings"
+val strings = make("$/strings")
+val dirs = make("$/dirs")
+
+// Unzip()
+//		gunzip the the gzipped fastqs
+func Unzip(gzipped file) = 
+	exec(image := gatk, cpu := 4, mem := 16*GiB) (output file) {"
+		gunzip -c {{gzipped}} > {{output}}
+	"}
+
+// Assemble()
+//		Run Bracer assemble
+func Assemble(sample_id string, fq1_unzipped file, fq2_unzipped file) dir = {
+
+	d := dirs.Make(["read1.fq": fq1_unzipped, "read2.fq": fq2_unzipped])
+
+	exec(image := bracer, cpu := threads, mem := 16*GiB) (out_dir dir) {"
+
+		export IGDATA=/ncbi-igblast-1.7.0/bin
+		cp /bracer/docker_helper_files/docker_bracer.conf ~/.bracerrc
+
+		bracer assemble --ncores {{threads}} --species Hsap {{d}}/read1.fq {{d}}/read2.fq {{sample_id}} {{out_dir}}
+	"}
+
+}
+
+val fq1 = file(input_fq1) // initialized as a string, need to convert to file
+val fq2 = file(input_fq2) // initialized as a string, need to convert to file
+
+fq1_unzipped := Unzip(fq1)
+fq2_unzipped := Unzip(fq2)
+assembled_dir := Assemble(sample_id, fq1_unzipped, fq2_unzipped)
+
+// Main()
+@requires(cpu := 8, mem := 32*GiB, disk := 200*GiB)
+val Main = dirs.Copy(assembled_dir, output_dir)
