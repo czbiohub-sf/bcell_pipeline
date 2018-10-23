@@ -45,6 +45,8 @@ layout3pies <- rbind(c(1),
                      c(3))
 layout3piesc <- rbind(c(1,3),
                       c(2,4))
+layout2 <- rbind(c(1),
+                 c(2))
 
 # Define commmandline arguments
 opt_list <- list(make_option(c("-d", "--db"), dest="DB",
