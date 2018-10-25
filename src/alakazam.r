@@ -716,6 +716,12 @@ hcisosubmeans_and_sds <- hcisosubmeans_and_sds %>%
 ## taking this out in reflow version - just save the two files separately...
 #isotypeandsubtypemeans_and_sds <- bind_rows(allmeans_and_sds,subtypemeans_and_sds)
 
+## adding tibbles to reorder rows in allmeans and hcmeans
+alltarget <- tibble(PRCONS2 = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
+allmeans_and_sds <- left_join(data.frame(PRCONS2=alltarget),allmeans_and_sds,by="PRCONS2")
+hctarget <- tibble(PRCONS2 = c("IgM", "IgG", "IgA"))
+hcmeans_and_sds <- left_join(data.frame(PRCONS2=hctarget),hcmeans_and_sds,by="PRCONS2")
+
 ## saving all created files as .tsv files..
 write.table(BX_hobs, "mutstats_h.tsv", sep = "\t", row.names = FALSE)
 write.table(BX_kobs, "mutstats_k.tsv", sep = "\t", row.names = FALSE)
@@ -739,6 +745,7 @@ write.table(subtypemeans_and_sds, "summary_mutationstats_subtypes.tsv", sep = "\
 
 ## NOW FACTOR EVERYTHING FOR GRAPHING
 allmeans_and_sds$PRCONS2 <- factor(allmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA", "Kappa", "Lambda"))
+hcmeans_and_sds$PRCONS2 <- factor(hcmeans_and_sds$PRCONS2, levels = c("IgM", "IgG", "IgA"))
 #isosubmeans_and_sds0$GANDA_SUBTYPE <- factor(isosubmeans_and_sds0$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
 isosubmeans_and_sds$GANDA_SUBTYPE <- factor(isosubmeans_and_sds$GANDA_SUBTYPE, levels = c("IgM", "IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2", "Kappa", "Lambda"))
 subtypemeans_and_sds1$GANDA_SUBTYPE <- factor(subtypemeans_and_sds1$GANDA_SUBTYPE, levels = c("IgG1", "IgG2", "IgG3", "IgG4", "IgA1", "IgA2"))
