@@ -51,7 +51,7 @@ func Assemble(sample_id string, fq1 file, fq2 file) dir = {
 
 	exec(image := bracer_docker_image, cpu := threads, mem := GiB) (out_dir dir) {"
 
-		export IGDATA=/ncbi-igblast-1.7.0/bin
+		export IGDATA=/ncbi-igblast-1.4.0/bin
 		cp /bracer/docker_helper_files/docker_bracer.conf ~/.bracerrc
 
 		bracer assemble --ncores {{threads}} --species Hsap {{sample_id}} {{out_dir}} {{d}}/read1.fq {{d}}/read2.fq
