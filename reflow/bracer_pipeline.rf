@@ -44,11 +44,12 @@ val dirs = make("$/dirs")
 
 // Assemble()
 //		Run Bracer assemble
+// make sure read1.fq and read2.fq below don't require an unzipped fastq
 func Assemble(sample_id string, fq1 file, fq2 file) dir = {
 
 	d := dirs.Make(["read1.fq": fq1, "read2.fq": fq2])
 
-	exec(image := bracer_docker_image, cpu := threads, mem := 64*GiB) (out_dir dir) {"
+	exec(image := bracer_docker_image, cpu := threads, mem := GiB) (out_dir dir) {"
 
 		export IGDATA=/ncbi-igblast-1.7.0/bin
 		cp /bracer/docker_helper_files/docker_bracer.conf ~/.bracerrc
