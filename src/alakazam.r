@@ -894,6 +894,20 @@ mutplotshistfree <- grid.arrange(ghmuthistogramfree,gkmuthistogram,glmuthistogra
 ggsave("mutation_histogram_hlseparatefreepanels.png", mutplotshistfree, width = 16, height = 12, units = "in")
 ggsave("mutation_histogram_hlseparatefreepanels.pdf", mutplotshistfree, width = 16, height = 12, units = "in")
 
+### force x axis for all HC to be 0-35%
+ghmuthistogramh35 <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol = 1) + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
+#plot(ghmuthistogramh35)
+ghmuthistogramcountsh35 <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Reads")
+#plot(ghmuthistogramcountsh35)
+mutplotshisth35 <- grid.arrange(ghmuthistogramh35,gkmuthistogram,glmuthistogram, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_hlseparatepanelsh35.png", mutplotshisth35, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_hlseparatepanelsh35.pdf", mutplotshisth35, width = 16, height = 12, units = "in")
+mutplotshistcountsh35 <- grid.arrange(ghmuthistogramcountsh35,gkmuthistogramcounts,glmuthistogramcounts, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_rawcounts_hlseparatepanelsh35.png", mutplotshistcountsh35, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_rawcounts_hlseparatepanelsh35.pdf", mutplotshistcountsh35, width = 16, height = 12, units = "in")
+
 ## same mutation plots but by clone
 ghmuthistogrambyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
@@ -936,6 +950,21 @@ ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanels.pdf", mutplotshist
 mutplotshistbyclonefree <- grid.arrange(ghmuthistogrambyclonefree,gkmuthistogrambyclone,glmuthistogrambyclone, layout_matrix = layouthkl3)
 ggsave("mutation_histogram_byclone_hlseparatefreepanels.png", mutplotshistbyclonefree, width = 16, height = 12, units = "in")
 ggsave("mutation_histogram_byclone_hlseparatefreepanels.pdf", mutplotshistbyclonefree, width = 16, height = 12, units = "in")
+
+### force x axis for all HC to be 0-35%
+ghmuthistogrambycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol=1) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
+#plot(ghmuthistogrambycloneh35)
+ghmuthistogramcountsbycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+  facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Clones")
+#plot(ghmuthistogramcountsbycloneh35)
+mutplotshistbycloneh35 <- grid.arrange(ghmuthistogrambycloneh35,gkmuthistogrambyclone,glmuthistogrambyclone, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_byclone_hlseparatepanelsh35.png", mutplotshistbycloneh35, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_byclone_hlseparatepanelsh35.pdf", mutplotshistbycloneh35, width = 16, height = 12, units = "in")
+mutplotshistcountsbycloneh35 <- grid.arrange(ghmuthistogramcountsbycloneh35,gkmuthistogramcountsbyclone,glmuthistogramcountsbyclone, layout_matrix = layouthkl3)
+ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanelsh35.png", mutplotshistcountsbycloneh35, width = 16, height = 12, units = "in")
+ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanelsh35.pdf", mutplotshistcountsbycloneh35, width = 16, height = 12, units = "in")
+
 
 ###################
 ## now clone plots but filter so leaving out all single clones!
@@ -1288,10 +1317,10 @@ ggsave("piechart_hcisosub_clones.pdf", piecharthcisosubclones2, width = 8, heigh
 #ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
 ## with new isotype color scheme
-pdfset1 <- c(list(piechartallcounts2, piechartsub1counts2, piecharthccounts2, piechartlccounts2, piechartisosubcounts2, piecharthcisosubcounts2, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshist, mutplotshistcounts))
+pdfset1 <- c(list(piechartallcounts2, piechartsub1counts2, piecharthccounts2, piechartlccounts2, piechartisosubcounts2, piecharthcisosubcounts2, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshisth35, mutplotshistcountsh35))
 manypdfs1 <- marrangeGrob(pdfset1, nrow=1, ncol=1)
 ggsave("results_byreads.pdf", manypdfs1, width = 16, height = 12, units = "in")
-pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclone, mutplotshistcountsbyclone, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotype))
+pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbycloneh35, mutplotshistcountsbycloneh35, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotype))
 manypdfs2 <- marrangeGrob(pdfset2, nrow=1, ncol=1)
 ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
@@ -1437,10 +1466,10 @@ ggsave("piechart_hcisosub_clones_blank.png", piecharthcisosubclones2b, width = 8
 ggsave("piechart_hcisosub_clones_blank.pdf", piecharthcisosubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
 
 ### PDFS
-pdfset1b <- c(list(piechartallcounts2b, piechartsub1counts2b, piecharthccounts2b, piechartlccounts2b, piechartisosubcounts2b, piecharthcisosubcounts2b, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshistfree, mutplotshistcounts))
+pdfset1b <- c(list(piechartallcounts2b, piechartsub1counts2b, piecharthccounts2b, piechartlccounts2b, piechartisosubcounts2b, piecharthcisosubcounts2b, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshist, mutplotshistcounts))
 manypdfs1b <- marrangeGrob(pdfset1b, nrow=1, ncol=1)
 ggsave("results_byreads_blankpies.pdf", manypdfs1b, width = 16, height = 12, units = "in")
-pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclonefree, mutplotshistcountsbyclone, nreadshistogrambyclonefree, nreadshistogramcountsbyclone, gmutandnhexallga))
+pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbyclone, mutplotshistcountsbyclone, nreadshistogrambyclonefree, nreadshistogramcountsbyclone, gmutandnhexallga))
 manypdfs2b <- marrangeGrob(pdfset2b, nrow=1, ncol=1)
 ggsave("results_byclones_blankpies.pdf", manypdfs2b, width = 16, height = 12, units = "in")
 
