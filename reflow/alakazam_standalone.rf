@@ -29,7 +29,7 @@ func AlakazamRun(changeo_tab file, run_name string) dir =
     	-o {{output}}
 	"}
 
-val alakazam_res = AlakazamRun(file(changeo_file), run_ame)
+val alakazam_res = AlakazamRun(file(changeo_file), run_name)
 val alakazam_bucket = dirs.Copy(alakazam_res, strings.Join([results_bucket, run_name], "/"))
 
 @requires(cpu := 8, mem := 96*GiB, disk := 800*GiB)
