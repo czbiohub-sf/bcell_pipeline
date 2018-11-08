@@ -953,7 +953,7 @@ ggsave("mutation_histogram_byclone_hlseparatefreepanels.pdf", mutplotshistbyclon
 
 ### force x axis for all HC to be 0-35%
 ghmuthistogrambycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
-  facet_wrap(~ PRCONS2, ncol=1) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
+  facet_wrap(~ PRCONS2, ncol=1) + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(ghmuthistogrambycloneh35)
 ghmuthistogramcountsbycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Clones")
