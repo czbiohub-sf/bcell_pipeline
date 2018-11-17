@@ -74,8 +74,8 @@ BX$CREGION <- as.character(BX$CREGION)
 BX$SEQUENCE_IMGT <- as.character(BX$SEQUENCE_IMGT)
 BX$GERMLINE_IMGT_D_MASK <- as.character(BX$GERMLINE_IMGT_D_MASK)
 BX$JUNCTION_LENGTH2 <- round(BX$JUNCTION_LENGTH/3)*3
-BX$CDR3KABAT_LENGTH <- (BX$JUNCTION_LENGTH2) / 3
-
+BX$CDR3KABAT_LENGTH <- ((BX$JUNCTION_LENGTH2) / 3) - 4
+BX$CDR3KABAT_LENGTH[BX$CDR3KABAT_LENGTH <= 1] <- 1
 BX$FAMILY <- getFamily(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$GENE <- getGene(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$FAMILY <- as.character(BX$FAMILY)
@@ -854,6 +854,26 @@ ggsave("CDR3_bygene_byclone.pdf", cdr3plots1c, width = 16, height = 12, units = 
 
 ## filtered clone steps removed
 
+### force mutation frequency (y-axis here) for all HC to be 0-35%
+ghmutvh35 <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+  theme_bw() + ggtitle("Mutation distribution by Gene") +
+  xlab("Gene") + ylab("% Somatic Hypermutation") +
+  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
+  geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
+#plot(ghmutv)
+mutplots1h35 <- grid.arrange(ghmutvh35,gkmutv,glmutv, layout_matrix = layouthkl3)
+ggsave("mutation_bygene_byreadh35.png", mutplots1h35, width = 16, height = 12, units = "in")
+ggsave("mutation_bygene_byreadh35.pdf", mutplots1h35, width = 16, height = 12, units = "in")
+ghmutvch35 <- ggplot(clonestatsh, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+  theme_bw() + ggtitle("Mutation distribution by Gene") +
+  xlab("Gene") + ylab("% Somatic Hypermutation") +
+  scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
+  geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
+#plot(gmutv) + scale_y_continuous(labels = scales::percent)
+mutplots1ch35 <- grid.arrange(ghmutvch35,gkmutvc,glmutvc, layout_matrix = layouthkl3)
+ggsave("mutation_bygene_bycloneh35.png", mutplots1ch35, width = 16, height = 12, units = "in")
+ggsave("mutation_bygene_bycloneh35.pdf", mutplots1ch35, width = 16, height = 12, units = "in")
+
 ###################################
 ### histograms of mutation
 ###################################
@@ -1023,6 +1043,26 @@ mutvsCDR3 <- grid.arrange(gmutandcdr3hexh,gmutandcdr3hexk,gmutandcdr3hexl, layou
 ggsave("mutationvsCDR3_byclone_hlseparatepanels.png", mutvsCDR3, width = 16, height = 12, units = "in")
 ggsave("mutationvsCDR3_byclone_hlseparatepanels.pdf", mutvsCDR3, width = 16, height = 12, units = "in")
 
+### force mutation frequency (y-axis here) for all HC to be 0-35%
+gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
+  xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
+  scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandcdr3hexhr)
+mutvsCDR3rh35 <- grid.arrange(gmutandcdr3hexhrh35,gmutandcdr3hexkr,gmutandcdr3hexlr, layout_matrix = layouthkl3)
+ggsave("mutationvsCDR3_byread_hlseparatepanelsh35.png", mutvsCDR3rh35, width = 16, height = 12, units = "in")
+ggsave("mutationvsCDR3_byread_hlseparatepanelsh35.pdf", mutvsCDR3rh35, width = 16, height = 12, units = "in")
+gmutandcdr3hexhh35 <- ggplot(clonestatsh, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+  theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
+  xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
+  scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandcdr3hexh)
+mutvsCDR3h35 <- grid.arrange(gmutandcdr3hexhh35,gmutandcdr3hexk,gmutandcdr3hexl, layout_matrix = layouthkl3)
+ggsave("mutationvsCDR3_byclone_hlseparatepanelsh35.png", mutvsCDR3h35, width = 16, height = 12, units = "in")
+ggsave("mutationvsCDR3_byclone_hlseparatepanelsh35.pdf", mutvsCDR3h35, width = 16, height = 12, units = "in")
+
 ## test violin plot
 ## removed for reflow version
 
@@ -1111,6 +1151,17 @@ gmutandnhexhbyisotypel <- ggplot(clonestatsl, aes(x=n, y=MU_FREQ)) +
 gmutandnhexhbyisotype <- grid.arrange(gmutandnhexhbyisotypeh,gmutandnhexhbyisotypek,gmutandnhexhbyisotypel, layout_matrix = layouthkl3)
 ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.png", gmutandnhexhbyisotype, width = 16, height = 12, units = "in")
 ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.pdf", gmutandnhexhbyisotype, width = 16, height = 12, units = "in")
+
+### force mutation frequency (y-axis here) for all HC to be 0-35%
+gmutandnhexhbyisotypehh35 <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
+  theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
+  xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
+  scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+#plot(gmutandnhexhbyisotypeh)
+gmutandnhexhbyisotypeh35 <- grid.arrange(gmutandnhexhbyisotypehh35,gmutandnhexhbyisotypek,gmutandnhexhbyisotypel, layout_matrix = layouthkl3)
+ggsave("clonalfamily_n_vs_mutation_hlseparatepanelsh35.png", gmutandnhexhbyisotypeh35, width = 16, height = 12, units = "in")
+ggsave("clonalfamily_n_vs_mutation_hlseparatepanelsh35.pdf", gmutandnhexhbyisotypeh35, width = 16, height = 12, units = "in")
 
 ## HC plots combining all isotypes
 gmutandnhexallh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
@@ -1317,10 +1368,10 @@ ggsave("piechart_hcisosub_clones.pdf", piecharthcisosubclones2, width = 8, heigh
 #ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
 ## with new isotype color scheme
-pdfset1 <- c(list(piechartallcounts2, piechartsub1counts2, piecharthccounts2, piechartlccounts2, piechartisosubcounts2, piecharthcisosubcounts2, gfsplots1, gsplots1, mutplots1, cdr3plots1, mutvsCDR3r, mutplotshisth35, mutplotshistcountsh35))
+pdfset1 <- c(list(piechartallcounts2, piechartsub1counts2, piecharthccounts2, piechartlccounts2, piechartisosubcounts2, piecharthcisosubcounts2, gfsplots1, gsplots1, mutplots1h35, cdr3plots1, mutvsCDR3rh35, mutplotshisth35, mutplotshistcountsh35))
 manypdfs1 <- marrangeGrob(pdfset1, nrow=1, ncol=1)
 ggsave("results_byreads.pdf", manypdfs1, width = 16, height = 12, units = "in")
-pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1c, cdr3plots1c, mutvsCDR3, mutplotshistbycloneh35, mutplotshistcountsbycloneh35, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotype))
+pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1ch35, cdr3plots1c, mutvsCDR3h35, mutplotshistbycloneh35, mutplotshistcountsbycloneh35, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotypeh35))
 manypdfs2 <- marrangeGrob(pdfset2, nrow=1, ncol=1)
 ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
