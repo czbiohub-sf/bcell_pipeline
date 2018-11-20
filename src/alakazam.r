@@ -74,8 +74,9 @@ BX$CREGION <- as.character(BX$CREGION)
 BX$SEQUENCE_IMGT <- as.character(BX$SEQUENCE_IMGT)
 BX$GERMLINE_IMGT_D_MASK <- as.character(BX$GERMLINE_IMGT_D_MASK)
 BX$JUNCTION_LENGTH2 <- round(BX$JUNCTION_LENGTH/3)*3
-BX$CDR3KABAT_LENGTH <- ((BX$JUNCTION_LENGTH2) / 3) - 4
-BX$CDR3KABAT_LENGTH[BX$CDR3KABAT_LENGTH <= 1] <- 1
+BX$CDRH3KABAT_LENGTH <- ((BX$JUNCTION_LENGTH2) / 3) - 4
+BX$CDRH3KABAT_LENGTH[BX$CDRH3KABAT_LENGTH <= 1] <- 1
+BX$CDRL3KABAT_LENGTH <- ((BX$JUNCTION_LENGTH2) / 3)
 BX$FAMILY <- getFamily(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$GENE <- getGene(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$FAMILY <- as.character(BX$FAMILY)
@@ -431,7 +432,7 @@ BX_lobs$PRCONS2 <- as.character(BX_lobs$PRCONS2)
 ### creating lists per clone not per read
 clonestatsh1 <- BX_hobs %>%
   group_by(CLONE) %>%
-  summarize_at(c("PRCONS2","GENE","V_CALL","D_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","GANDA_SUBTYPE","JUNCTION_LENGTH2","CDR3KABAT_LENGTH","FAMILY"), first)
+  summarize_at(c("PRCONS2","GENE","V_CALL","D_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","GANDA_SUBTYPE","JUNCTION_LENGTH2","CDRH3KABAT_LENGTH","FAMILY"), first)
 clonestatsh2 <- BX_hobs %>%
   group_by(CLONE) %>%
   summarize_if(is.numeric, mean)
@@ -445,7 +446,7 @@ clonestatsh <- inner_join(clonestatsh4, clonestatsh3)
 
 clonestatsk1 <- BX_kobs %>%
   group_by(CLONE) %>%
-  summarize_at(c("PRCONS2","GENE","V_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","JUNCTION_LENGTH2","CDR3KABAT_LENGTH","FAMILY"), first)
+  summarize_at(c("PRCONS2","GENE","V_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","JUNCTION_LENGTH2","CDRL3KABAT_LENGTH","FAMILY"), first)
 clonestatsk2 <- BX_kobs %>%
   group_by(CLONE) %>%
   summarize_if(is.numeric, mean)
@@ -453,7 +454,7 @@ clonestatsk <- inner_join(clonestatsk1, clonestatsk2)
 
 clonestatsl1 <- BX_lobs %>%
   group_by(CLONE) %>%
-  summarize_at(c("PRCONS2","GENE","V_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","JUNCTION_LENGTH2","CDR3KABAT_LENGTH","FAMILY"), first)
+  summarize_at(c("PRCONS2","GENE","V_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","JUNCTION_LENGTH2","CDRL3KABAT_LENGTH","FAMILY"), first)
 clonestatsl2 <- BX_lobs %>%
   group_by(CLONE) %>%
   summarize_if(is.numeric, mean)
@@ -767,7 +768,7 @@ ghmutv <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stro
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent) +
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(ghmutv)
-ghcdr3v <- ggplot(BX_hobs, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+ghcdr3v <- ggplot(BX_hobs, aes(x=GENE, y=CDRH3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() + ggtitle("CDR3 Length by Gene") +
   xlab("Gene") + ylab("CDRH3 Length, Kabat (aa)") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) +
@@ -780,7 +781,7 @@ gkmutv <- ggplot(BX_kobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stro
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gkmutv)
-gkcdr3v <- ggplot(BX_kobs, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+gkcdr3v <- ggplot(BX_kobs, aes(x=GENE, y=CDRL3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() +
   xlab("Gene") + ylab("CDRL3 Length, Kabat (aa)") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
@@ -792,7 +793,7 @@ glmutv <- ggplot(BX_lobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stro
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(glmutv)
-glcdr3v <- ggplot(BX_lobs, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+glcdr3v <- ggplot(BX_lobs, aes(x=GENE, y=CDRL3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() +
   xlab("Gene") + ylab("CDRL3 Length, Kabat (aa)") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
@@ -813,7 +814,7 @@ ghmutvc <- ggplot(clonestatsh, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY,
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent) +
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gmutv) + scale_y_continuous(labels = scales::percent)
-ghcdr3vc <- ggplot(clonestatsh, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+ghcdr3vc <- ggplot(clonestatsh, aes(x=GENE, y=CDRH3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() + ggtitle("CDR3 Length by Gene") +
   xlab("Gene") + ylab("CDRH3 Length, Kabat (aa)") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) +
@@ -825,7 +826,7 @@ gkmutvc <- ggplot(clonestatsk, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY,
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gkmutv)
-gkcdr3vc <- ggplot(clonestatsk, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+gkcdr3vc <- ggplot(clonestatsk, aes(x=GENE, y=CDRL3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() +
   xlab("Gene") + ylab("CDRL3 Length, Kabat (aa)") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
@@ -837,7 +838,7 @@ glmutvc <- ggplot(clonestatsl, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY,
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
   geom_violin(width=1.25) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(glmutv)
-glcdr3vc <- ggplot(clonestatsl, aes(x=GENE, y=CDR3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+glcdr3vc <- ggplot(clonestatsl, aes(x=GENE, y=CDRL3KABAT_LENGTH, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() +
   xlab("Gene") + ylab("CDRL3 Length, Kabat (aa)") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
@@ -998,19 +999,19 @@ ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanelsh35.pdf", mutplotsh
 ###################################
 ##### mutation vs CDR3 hex plots
 ## by read
-gmutandcdr3hexhr <- ggplot(BX_hobs, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexhr <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
 #plot(gmutandcdr3hexhr)
-gmutandcdr3hexkr <- ggplot(BX_kobs, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexkr <- ggplot(BX_kobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads",  breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
 #plot(gmutandcdr3hexkr)
-gmutandcdr3hexlr <- ggplot(BX_lobs, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexlr <- ggplot(BX_lobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
@@ -1021,19 +1022,19 @@ ggsave("mutationvsCDR3_byread_hlseparatepanels.png", mutvsCDR3r, width = 16, hei
 ggsave("mutationvsCDR3_byread_hlseparatepanels.pdf", mutvsCDR3r, width = 16, height = 12, units = "in")
 
 ## by clone
-gmutandcdr3hexh <- ggplot(clonestatsh, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexh <- ggplot(clonestatsh, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
 #plot(gmutandcdr3hexh)
-gmutandcdr3hexk <- ggplot(clonestatsk, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexk <- ggplot(clonestatsk, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
 #plot(gmutandcdr3hexk)
-gmutandcdr3hexl <- ggplot(clonestatsl, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexl <- ggplot(clonestatsl, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
@@ -1044,7 +1045,7 @@ ggsave("mutationvsCDR3_byclone_hlseparatepanels.png", mutvsCDR3, width = 16, hei
 ggsave("mutationvsCDR3_byclone_hlseparatepanels.pdf", mutvsCDR3, width = 16, height = 12, units = "in")
 
 ### force mutation frequency (y-axis here) for all HC to be 0-35%
-gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
@@ -1053,7 +1054,7 @@ gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
 mutvsCDR3rh35 <- grid.arrange(gmutandcdr3hexhrh35,gmutandcdr3hexkr,gmutandcdr3hexlr, layout_matrix = layouthkl3)
 ggsave("mutationvsCDR3_byread_hlseparatepanelsh35.png", mutvsCDR3rh35, width = 16, height = 12, units = "in")
 ggsave("mutationvsCDR3_byread_hlseparatepanelsh35.pdf", mutvsCDR3rh35, width = 16, height = 12, units = "in")
-gmutandcdr3hexhh35 <- ggplot(clonestatsh, aes(x=CDR3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexhh35 <- ggplot(clonestatsh, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
