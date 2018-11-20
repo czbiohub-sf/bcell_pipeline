@@ -24,7 +24,7 @@ val strings = make("$/strings")
 /**************************** RAW READ PROCESSING *****************************/
 
 // Step 1. Presto.
-val presto = make("presto.rf")
+val presto = make("prestoss.rf")
 val yaml = presto.CreateYaml(read1_file, run_name)
 val presto_res = presto.PrestoRun(file(read1_file), file(read2_file), 
 	file(read1_primers), file(read2_primers), yaml, run_name)
