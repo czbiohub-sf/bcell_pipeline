@@ -67,7 +67,7 @@ val shazam_bucket = dirs.Copy(shazam_res,
 	strings.Join([results_bucket, run_name, "shazam"], "/"))
 
 // Step 4. Change-O Clonal Assignment.
-val changeo_clone = shazam_bucket ~> make("changeo_clone015.rf")
+val changeo_clone = shazam_bucket ~> make("changeo_clone012.rf")
 val (changeo_tsv, _) = dirs.Pick(shazam_res, "*threshold-values.tab")
 val changeo_clone_res = changeo_clone.ChangeoRun(shazam_tsv, changeo_tsv, run_name)
 val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
