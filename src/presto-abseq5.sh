@@ -237,8 +237,8 @@ FS_MASK=30
 MP_UIDLEN=8
 MP_R1_MAXERR=0.3
 MP_R2_MAXERR=0.3
-CREGION_MAXLEN=106
-CREGION_MAXERR=0.25
+CREGION_MAXLEN=120
+CREGION_MAXERR=0.26
 
 # AlignSets run parameters
 MUSCLE_EXEC=muscle
@@ -450,7 +450,7 @@ if $ALIGN_CREGION; then
     CREGION_FIELD="CREGION"
     MaskPrimers.py align -s $PH_FILE -p $CREGION_SEQ \
         --maxlen $CREGION_MAXLEN --maxerror $CREGION_MAXERR \
-        --mode tag --revpr --skiprc \
+        --mode tag --revpr --skiprc --pf $CREGION_FIELD \
         --log "${LOGDIR}/cregion.log" --outname "${OUTNAME}-CR" --nproc $NPROC \
         >> $PIPELINE_LOG 2> $ERROR_LOG
     PH_FILE="${OUTNAME}-CR_primers-pass.fastq"
@@ -470,14 +470,14 @@ check_error
 
 # Remove duplicate sequences
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "CollapseSeq"
-if $CS_KEEP; then
+if $ALIGN_CREGION; then
     CollapseSeq.py -s "${OUTNAME}-final_total.fastq" -n $CS_MISS \
-        --uf PRCONS $CREGION_FIELD --cf CONSCOUNT --act sum --inner \
+        --uf $CREGION_FIELD --cf CONSCOUNT --act sum --inner \
         --keepmiss --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
 else
     CollapseSeq.py -s "${OUTNAME}-final_total.fastq" -n $CS_MISS \
-        --uf PRCONS $CREGION_FIELD --cf CONSCOUNT --act sum --inner \
-        --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
+        --uf PRCONS --cf CONSCOUNT --act sum --inner \
+        --keepmiss --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
 fi
 check_error
 
@@ -487,14 +487,14 @@ printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "SplitSeq group"
 SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f CONSCOUNT --num $MIN_CONSCOUNT \
     >> $PIPELINE_LOG 2> $ERROR_LOG
 ## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
-# IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
+## also adding file name change here...
 mv "${OUTNAME}-final_collapse-unique_atleast-5.fastq" "${OUTNAME}-final_collapse-unique_atleast-2.fastq"
+# IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
     --mode tag --revpr --pf GandA_SUBTYPE
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
     --mode tag --revpr --pf GandA_SUBTYPE
 check_error
-
 
 
 # Create table of final repertoire
@@ -529,10 +529,10 @@ if $MASK_LOWQUAL; then
     ParseLog.py -l "${LOGDIR}/maskqual.log" -f ID MASKED \
         --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
 fi
-if $ALIGN_CREGION; then
-    ParseLog.py -l "${LOGDIR}/cregion.log" -f ID PRIMERCLPSD ERROR \
-        --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
-fi
+#if $ALIGN_CREGION; then
+#    ParseLog.py -l "${LOGDIR}/cregion.log" -f ID PRIMERCLPSD ERROR \
+#        --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
+#fi
 wait
 check_error
 
