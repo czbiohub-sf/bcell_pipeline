@@ -14,6 +14,7 @@ param (
 	read2_file string
 	read1_primers string
 	read2_primers string
+	yaml string
 	run_name string
 	results_bucket string
 )
