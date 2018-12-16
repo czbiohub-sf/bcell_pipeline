@@ -14,7 +14,6 @@ param (
 	read2_file string
 	read1_primers string
 	read2_primers string
-	yaml string
 	run_name string
 	results_bucket string
 )
@@ -28,7 +27,7 @@ val strings = make("$/strings")
 // Step 1. Presto.
 val presto = make("prestooldyaml.rf")
 val presto_res = presto.PrestoRun(file(read1_file), file(read2_file), 
-	file(read1_primers), file(read2_primers), yaml, run_name)
+	file(read1_primers), file(read2_primers), run_name)
 val presto_bucket = dirs.Copy(presto_res,
 	strings.Join([results_bucket, run_name, "presto"], "/"))
 
