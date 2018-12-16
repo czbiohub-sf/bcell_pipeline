@@ -11,7 +11,6 @@
 param (
 	docker_image = "kleinstein/immcantation:2.3.0"
 	presto_script = file("../src/presto-abseq.sh")
-	python_script = file("../src/createYaml.py")
 	subtypes = file("s3://eric.waltari-bucket/BX_miseq/presto/IgGIgAsubtypes.fasta")
 	yaml = file("s3://eric.waltari-bucket/BX_miseq/presto/apr18_full.yaml")
 	cregion = file("s3://eric.waltari-bucket/BX_miseq/presto/heavy_and_light_motifs.fasta")
