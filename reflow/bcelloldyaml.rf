@@ -26,7 +26,6 @@ val strings = make("$/strings")
 
 // Step 1. Presto.
 val presto = make("prestooldyaml.rf")
-val yaml = presto.CreateYaml(read1_file, run_name)
 val presto_res = presto.PrestoRun(file(read1_file), file(read2_file), 
 	file(read1_primers), file(read2_primers), yaml, run_name)
 val presto_bucket = dirs.Copy(presto_res,
