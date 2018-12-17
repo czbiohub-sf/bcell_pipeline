@@ -12,7 +12,7 @@ param (
 	changeo_file string
 	run_name string
 	results_bucket string
-	docker_image = "kleinstein/immcantation:2.3.0"
+	docker_image = "czbiohub/immcantation:2.3.0"
 	alakazam_script = file("../src/alakazam.r")
 )
 
