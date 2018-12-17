@@ -7,7 +7,7 @@
 /* Parameters specify the docker image version and parse_tsv script
    used to parse the distance threshold from shazam tuning output. */
 param (
-	docker_image = "kleinstein/immcantation:2.3.0"
+	docker_image = "czbiohub/immcantation:2.3.0"
 	parse_tsv = file("../src/parse_tsv.py")
 )
 
