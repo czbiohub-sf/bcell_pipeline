@@ -31,17 +31,17 @@ val dirs = make("$/dirs")
    fasta sequences; if unspecified, C-region alignment is not performed. */
 func PrestoRun(read1, read2, read1_primers, read2_primers, yaml_filled, run_name string) dir = {
 	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers,
-					"read2_primers.fasta": read2_primers, "subtypes.fasta": subtypes, "cregion.fasta": cregion, "yaml.yaml": yaml_filled])
+					"read2_primers.fasta": read2_primers, "yaml.yaml": yaml_filled, "subtypes.fasta": subtypes, "cregion.fasta": cregion])
 	exec(image := docker_image) (output dir) {"
 	    sh {{presto_script}} \
 	    -1 {{d}}/read1.fastq \
 	    -2 {{d}}/read2.fastq \
 	    -j {{d}}/read1_primers.fasta \
 	    -v {{d}}/read2_primers.fasta \
+	    -y {{d}}/yaml.yaml \	    
 	    -s {{d}}/subtypes.fasta \
 	    -c {{d}}/cregion.fasta \
 	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
-	    -y {{d}}/yaml.yaml \
 	    -n {{run_name}} \
 	    -o {{output}}
 
