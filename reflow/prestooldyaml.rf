@@ -12,7 +12,6 @@ param (
 	docker_image = "kleinstein/immcantation:2.3.0"
 	presto_script = file("../src/presto-abseq.sh")
 	subtypes = file("s3://eric.waltari-bucket/BX_miseq/presto/IgGIgAsubtypes.fasta")
-	yaml = file("s3://eric.waltari-bucket/BX_miseq/presto/apr18_full.yaml")
 	cregion = file("s3://eric.waltari-bucket/BX_miseq/presto/heavy_and_light_motifs.fasta")
 	author = "CZ Biohub"
 	description = "Initial MiSeq run"
@@ -30,7 +29,7 @@ val dirs = make("$/dirs")
    Results will be saved under the run_name/presto/ directory in the given bucket. 
    Optional -r flag is the V-segment reference file. Optional -c flag is C-region
    fasta sequences; if unspecified, C-region alignment is not performed. */
-func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name string) dir = {
+func PrestoRun(read1, read2, read1_primers, read2_primers, yaml, run_name string) dir = {
 	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers,
 					"read2_primers.fasta": read2_primers, "subtypes.fasta": subtypes, "cregion.fasta": cregion, "yaml.yaml": yaml])
 	exec(image := docker_image) (output dir) {"
