@@ -28,6 +28,47 @@ suppressPackageStartupMessages(library(dplyr))
 ################################ GENERIC COMMANDS FOR ALL ANALYSES ##############################
 #################################################################################################
 # layouts
+layouthkl <- rbind(c(1,NA,2),
+                   c(1,1,3))
+layouthkl2 <- rbind (c(1,1,1,2,3))
+layouthkl3a <- rbind(c(1,1,1),
+                     c(NA,2,3))
+layouthkl3 <- rbind(c(1,NA),
+                    c(1,2),
+                    c(1,3))
+layoutgmkl <- rbind(c(1,3),
+                    c(2,4))
+
+layout3piesa <- rbind(c(1, 2, 3))
+layout3pies <- rbind(c(1),
+                     c(2),
+                     c(3))
+layout3piesc <- rbind(c(1,3),
+                      c(2,4))
+layout2 <- rbind(c(1),
+                 c(2))
+
+# Define commmandline arguments
+opt_list <- list(make_option(c("-d", "--db"), dest="DB",
+                             help="Change-O formatted TSV (TAB) file."),
+                 make_option(c("-c", "--clone"), dest="CLONE", default="1",
+                             help="CLONE number to make ChangeoClone"),
+                 make_option(c("-o", "--outdir"), dest="OUTDIR", default=".",
+                             help=paste("Output directory.", "Defaults to the sample name.")))
+# Parse arguments
+opt <- parse_args(OptionParser(option_list=opt_list))
+
+# Create output directory
+if (!(dir.exists(opt$OUTDIR))) {
+    dir.create(opt$OUTDIR)
+}
+
+setwd(opt$OUTDIR)
+
+## Sets BX as the input change-o tab file
+BX <- read.delim(opt$DB)
+
+### NOW UNIVERSAL COMMANDS - UNTIL LINEAGE SECTION
 BX$PRCONS <- as.character(BX$PRCONS)
 BX$CREGION <- as.character(BX$CREGION)
 BX$SEQUENCE_IMGT <- as.character(BX$SEQUENCE_IMGT)
