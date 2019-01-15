@@ -23,7 +23,6 @@ val strings = make("$/strings")
 
 /**************************** RAW READ PROCESSING *****************************/
 
-
 // Step 1. Presto.
 val presto = make("prestohc.rf")
 val yaml = presto.CreateYaml(read1_file, run_name)
@@ -68,7 +67,7 @@ val shazam_bucket = dirs.Copy(shazam_res,
 	strings.Join([results_bucket, run_name, "shazam"], "/"))
 
 // Step 4. Change-O Clonal Assignment.
-val changeo_clone = shazam_bucket ~> make("changeo_clone.rf")
+val changeo_clone = shazam_bucket ~> make("changeo_clone012.rf")
 val (changeo_tsv, _) = dirs.Pick(shazam_res, "*threshold-values.tab")
 val changeo_clone_res = changeo_clone.ChangeoRun(shazam_tsv, changeo_tsv, run_name)
 val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
@@ -77,7 +76,7 @@ val changeo_clone_bucket = dirs.Copy(changeo_clone_res,
 // Analysis Step.
 // Construct Gene and Gene Family Plots.
 // TODO: Read Clone number and run Lineage Reconstruction for a given clone.
-val alakazam = changeo_clone_bucket ~> make("alakazam.rf")
+val alakazam = changeo_clone_bucket ~> make("alakazamhc.rf")
 val (alakazam_tsv, _) = dirs.Pick(changeo_clone_res, "*germ-pass.tab")
 val alakazam_res = alakazam.AlakazamRun(alakazam_tsv)
 val alakazam_bucket = dirs.Copy(alakazam_res,
