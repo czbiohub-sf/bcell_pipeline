@@ -60,7 +60,7 @@ opt <- parse_args(OptionParser(option_list=opt_list))
 
 # Create output directory
 if (!(dir.exists(opt$OUTDIR))) {
-    dir.create(opt$OUTDIR)
+  dir.create(opt$OUTDIR)
 }
 
 setwd(opt$OUTDIR)
@@ -78,6 +78,7 @@ BX$CDRH3KABAT_LENGTH <- ((BX$JUNCTION_LENGTH2) / 3) - 4
 BX$CDRH3KABAT_LENGTH[BX$CDRH3KABAT_LENGTH <= 1] <- 1
 BX$CDRL3KABAT_LENGTH <- ((BX$JUNCTION_LENGTH2) / 3) - 2
 BX$CDRL3KABAT_LENGTH[BX$CDRL3KABAT_LENGTH <= 1] <- 1
+BX$MU_FREQ2 <- 1 - BX$V_IDENTITY
 BX$FAMILY <- getFamily(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$GENE <- getGene(BX$V_CALL, first=TRUE, strip_d=TRUE)
 BX$FAMILY <- as.character(BX$FAMILY)
@@ -200,7 +201,7 @@ gh <- ggplot(BX.H.gene, aes(x=GENE, y=CLONE_FREQ, fill=GF, color=GF)) +
   xlab("Gene") +
   scale_y_continuous(labels = scales::percent) +
   scale_fill_discrete(name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") +
-   geom_point(aes(sample="BX.H"), size=3, alpha=1) +
+  geom_point(aes(sample="BX.H"), size=3, alpha=1) +
   facet_wrap(~ PRCONS2, ncol=1)
 #plot(gh)
 
@@ -342,18 +343,18 @@ ggsave("geneusage_bysample.pdf", gsplots1, width = 16, height = 12, units = "in"
 
 # Calculate combined R and S mutation frequencies
 BX_hobs <- observedMutations(BX.H, sequenceColumn="SEQUENCE_IMGT",
-                            germlineColumn="GERMLINE_IMGT_D_MASK",
-                            regionDefinition=NULL,
-                            frequency=TRUE, 
-                            combine=TRUE,
-                            nproc=1)
+                             germlineColumn="GERMLINE_IMGT_D_MASK",
+                             regionDefinition=NULL,
+                             frequency=TRUE, 
+                             combine=TRUE,
+                             nproc=1)
 
 BX_kobs <- observedMutations(BX.kappa, sequenceColumn="SEQUENCE_IMGT",
-                            germlineColumn="GERMLINE_IMGT_D_MASK",
-                            regionDefinition=NULL,
-                            frequency=TRUE, 
-                            combine=TRUE,
-                            nproc=1)
+                             germlineColumn="GERMLINE_IMGT_D_MASK",
+                             regionDefinition=NULL,
+                             frequency=TRUE, 
+                             combine=TRUE,
+                             nproc=1)
 
 BX_lobs <- observedMutations(BX.lambda, sequenceColumn="SEQUENCE_IMGT",
                              germlineColumn="GERMLINE_IMGT_D_MASK",
@@ -395,9 +396,9 @@ BX_lobs <- rename(BX_lobs, GENECOUNT_BYREAD = SEQ_COUNT)
 BX_lobs$GENEFREQWEIGHT_BYCLONE <- rescale(BX_lobs$GENEFREQ_BYCLONE)
 BX_lobs$GENEFREQWEIGHT_BYREAD <- rescale(BX_lobs$GENEFREQ_BYREAD)
 
-#BX_hobs$MU_WEIGHT <- rescale(BX_hobs$MU_FREQ)
-#BX_kobs$MU_WEIGHT <- rescale(BX_kobs$MU_FREQ)
-#BX_lobs$MU_WEIGHT <- rescale(BX_lobs$MU_FREQ)
+#BX_hobs$MU_WEIGHT <- rescale(BX_hobs$MU_FREQ2)
+#BX_kobs$MU_WEIGHT <- rescale(BX_kobs$MU_FREQ2)
+#BX_lobs$MU_WEIGHT <- rescale(BX_lobs$MU_FREQ2)
 
 ## only after merging should we change LV names for plotting
 BX_lobs$GENE <- gsub("LV", "LV0", BX_lobs$GENE)
@@ -470,22 +471,22 @@ clonestatslf <- clonestatsl %>% filter(n > 1)
 ## getting some summary stats for each isotype...
 hmeans1 <- BX_hobs %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n())
+  summarize(mutation_mean_reads = mean(MU_FREQ2), n1 = n())
 hsds1 <- BX_hobs %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_reads = sd(MU_FREQ), n1b = n())
+  summarize(mutation_sd_reads = sd(MU_FREQ2), n1b = n())
 hmeans2 <- clonestatsh %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_clones = mean(MU_FREQ), n2 = n())
+  summarize(mutation_mean_clones = mean(MU_FREQ2), n2 = n())
 hsds2 <- clonestatsh %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_clones = sd(MU_FREQ), n2b = n())
+  summarize(mutation_sd_clones = sd(MU_FREQ2), n2b = n())
 hmeans3 <- clonestatshf %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_filteredclones = mean(MU_FREQ), n3 = n())
+  summarize(mutation_mean_filteredclones = mean(MU_FREQ2), n3 = n())
 hsds3 <- clonestatshf %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
+  summarize(mutation_sd_filteredclones = sd(MU_FREQ2), n3b = n())
 #hmeans_and_sds <- bind_cols(hmeans1,hsds1,hmeans2,hsds2,hmeans3,hsds3)
 hmeans_and_sds <- hmeans1 %>%
   left_join(hsds1, by='PRCONS2') %>%
@@ -496,22 +497,22 @@ hmeans_and_sds <- hmeans1 %>%
 
 kmeans1 <- BX_kobs %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n())
+  summarize(mutation_mean_reads = mean(MU_FREQ2), n1 = n())
 ksds1 <- BX_kobs %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_reads = sd(MU_FREQ), n1b = n())
+  summarize(mutation_sd_reads = sd(MU_FREQ2), n1b = n())
 kmeans2 <- clonestatsk %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_clones = mean(MU_FREQ), n2 = n())
+  summarize(mutation_mean_clones = mean(MU_FREQ2), n2 = n())
 ksds2 <- clonestatsk %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_clones = sd(MU_FREQ), n2b = n())
+  summarize(mutation_sd_clones = sd(MU_FREQ2), n2b = n())
 kmeans3 <- clonestatskf %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_filteredclones = mean(MU_FREQ), n3 = n())
+  summarize(mutation_mean_filteredclones = mean(MU_FREQ2), n3 = n())
 ksds3 <- clonestatskf %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
+  summarize(mutation_sd_filteredclones = sd(MU_FREQ2), n3b = n())
 #kmeans_and_sds <- bind_cols(kmeans1,ksds1,kmeans2,ksds2,kmeans3,ksds3)
 kmeans_and_sds <- kmeans1 %>%
   left_join(ksds1, by='PRCONS2') %>%
@@ -522,22 +523,22 @@ kmeans_and_sds <- kmeans1 %>%
 
 lmeans1 <- BX_lobs %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n())
+  summarize(mutation_mean_reads = mean(MU_FREQ2), n1 = n())
 lsds1 <- BX_lobs %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_reads = sd(MU_FREQ), n1b = n())
+  summarize(mutation_sd_reads = sd(MU_FREQ2), n1b = n())
 lmeans2 <- clonestatsl %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_clones = mean(MU_FREQ), n2 = n())
+  summarize(mutation_mean_clones = mean(MU_FREQ2), n2 = n())
 lsds2 <- clonestatsl %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_clones = sd(MU_FREQ), n2b = n())
+  summarize(mutation_sd_clones = sd(MU_FREQ2), n2b = n())
 lmeans3 <- clonestatslf %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_mean_filteredclones = mean(MU_FREQ), n3 = n())
+  summarize(mutation_mean_filteredclones = mean(MU_FREQ2), n3 = n())
 lsds3 <- clonestatslf %>%
   group_by(PRCONS2) %>%
-  summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
+  summarize(mutation_sd_filteredclones = sd(MU_FREQ2), n3b = n())
 #lmeans_and_sds <- bind_cols(lmeans1,lsds1,lmeans2,lsds2,lmeans3,lsds3)
 lmeans_and_sds <- lmeans1 %>%
   left_join(lsds1, by='PRCONS2') %>%
@@ -550,24 +551,24 @@ allmeans_and_sds <- bind_rows(hmeans_and_sds,kmeans_and_sds,lmeans_and_sds)
 ### do same for subtype
 submeans1 <- BX_hobs %>%
   group_by(GANDA_SUBTYPE) %>%
-  summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n())
-#  summarize(mutation_mean_reads = mean(MU_FREQ), n1 = n()) %>%
+  summarize(mutation_mean_reads = mean(MU_FREQ2), n1 = n())
+#  summarize(mutation_mean_reads = mean(MU_FREQ2), n1 = n()) %>%
 #  replace_na(GANDA_SUBTYPE = "OTHER")
 subsds1 <- BX_hobs %>%
   group_by(GANDA_SUBTYPE) %>%
-  summarize(mutation_sd_reads = sd(MU_FREQ), n1b = n())
+  summarize(mutation_sd_reads = sd(MU_FREQ2), n1b = n())
 submeans2 <- clonestatsh %>%
   group_by(GANDA_SUBTYPE) %>%
-  summarize(mutation_mean_clones = mean(MU_FREQ), n2 = n())
+  summarize(mutation_mean_clones = mean(MU_FREQ2), n2 = n())
 subsds2 <- clonestatsh %>%
   group_by(GANDA_SUBTYPE) %>%
-  summarize(mutation_sd_clones = sd(MU_FREQ), n2b = n())
+  summarize(mutation_sd_clones = sd(MU_FREQ2), n2b = n())
 submeans3 <- clonestatshf %>%
   group_by(GANDA_SUBTYPE) %>%
-  summarize(mutation_mean_filteredclones = mean(MU_FREQ), n3 = n())
+  summarize(mutation_mean_filteredclones = mean(MU_FREQ2), n3 = n())
 subsds3 <- clonestatshf %>%
   group_by(GANDA_SUBTYPE) %>%
-  summarize(mutation_sd_filteredclones = sd(MU_FREQ), n3b = n())
+  summarize(mutation_sd_filteredclones = sd(MU_FREQ2), n3b = n())
 ## TRYING REPLACE_NA - DOESN'T SEEM TO WORK - PLAN B TO USE DROP_NA, BUT INSTEAD JUST SUBSET EARLIER...AFTER ADDING AS.CHARACTER REPLACE_NA WORKS!
 submeans1 <- replace_na(submeans1, list(GANDA_SUBTYPE = "other"))
 submeans2 <- replace_na(submeans2, list(GANDA_SUBTYPE = "other"))
@@ -763,7 +764,7 @@ clonestatshf$PRCONS2 <- factor(clonestatshf$PRCONS2, levels = c("IgM", "IgG", "I
 ################## NOW REST OF ALL PLOTS ###########################
 ####################################################################
 ### Mutation distribution by Gene plots by read
-ghmutv <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+ghmutv <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() + ggtitle("Mutation distribution by Gene") +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent) +
@@ -776,7 +777,7 @@ ghcdr3v <- ggplot(BX_hobs, aes(x=GENE, y=CDRH3KABAT_LENGTH, fill=FAMILY, color=F
   geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(ghcdr3v)
 
-gkmutv <- ggplot(BX_kobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+gkmutv <- ggplot(BX_kobs, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
@@ -788,7 +789,7 @@ gkcdr3v <- ggplot(BX_kobs, aes(x=GENE, y=CDRL3KABAT_LENGTH, fill=FAMILY, color=F
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
   geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gkcdr3v)
-glmutv <- ggplot(BX_lobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+glmutv <- ggplot(BX_lobs, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
@@ -809,7 +810,7 @@ ggsave("CDR3_bygene_byread.png", cdr3plots1, width = 16, height = 12, units = "i
 ggsave("CDR3_bygene_byread.pdf", cdr3plots1, width = 16, height = 12, units = "in")
 
 ### MUTATION AND CDR3 PLOTS BY GENE - BUT NOW BY CLONE (AND BY FILTERED CLONE)
-ghmutvc <- ggplot(clonestatsh, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+ghmutvc <- ggplot(clonestatsh, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() + ggtitle("Mutation distribution by Gene") +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent) +
@@ -821,7 +822,7 @@ ghcdr3vc <- ggplot(clonestatsh, aes(x=GENE, y=CDRH3KABAT_LENGTH, fill=FAMILY, co
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) +
   geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gcdr3v) + scale_y_continuous(labels = scales::percent)
-gkmutvc <- ggplot(clonestatsk, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+gkmutvc <- ggplot(clonestatsk, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
@@ -833,7 +834,7 @@ gkcdr3vc <- ggplot(clonestatsk, aes(x=GENE, y=CDRL3KABAT_LENGTH, fill=FAMILY, co
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) +
   geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gkcdr3v) + scale_y_continuous(labels = scales::percent)
-glmutvc <- ggplot(clonestatsl, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+glmutvc <- ggplot(clonestatsl, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2) + scale_y_continuous(labels = scales::percent) +
@@ -857,7 +858,7 @@ ggsave("CDR3_bygene_byclone.pdf", cdr3plots1c, width = 16, height = 12, units = 
 ## filtered clone steps removed
 
 ### force mutation frequency (y-axis here) for all HC to be 0-35%
-ghmutvh35 <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
+ghmutvh35 <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYREAD)) +
   theme_bw() + ggtitle("Mutation distribution by Gene") +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
@@ -866,7 +867,7 @@ ghmutvh35 <- ggplot(BX_hobs, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, s
 mutplots1h35 <- grid.arrange(ghmutvh35,gkmutv,glmutv, layout_matrix = layouthkl3)
 ggsave("mutation_bygene_byreadh35.png", mutplots1h35, width = 16, height = 12, units = "in")
 ggsave("mutation_bygene_byreadh35.pdf", mutplots1h35, width = 16, height = 12, units = "in")
-ghmutvch35 <- ggplot(clonestatsh, aes(x=GENE, y=MU_FREQ, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
+ghmutvch35 <- ggplot(clonestatsh, aes(x=GENE, y=MU_FREQ2, fill=FAMILY, color=FAMILY, stroke = 0.001, alpha=GENEFREQ_BYCLONE)) +
   theme_bw() + ggtitle("Mutation distribution by Gene") +
   xlab("Gene") + ylab("% Somatic Hypermutation") +
   scale_fill_brewer(palette = "Paired", name="Gene Family") + scale_colour_brewer(palette = "Paired", name="Gene Family") + scale_alpha(guide = "none") + facet_wrap(~ PRCONS2, ncol=1) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
@@ -880,27 +881,27 @@ ggsave("mutation_bygene_bycloneh35.pdf", mutplots1ch35, width = 16, height = 12,
 ### histograms of mutation
 ###################################
 ## by read
-ghmuthistogram <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogram <- ggplot(BX_hobs, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol = 1) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
 #plot(ghmuthistogram)
-gkmuthistogram <- ggplot(BX_kobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+gkmuthistogram <- ggplot(BX_kobs, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
 #plot(gkmuthistogram)
-glmuthistogram <- ggplot(BX_lobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+glmuthistogram <- ggplot(BX_lobs, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
 #plot(glmuthistogram)
 ### free y axis for % and not just counts below
-ghmuthistogramfree <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogramfree <- ggplot(BX_hobs, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol = 1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
 #plot(ghmuthistogramfree)
 
-ghmuthistogramcounts <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+ghmuthistogramcounts <- ggplot(BX_hobs, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Reads")
 #plot(ghmuthistogramcounts)
-gkmuthistogramcounts <- ggplot(BX_kobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+gkmuthistogramcounts <- ggplot(BX_kobs, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Reads")
 #plot(gkmuthistogramcounts)
-glmuthistogramcounts <- ggplot(BX_lobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+glmuthistogramcounts <- ggplot(BX_lobs, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Reads")
 #plot(glmuthistogramcounts)
 
@@ -917,10 +918,10 @@ ggsave("mutation_histogram_hlseparatefreepanels.png", mutplotshistfree, width = 
 ggsave("mutation_histogram_hlseparatefreepanels.pdf", mutplotshistfree, width = 16, height = 12, units = "in")
 
 ### force x axis for all HC to be 0-35%
-ghmuthistogramh35 <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogramh35 <- ggplot(BX_hobs, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol = 1) + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Reads")
 #plot(ghmuthistogramh35)
-ghmuthistogramcountsh35 <- ggplot(BX_hobs, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+ghmuthistogramcountsh35 <- ggplot(BX_hobs, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Reads")
 #plot(ghmuthistogramcountsh35)
 mutplotshisth35 <- grid.arrange(ghmuthistogramh35,gkmuthistogram,glmuthistogram, layout_matrix = layouthkl3)
@@ -931,34 +932,34 @@ ggsave("mutation_histogram_rawcounts_hlseparatepanelsh35.png", mutplotshistcount
 ggsave("mutation_histogram_rawcounts_hlseparatepanelsh35.pdf", mutplotshistcountsh35, width = 16, height = 12, units = "in")
 
 ## same mutation plots but by clone
-ghmuthistogrambyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogrambyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(ghmuthistogrambyclone0)
-ghmuthistogrambyclone <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogrambyclone <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(ghmuthistogrambyclone)
-gkmuthistogrambyclone <- ggplot(clonestatsk, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+gkmuthistogrambyclone <- ggplot(clonestatsk, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(gkmuthistogrambyclone)
-glmuthistogrambyclone <- ggplot(clonestatsl, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+glmuthistogrambyclone <- ggplot(clonestatsl, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(glmuthistogrambyclone)
 ### free y axis for % and not just counts below
-ghmuthistogrambyclonefree <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogrambyclonefree <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(ghmuthistogrambyclonefree)
 
 
-ghmuthistogramcountsbyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+ghmuthistogramcountsbyclone0 <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Clones")
 #plot(ghmuthistogramcountsbyclone0)
-ghmuthistogramcountsbyclone <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+ghmuthistogramcountsbyclone <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Clones")
 #plot(ghmuthistogramcountsbyclone)
-gkmuthistogramcountsbyclone <- ggplot(clonestatsk, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+gkmuthistogramcountsbyclone <- ggplot(clonestatsk, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Clones")
 #plot(gkmuthistogramcountsbyclone)
-glmuthistogramcountsbyclone <- ggplot(clonestatsl, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+glmuthistogramcountsbyclone <- ggplot(clonestatsl, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2) + scale_x_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + xlab("% Somatic Hypermutation") + ylab("Clones")
 #plot(glmuthistogramcountsbyclone)
 
@@ -974,10 +975,10 @@ ggsave("mutation_histogram_byclone_hlseparatefreepanels.png", mutplotshistbyclon
 ggsave("mutation_histogram_byclone_hlseparatefreepanels.pdf", mutplotshistbyclonefree, width = 16, height = 12, units = "in")
 
 ### force x axis for all HC to be 0-35%
-ghmuthistogrambycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
+ghmuthistogrambycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(aes(y=0.01*..density..), binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1) + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + scale_y_continuous(labels = scales::percent) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation") + xlab("% Somatic Hypermutation") + ylab("Proportion of Clones")
 #plot(ghmuthistogrambycloneh35)
-ghmuthistogramcountsbycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ)) + geom_histogram(binwidth = 0.01) + 
+ghmuthistogramcountsbycloneh35 <- ggplot(clonestatsh, aes(x = MU_FREQ2)) + geom_histogram(binwidth = 0.01) + 
   facet_wrap(~ PRCONS2, ncol=1, scales = "free_y") + scale_x_continuous(labels = scales::percent, limits = c(-0.01, .35)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) + ggtitle("Somatic Hypermutation, Raw Counts") + xlab("% Somatic Hypermutation") + ylab("Clones")
 #plot(ghmuthistogramcountsbycloneh35)
 mutplotshistbycloneh35 <- grid.arrange(ghmuthistogrambycloneh35,gkmuthistogrambyclone,glmuthistogrambyclone, layout_matrix = layouthkl3)
@@ -1000,19 +1001,19 @@ ggsave("mutation_histogram_rawcounts_byclone_hlseparatepanelsh35.pdf", mutplotsh
 ###################################
 ##### mutation vs CDR3 hex plots
 ## by read
-gmutandcdr3hexhr <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexhr <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
 #plot(gmutandcdr3hexhr)
-gmutandcdr3hexkr <- ggplot(BX_kobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexkr <- ggplot(BX_kobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads",  breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
 #plot(gmutandcdr3hexkr)
-gmutandcdr3hexlr <- ggplot(BX_lobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexlr <- ggplot(BX_lobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
@@ -1023,19 +1024,19 @@ ggsave("mutationvsCDR3_byread_hlseparatepanels.png", mutvsCDR3r, width = 16, hei
 ggsave("mutationvsCDR3_byread_hlseparatepanels.pdf", mutvsCDR3r, width = 16, height = 12, units = "in")
 
 ## by clone
-gmutandcdr3hexh <- ggplot(clonestatsh, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexh <- ggplot(clonestatsh, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
 #plot(gmutandcdr3hexh)
-gmutandcdr3hexk <- ggplot(clonestatsk, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexk <- ggplot(clonestatsk, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
 #plot(gmutandcdr3hexk)
-gmutandcdr3hexl <- ggplot(clonestatsl, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexl <- ggplot(clonestatsl, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
@@ -1046,7 +1047,7 @@ ggsave("mutationvsCDR3_byclone_hlseparatepanels.png", mutvsCDR3, width = 16, hei
 ggsave("mutationvsCDR3_byclone_hlseparatepanels.pdf", mutvsCDR3, width = 16, height = 12, units = "in")
 
 ### force mutation frequency (y-axis here) for all HC to be 0-35%
-gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
@@ -1055,7 +1056,7 @@ gmutandcdr3hexhrh35 <- ggplot(BX_hobs, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
 mutvsCDR3rh35 <- grid.arrange(gmutandcdr3hexhrh35,gmutandcdr3hexkr,gmutandcdr3hexlr, layout_matrix = layouthkl3)
 ggsave("mutationvsCDR3_byread_hlseparatepanelsh35.png", mutvsCDR3rh35, width = 16, height = 12, units = "in")
 ggsave("mutationvsCDR3_byread_hlseparatepanelsh35.pdf", mutvsCDR3rh35, width = 16, height = 12, units = "in")
-gmutandcdr3hexhh35 <- ggplot(clonestatsh, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ)) +
+gmutandcdr3hexhh35 <- ggplot(clonestatsh, aes(x=CDRH3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() + ggtitle("Somatic Hypermutation & CDR3") +
   xlab("CDRH3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
@@ -1132,19 +1133,19 @@ ggsave("clonalfamily_n_IgGIgA_reads.png", ghnreadshistogrambyclonega, width = 8,
 ggsave("clonalfamily_n_IgGIgA_readcounts.png", ghnreadshistogramcountsbyclonega, width = 8, height = 6, units = "in")
 
 ## Hex plots of avg mutation vs. number of reads
-gmutandnhexhbyisotypeh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
+gmutandnhexhbyisotypeh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
 #plot(gmutandnhexhbyisotypeh)
-gmutandnhexhbyisotypek <- ggplot(clonestatsk, aes(x=n, y=MU_FREQ)) +
+gmutandnhexhbyisotypek <- ggplot(clonestatsk, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
   geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
 #plot(gmutandnhexhbyisotypek)
-gmutandnhexhbyisotypel <- ggplot(clonestatsl, aes(x=n, y=MU_FREQ)) +
+gmutandnhexhbyisotypel <- ggplot(clonestatsl, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
@@ -1155,7 +1156,7 @@ ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.png", gmutandnhexhbyisotype,
 ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.pdf", gmutandnhexhbyisotype, width = 16, height = 12, units = "in")
 
 ### force mutation frequency (y-axis here) for all HC to be 0-35%
-gmutandnhexhbyisotypehh35 <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
+gmutandnhexhbyisotypehh35 <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent, limits = c(-0.01, .35)) +
@@ -1166,7 +1167,7 @@ ggsave("clonalfamily_n_vs_mutation_hlseparatepanelsh35.png", gmutandnhexhbyisoty
 ggsave("clonalfamily_n_vs_mutation_hlseparatepanelsh35.pdf", gmutandnhexhbyisotypeh35, width = 16, height = 12, units = "in")
 
 ## HC plots combining all isotypes
-gmutandnhexallh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
+gmutandnhexallh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation, HC Reads") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
@@ -1174,7 +1175,7 @@ gmutandnhexallh <- ggplot(clonestatsh, aes(x=n, y=MU_FREQ)) +
 #plot(gmutandnhexallh)
 ggsave("clonalfamily_n_vs_mutation_allHC_reads.png", gmutandnhexallh, width = 8, height = 6, units = "in")
 ## EXCLUDING IgM
-gmutandnhexga <- ggplot(clonestatsga, aes(x=n, y=MU_FREQ)) +
+gmutandnhexga <- ggplot(clonestatsga, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation, IgG & IgA Reads") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
@@ -1726,4 +1727,3 @@ ggsave("results_byclones_blankpies.pdf", manypdfs2b, width = 16, height = 12, un
 # ##################       TOPOLOGY ANALYSIS              #############
 # #####################################################################
 # #####################################################################
-
