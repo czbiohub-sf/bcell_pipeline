@@ -60,7 +60,7 @@ val changeo_igblast_bucket = dirs.Copy(changeo_igblast_res,
 // 	strings.Join([results_bucket, run_name, "tigger"], "/"))
 
 // Step 3b. SHazaM Clonal Assignment Threshold Tuning.
-val shazam = tigger_bucket ~> make("shazam.rf")
+val shazam = changeo_igblast_bucket ~> make("shazam.rf")
 val (shazam_tsv, _) = dirs.Pick(changeo_igblast_res, "*parse-select.tab")
 val shazam_res = shazam.ShazamRun(shazam_tsv, run_name)
 val shazam_bucket = dirs.Copy(shazam_res,
