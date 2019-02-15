@@ -14,7 +14,7 @@ param (
 	python_script = file("../src/createYaml.py")
 	subtypes = file("s3://eric.waltari-bucket/BX_miseq/presto/IgGIgAsubtypes2.fasta")
 	cregion = file("s3://eric.waltari-bucket/BX_miseq/presto/heavy_and_light_motifs.fasta")
-	singlesequences = file("s3://eric.waltari-bucket/BX_miseq/presto/singlesequences.fastq")
+	singlesequences = file("s3://eric.waltari-bucket/BX_miseq/presto/den_lc.fastq")
 	author = "CZ Biohub"
 	description = "Initial MiSeq run"
 )
