@@ -1,8 +1,8 @@
 ## Immcantation B-cell Repertoire Sequencing Pipeline adapted for Reflow. 
 
-Author: Gerry Meixiong, Aaron McGeever, CZ Biohub
+Author: Eric Waltari, Gerry Meixiong, Aaron McGeever, CZ Biohub
 
-Date: 7.13.18
+Date: 2.22.19
 
 ## Contents ##
 1. [Introduction](#introduction)
@@ -17,7 +17,7 @@ to repertoire analysis. It encompasses pre-processing of fastq files, pRESTO,
 changeo-igblast, tigger, shazam, changeo-clone, and alakazam. The steps leading
 up to analysis are included in bcell.rf. The resulting output from changeo-clone,
 the end stage of bcell.rf, is used as input for alakazam analysis steps. The reflow
-pipeline currently uses the 1.10.2 version of kleinstein/immcantation.
+pipeline currently uses the 2.3 version of kleinstein/immcantation.
 
 
 
@@ -83,4 +83,4 @@ Results will be saved to the s3 bucket under the run_name/alakazam/ directory.
 
 ## Questions
 
-For questions, please contact gerry.meixiong@czbiohub.org or aaron.mcgeever@czbiohub.org. 
+For questions, please contact eric.waltari@czbiohub.org or aaron.mcgeever@czbiohub.org. 
