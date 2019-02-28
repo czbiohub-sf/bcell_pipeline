@@ -38,7 +38,6 @@ AWS_SDK_LOAD_CONFIG=1 reflow setup-dynamodb-assoc czbiohub-reflow-quickstart
 
 Your reflow config should now be configured with the biohub's s3 bucket and ready to run.
 
-
 To run on an ec2 instance, use aegea to launch the czbiohub-reflow packer image.
 aegea launch --iam-role S3fromEC2 --ami-tags Name=czbiohub-reflow -t t2.micro  [yourname]-reflow
 aegea start [yourinstance]
@@ -55,30 +54,14 @@ reflow [-cache off] run bcell.rf -read1_file <read1.fastq> -read2_file <read2.fa
 -read1_primers <r1_primers.fasta> -read2_primers <r2_primers.fasta> -run_name <name> \
 -results_bucket s3://<bucket> 
 
-Results will be saved to the s3 bucket under the run_name directory. The -cache off option 
-prevents caching and forces a full run. 
-
-
-For batch runs, cd to the experiments/bcell_initial_runs/ directory. Modify bcell_test_run.csv
-to match your input files. 
-
-reflow runbatch [--reset]
-
-The reset option will retry all the failed runs, if there were any previously. 
-
-
 It is important to note that the read1_file and read2_file inputs do not necessarily correspond 
 to your R1 and R2 fastq files from the sequencer. The read1_file input must be the fastq sequence 
 beginning with the C-region or J-segment. The read2_file input much be the matching fastq sequence 
 beginning with the leader V-segment. read1_primers and read2_primers enumerate the primer sequences 
 for read1_file and read2_file, respectively. 
+Results will be saved to the s3 bucket under the run_name directory (i.e. the Alakazam results will be under the run_name/alakazam/ directory). The -cache off option 
+prevents caching and forces a full run. 
 
-
-For analysis steps, save the germ-pass tsv file in changeo-clone/ in s3. 
-
-reflow run alakazam.rf -changeo_file <germ-pass.tab> -run_name <name> -results_bucket s3://<bucket>
-
-Results will be saved to the s3 bucket under the run_name/alakazam/ directory. 
 
 
 ## Questions
