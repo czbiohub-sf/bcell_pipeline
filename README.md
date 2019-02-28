@@ -59,8 +59,8 @@ to your R1 and R2 fastq files from the sequencer. The read1_file input must be t
 beginning with the C-region or J-segment. The read2_file input much be the matching fastq sequence 
 beginning with the leader V-segment. read1_primers and read2_primers enumerate the primer sequences 
 for read1_file and read2_file, respectively. 
-Results will be saved to the s3 bucket under the run_name directory (i.e. the Alakazam results will be under the run_name/alakazam/ directory). The -cache off option 
-prevents caching and forces a full run. 
+Results will be saved to the s3 bucket under the run_name directory (i.e. the Alakazam results will be 
+under the run_name/alakazam/ directory). The -cache off option prevents caching and forces a full run. 
 
 
 
