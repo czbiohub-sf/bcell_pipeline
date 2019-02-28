@@ -12,8 +12,8 @@ param (
 	docker_image = "czbiohub/immcantation:2.3.0"
 	presto_script = file("../src/presto-abseq.sh")
 	python_script = file("../src/createYaml.py")
-	subtypes = file("s3://eric.waltari-bucket/BX_miseq/presto/IgGIgAsubtypes.fasta")
-	cregion = file("s3://eric.waltari-bucket/BX_miseq/presto/heavy_and_light_motifs.fasta")
+	subtypes = file("../src/HCsubtypes.fasta")
+	cregion = file("../src/heavy_and_light_motifs.fasta")
 	author = "CZ Biohub"
 	description = "Initial MiSeq run"
 )
