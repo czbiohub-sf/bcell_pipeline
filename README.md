@@ -14,9 +14,8 @@ Date: 2.22.19
 
 The Immcantation framework is a start-to-finish pipeline going from raw reads 
 to repertoire analysis. It encompasses pre-processing of fastq files, pRESTO, 
-changeo-igblast, tigger, shazam, changeo-clone, and alakazam. The steps leading
-up to analysis are included in bcell.rf. The resulting output from changeo-clone,
-the end stage of bcell.rf, is used as input for alakazam analysis steps. The reflow
+Change-O Igblast, TigGER, SHazaM, Change-O Clone, and Alakazam. All of these steps
+up to Alakazam summaries are included in bcell.rf. The reflow
 pipeline currently uses the 2.3 version of kleinstein/immcantation.
 
 
