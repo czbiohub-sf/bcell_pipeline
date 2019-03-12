@@ -1,0 +1,58 @@
+/* Reflow module for presto-abseq step of the Immcantation pipeline. 
+
+   author: Gerry Meixiong, CZ Biohub
+   date: 7.12.18
+ */
+
+/* Parameters specify the docker image version as well as the scripts
+   used for presto-abseq and creating the yaml file. All presto runs 
+   need an accompanying yaml file. The author and description params 
+   are used for the yaml file. */
+param (
+	docker_image = "czbiohub/immcantation:2.3.0"
+	presto_script = file("../src/presto-abseq.sh")
+	python_script = file("../src/createYaml.py")
+	subtypes = file("../src/HCsubtypes.fasta")
+	cregion = file("../src/heavy_and_light_motifs_mus.fasta")
+	author = "CZ Biohub"
+	description = "Initial MiSeq run"
+)
+
+val dirs = make("$/dirs")
+
+/* Creates yaml file for the current run. Feel free to change author and
+   description parameters. */
+func CreateYaml(read_file, run_name string) file = 
+	exec(image := docker_image, mem := GiB) (out file) {"
+		PRESTO_VERSION=$(python3 -c "import presto; print('%s' % (presto.__version__))")
+		python3 {{python_script}} "{{read_file}}" "{{run_name}}" \
+		"{{author}}" ${PRESTO_VERSION} "{{description}}" {{out}}
+	"}
+
+/* Input: read1_file is a fastq sequence file beginning with C-region or J-segment. 
+   read2_file is the matching fastq sequence file beginning with the leader V-segment.
+   read1_primers and read2_primers enumerate the primer sequences for read1_file and 
+   read2_file, respectively. yaml is the yaml file containing metadata for this run.
+   Results will be saved under the run_name/presto/ directory in the given bucket. 
+   Optional -r flag is the V-segment reference file. Optional -c flag is C-region
+   fasta sequences; if unspecified, C-region alignment is not performed. */
+func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name string) dir = {
+	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers,
+					"read2_primers.fasta": read2_primers, "subtypes.fasta": subtypes, "cregion.fasta": cregion, "yaml.yaml": yaml])
+	exec(image := docker_image) (output dir) {"
+	    sh {{presto_script}} \
+	    -1 {{d}}/read1.fastq \
+	    -2 {{d}}/read2.fastq \
+	    -j {{d}}/read1_primers.fasta \
+	    -v {{d}}/read2_primers.fasta \
+	    -s {{d}}/subtypes.fasta \
+	    -c {{d}}/cregion.fasta \
+	    -r /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta \
+	    -y {{d}}/yaml.yaml \
+	    -n {{run_name}} \
+	    -o {{output}}
+
+	    cat {{output}}/*_atleast-2_primers-fail.fastq >> {{output}}/*_atleast-2_primers-pass.fastq
+	    cat {{output}}/*-unique_primers-fail.fastq >> {{output}}/*-unique_primers-pass.fastq
+	"}
+}
