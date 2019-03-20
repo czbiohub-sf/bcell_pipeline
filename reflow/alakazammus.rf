@@ -1,0 +1,28 @@
+
+/* Reflow module for alakazam analysis step of the Immcantation pipeline. 
+
+   author: Gerry Meixiong, CZ Biohub
+   date: 7.12.18
+ */
+
+/* Parameters specify the changeo file output from changeo-clone to 
+   analyze as well as the docker image version and alakazam script
+   used for analysis. Results will be saved in the name directory
+   in the bucket results_bucket. */
+param (
+	// clone int
+	docker_image = "czbiohub/immcantation:2.3.0"
+	analysis_script = file("../src/alakazammus.r")
+)
+
+val dirs = make("$/dirs")
+val strings = make("$/strings")
+
+func AlakazamRun(changeo_tab file) dir = {
+	d := dirs.Make(["changeo.tab": changeo_tab])
+	exec(image := docker_image) (output dir) {"
+		Rscript {{analysis_script}} \
+    	-d {{d}}/changeo.tab \
+    	-o {{output}}
+	"}
+}
