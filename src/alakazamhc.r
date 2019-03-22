@@ -524,12 +524,12 @@ ghcdr3vc <- ggplot(clonestatsh, aes(x=GENE, y=CDRH3KABAT_LENGTH, fill=FAMILY, co
   geom_violin(width=1) + theme(axis.text.x = element_text(angle=45, hjust=1, size=5)) + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"))
 #plot(gcdr3v) + scale_y_continuous(labels = scales::percent)
 
-mutplots1c <- grid.arrange(ghmutvc,gkmutvc,glmutvc, layout_matrix = layouthkl3)
-ggsave("mutation_bygene_byclone.png", mutplots1c, width = 16, height = 12, units = "in")
-ggsave("mutation_bygene_byclone.pdf", mutplots1c, width = 16, height = 12, units = "in")
-cdr3plots1c <- grid.arrange(ghcdr3vc,gkcdr3vc,glcdr3vc, layout_matrix = layouthkl3)
-ggsave("CDR3_bygene_byclone.png", cdr3plots1c, width = 16, height = 12, units = "in")
-ggsave("CDR3_bygene_byclone.pdf", cdr3plots1c, width = 16, height = 12, units = "in")
+#mutplots1c <- grid.arrange(ghmutvc,gkmutvc,glmutvc, layout_matrix = layouthkl3)
+#ggsave("mutation_bygene_byclone.png", mutplots1c, width = 16, height = 12, units = "in")
+#ggsave("mutation_bygene_byclone.pdf", mutplots1c, width = 16, height = 12, units = "in")
+#cdr3plots1c <- grid.arrange(ghcdr3vc,gkcdr3vc,glcdr3vc, layout_matrix = layouthkl3)
+#ggsave("CDR3_bygene_byclone.png", cdr3plots1c, width = 16, height = 12, units = "in")
+#ggsave("CDR3_bygene_byclone.pdf", cdr3plots1c, width = 16, height = 12, units = "in")
 ###
 
 ### force mutation frequency (y-axis here) for all HC to be 0-35%
