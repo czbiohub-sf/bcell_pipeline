@@ -446,6 +446,12 @@ hcisosubmeans_and_sds <- hcisosubmeans_and_sds %>%
 hctarget <- tibble(PRCONS2 = c("IgM", "IgG", "IgA"))
 hcmeans_and_sds <- left_join(data.frame(PRCONS2=hctarget),hcmeans_and_sds,by="PRCONS2")
 
+## ADDING COLLAPSE INTO CLONES FROM SHAZAM SCRIPTS, THEN SAVING AS TSV FILES
+clonesh <- collapseClones(BX_hobs, regionDefinition=IMGT_V, 
+                          method="thresholdedFreq", minimumFrequency=0.6,
+                          includeAmbiguous=FALSE, breakTiesStochastic=FALSE, 
+                          nproc=4)
+write.table(clonesh, "onereadperclone_h.tsv", sep = "\t", row.names = FALSE)
 
 ## saving all created files as .tsv files..
 write.table(BX_hobs, "mutstats_h.tsv", sep = "\t", row.names = FALSE)
