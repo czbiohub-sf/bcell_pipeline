@@ -726,6 +726,23 @@ allmeans_and_sds <- left_join(data.frame(PRCONS2=alltarget),allmeans_and_sds,by=
 hctarget <- tibble(PRCONS2 = c("IgM", "IgG", "IgA"))
 hcmeans_and_sds <- left_join(data.frame(PRCONS2=hctarget),hcmeans_and_sds,by="PRCONS2")
 
+## ADDING COLLAPSE INTO CLONES FROM SHAZAM SCRIPTS, THEN SAVING AS TSV FILES
+clonesh <- collapseClones(BX_hobs, regionDefinition=IMGT_V, 
+                          method="thresholdedFreq", minimumFrequency=0.6,
+                          includeAmbiguous=FALSE, breakTiesStochastic=FALSE, 
+                          nproc=4)
+clonesk <- collapseClones(BX_kobs, regionDefinition=IMGT_V, 
+                          method="thresholdedFreq", minimumFrequency=0.6,
+                          includeAmbiguous=FALSE, breakTiesStochastic=FALSE, 
+                          nproc=4)
+clonesl <- collapseClones(BX_lobs, regionDefinition=IMGT_V, 
+                          method="thresholdedFreq", minimumFrequency=0.6,
+                          includeAmbiguous=FALSE, breakTiesStochastic=FALSE, 
+                          nproc=4)
+write.table(clonesh, "onereadperclone_h.tsv", sep = "\t", row.names = FALSE)
+write.table(clonesk, "onereadperclone_k.tsv", sep = "\t", row.names = FALSE)
+write.table(clonesl, "onereadperclone_l.tsv", sep = "\t", row.names = FALSE)
+
 ## saving all created files as .tsv files..
 write.table(BX_hobs, "mutstats_h.tsv", sep = "\t", row.names = FALSE)
 write.table(BX_kobs, "mutstats_k.tsv", sep = "\t", row.names = FALSE)
