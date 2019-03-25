@@ -53,15 +53,15 @@ val changeo_igblast_bucket = dirs.Copy(changeo_igblast_res,
 	strings.Join([results_bucket, run_name, "changeo_igblast"], "/"))
 
 // Step 3a. TIgGER.
-val tigger = changeo_igblast_bucket ~> make("tigger.rf")
-val (tigger_tsv, _) = dirs.Pick(changeo_igblast_res, "*parse-select.tab")
-val tigger_res = tigger.TiggerRun(tigger_tsv, run_name)
-val tigger_bucket = dirs.Copy(tigger_res,
-	strings.Join([results_bucket, run_name, "tigger"], "/"))
+// val tigger = changeo_igblast_bucket ~> make("tigger.rf")
+// val (tigger_tsv, _) = dirs.Pick(changeo_igblast_res, "*parse-select.tab")
+// val tigger_res = tigger.TiggerRun(tigger_tsv, run_name)
+// val tigger_bucket = dirs.Copy(tigger_res,
+// 	strings.Join([results_bucket, run_name, "tigger"], "/"))
 
 // Step 3b. SHazaM Clonal Assignment Threshold Tuning.
-val shazam = tigger_bucket ~> make("shazam.rf")
-val (shazam_tsv, _) = dirs.Pick(tigger_res, "*genotyped.tab")
+val shazam = changeo_igblast_bucket ~> make("shazam.rf")
+val (shazam_tsv, _) = dirs.Pick(changeo_igblast_res, "*parse-select.tab")
 val shazam_res = shazam.ShazamRun(shazam_tsv, run_name)
 val shazam_bucket = dirs.Copy(shazam_res,
 	strings.Join([results_bucket, run_name, "shazam"], "/"))
