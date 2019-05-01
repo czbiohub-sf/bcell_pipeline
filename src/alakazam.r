@@ -432,7 +432,22 @@ BX_hobs$GANDA_SUBTYPE <- as.character(BX_hobs$GANDA_SUBTYPE)
 BX_kobs$PRCONS2 <- as.character(BX_kobs$PRCONS2)
 BX_lobs$PRCONS2 <- as.character(BX_lobs$PRCONS2)
 
-### creating lists per clone not per read
+### creating lists per clone not per read 
+## NOTE UPDATING 5/1/19 TO USE MODE FOR PRCONS2 AND GANDA_SUBTYPE
+#clonestatsh1 <- BX_hobs %>%
+#  group_by(CLONE) %>%
+#  summarize_at(c("PRCONS2","GENE","V_CALL","D_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","GANDA_SUBTYPE","JUNCTION_LENGTH2","CDRH3KABAT_LENGTH","FAMILY"), first)
+#clonestatsh2 <- BX_hobs %>%
+#  group_by(CLONE) %>%
+#  summarize_if(is.numeric, mean)
+#clonestatsh3 <- BX_hobs %>%
+#  group_by(CLONE) %>%
+#  summarize_at(c("PRCONS2","GANDA_SUBTYPE"), n_distinct)
+#clonestatsh3 <- rename(clonestatsh3, PRCONS2_d = PRCONS2)
+#clonestatsh3 <- rename(clonestatsh3, GANDA_SUBTYPE_d = GANDA_SUBTYPE)
+#clonestatsh4 <- inner_join(clonestatsh1, clonestatsh2)
+#clonestatsh <- inner_join(clonestatsh4, clonestatsh3)
+
 clonestatsh1 <- BX_hobs %>%
   group_by(CLONE) %>%
   summarize_at(c("PRCONS2","GENE","V_CALL","D_CALL","J_CALL","JUNCTION_LENGTH","PRCONS","GANDA_SUBTYPE","JUNCTION_LENGTH2","CDRH3KABAT_LENGTH","FAMILY"), first)
@@ -442,10 +457,24 @@ clonestatsh2 <- BX_hobs %>%
 clonestatsh3 <- BX_hobs %>%
   group_by(CLONE) %>%
   summarize_at(c("PRCONS2","GANDA_SUBTYPE"), n_distinct)
+#clonestatsh3b <- BX_hobs %>%
+#  group_by(CLONE) %>%
+#  summarize_at(c("DUPCOUNT","CONSCOUNT"), max)
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+clonestatsh5 <- BX_hobs %>%
+  group_by(CLONE) %>%
+  summarize_at(c("PRCONS2","GANDA_SUBTYPE"), Mode)
+clonestatsh1 <- rename(clonestatsh1, PRCONS2f = PRCONS2)
+clonestatsh1 <- rename(clonestatsh1, GANDA_SUBTYPEf = GANDA_SUBTYPE)
 clonestatsh3 <- rename(clonestatsh3, PRCONS2_d = PRCONS2)
 clonestatsh3 <- rename(clonestatsh3, GANDA_SUBTYPE_d = GANDA_SUBTYPE)
 clonestatsh4 <- inner_join(clonestatsh1, clonestatsh2)
-clonestatsh <- inner_join(clonestatsh4, clonestatsh3)
+clonestatsh6 <- inner_join(clonestatsh4, clonestatsh3)
+clonestatsh <- inner_join(clonestatsh6, clonestatsh5)
 
 clonestatsk1 <- BX_kobs %>%
   group_by(CLONE) %>%
