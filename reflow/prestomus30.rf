@@ -38,8 +38,8 @@ func CreateYaml(read_file, run_name string) file =
    Optional -r flag is the V-segment reference file. Optional -c flag is C-region
    fasta sequences; if unspecified, C-region alignment is not performed. */
 func PrestoRun(read1, read2, read1_primers, read2_primers, yaml file, run_name string) dir = {
-	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers,
-					"read2_primers.fasta": read2_primers, "subtypes.fasta": subtypes, "cregion.fasta": cregion, "yaml.yaml": yaml])
+	d := dirs.Make(["read1.fastq": read1, "read2.fastq": read2, "read1_primers.fasta": read1_primers, "read2_primers.fasta": read2_primers,
+					"single_sequences.fastq": singlesequences, "subtypes.fasta": subtypes, "cregion.fasta": cregion, "yaml.yaml": yaml])
 	exec(image := docker_image) (output dir) {"
 	    sh {{presto_script}} \
 	    -1 {{d}}/read1.fastq \
