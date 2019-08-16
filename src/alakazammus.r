@@ -1521,98 +1521,6 @@ ggsave("piechart_lc_clones.pdf", piechartlcclones2, width = 8, height = 6, units
 
 
 ## SUBTYPES...
-piechartsubcounts <- ggplot(subtypemeans_and_sds, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_brewer(name = "Subtype", palette = "BuPu", labels = subtypemeans_and_sds$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Reads by Subtype") +
-  xlab("") + ylab("Counts") + geom_text(aes(label = scales::percent(pern1)), position = position_stack(vjust = 0.5))
-piechartsubcounts2 <- piechartsubcounts + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsubcounts2)
-piechartsubclones <- ggplot(subtypemeans_and_sds, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_brewer(name = "Subtype", palette = "BuPu", labels = subtypemeans_and_sds$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Clones by Subtype") +
-  xlab("") + ylab("Clones") + geom_text(aes(label = scales::percent(pern2)), position = position_stack(vjust = 0.5))
-piechartsubclones2 <- piechartsubclones + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsubclones2)
-ggsave("piechart_subtype_reads.png", piechartsubcounts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype_reads.pdf", piechartsubcounts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype_clones.png", piechartsubclones2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype_clones.pdf", piechartsubclones2, width = 8, height = 6, units = "in", bg = "transparent")
-
-# new color scheme
-# new color scheme
-piechartsub1counts <- ggplot(subtypemeans_and_sds1, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Subtype", values = c("orchid1", "mediumorchid2", "darkorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "darkslateblue"), labels = subtypemeans_and_sds1$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Reads by Subtype") +
-  xlab("") + ylab("Counts") + geom_text(aes(label = scales::percent(pern1)), position = position_stack(vjust = 0.5))
-piechartsub1counts2 <- piechartsub1counts + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsub1counts2)
-piechartsub1clones <- ggplot(subtypemeans_and_sds1, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Subtype", values = c("orchid1", "mediumorchid2", "darkorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "darkslateblue"), labels = subtypemeans_and_sds1$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Clones by Subtype") +
-  xlab("") + ylab("Clones") + geom_text(aes(label = scales::percent(pern2)), position = position_stack(vjust = 0.5))
-piechartsub1clones2 <- piechartsub1clones + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsub1clones2)
-ggsave("piechart_subtype1_reads.png", piechartsub1counts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype1_reads.pdf", piechartsub1counts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype1_clones.png", piechartsub1clones2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype1_clones.pdf", piechartsub1clones2, width = 8, height = 6, units = "in", bg = "transparent")
-
-
-### sets of piecharts in threes...
-pies_byread <- grid.arrange(piechartallcounts2,piechartsubcounts2,piecharthccounts2,piechartlccounts2, layout_matrix = layout3piesc)
-pies_byclone <- grid.arrange(piechartallclones2,piechartsubclones2,piecharthcclones2,piechartlcclones2, layout_matrix = layout3piesc)
-
-### ISOTYPES + SUBTYPES
-piechartisosubcounts <- ggplot(isosubmeans_and_sds, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "darkslateblue", "skyblue", "lightgreen"), labels = isosubmeans_and_sds$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("Reads by Isotype & Subtype") +
-  xlab("") + ylab("Counts") + geom_text(aes(label = scales::percent(pern1)), position = position_stack(vjust = 0.5))
-piechartisosubcounts2 <- piechartisosubcounts + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartisosubcounts2)
-piechartisosubclones <- ggplot(isosubmeans_and_sds, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "darkslateblue", "skyblue", "lightgreen"), labels = isosubmeans_and_sds$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("Clones by Isotype & Subtype") +
-  xlab("") + ylab("Clones") + geom_text(aes(label = scales::percent(pern2)), position = position_stack(vjust = 0.5))
-piechartisosubclones2 <- piechartisosubclones + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartisosubclones2)
-ggsave("piechart_isosub_reads.png", piechartisosubcounts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_isosub_reads.pdf", piechartisosubcounts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_isosub_clones.png", piechartisosubclones2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_isosub_clones.pdf", piechartisosubclones2, width = 8, height = 6, units = "in", bg = "transparent")
-
-## HC ISOTYPES + SUBTYPES
-piecharthcisosubcounts <- ggplot(hcisosubmeans_and_sds, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "darkslateblue"), labels = hcisosubmeans_and_sds$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Reads by Isotype & Subtype") +
-  xlab("") + ylab("Counts") + geom_text(aes(label = scales::percent(pern1)), position = position_stack(vjust = 0.5))
-piecharthcisosubcounts2 <- piecharthcisosubcounts + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piecharthcisosubcounts2)
-piecharthcisosubclones <- ggplot(hcisosubmeans_and_sds, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "darkslateblue"), labels = hcisosubmeans_and_sds$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Clones by Isotype & Subtype") +
-  xlab("") + ylab("Clones") + geom_text(aes(label = scales::percent(pern2)), position = position_stack(vjust = 0.5))
-piecharthcisosubclones2 <- piecharthcisosubclones + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piecharthcisosubclones2)
-ggsave("piechart_hcisosub_reads.png", piecharthcisosubcounts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_hcisosub_reads.pdf", piecharthcisosubcounts2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_hcisosub_clones.png", piecharthcisosubclones2, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_hcisosub_clones.pdf", piecharthcisosubclones2, width = 8, height = 6, units = "in", bg = "transparent")
 
 ###############################
 ### NOTE IF NO IgG4, need another set of subytpe plots - note instead at first calculation I now replace all NAs with 0s
@@ -1636,10 +1544,10 @@ ggsave("piechart_hcisosub_clones.pdf", piecharthcisosubclones2, width = 8, heigh
 #ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
 ## with new isotype color scheme
-pdfset1 <- c(list(piechartallcounts2, piechartsub1counts2, piecharthccounts2, piechartlccounts2, piechartisosubcounts2, piecharthcisosubcounts2, gfsplots1, gsplots1, mutplots1h35, cdr3plots1, mutvsCDR3rh35, mutplotshisth35, mutplotshistcountsh35))
+pdfset1 <- c(list(piechartallcounts2, piecharthccounts2, piechartlccounts2, gfsplots1, gsplots1, mutplots1h35, cdr3plots1, mutvsCDR3rh35, mutplotshisth35, mutplotshistcountsh35))
 manypdfs1 <- marrangeGrob(pdfset1, nrow=1, ncol=1)
 ggsave("results_byreads.pdf", manypdfs1, width = 16, height = 12, units = "in")
-pdfset2 <- c(list(piechartallclones2, piechartsub1clones2, piecharthcclones2, piechartlcclones2, piechartisosubclones2, piecharthcisosubclones2, gfplots1, gplots1, mutplots1ch35, cdr3plots1c, mutvsCDR3h35, mutplotshistbycloneh35, mutplotshistcountsbycloneh35, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotypeh35))
+pdfset2 <- c(list(piechartallclones2, piecharthcclones2, piechartlcclones2, gfplots1, gplots1, mutplots1ch35, cdr3plots1c, mutvsCDR3h35, mutplotshistbycloneh35, mutplotshistcountsbycloneh35, nreadshistogrambyclone, nreadshistogramcountsbyclone, gmutandnhexhbyisotypeh35))
 manypdfs2 <- marrangeGrob(pdfset2, nrow=1, ncol=1)
 ggsave("results_byclones.pdf", manypdfs2, width = 16, height = 12, units = "in")
 
@@ -1705,90 +1613,12 @@ ggsave("piechart_lc_clones_blank.png", piechartlcclones2b, width = 8, height = 6
 ggsave("piechart_lc_clones_blank.pdf", piechartlcclones2b, width = 8, height = 6, units = "in", bg = "transparent")
 
 ## SUBTYPES...
-piechartsubcountsblank <- ggplot(subtypemeans_and_sds, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_brewer(name = "Subtype", palette = "BuPu", labels = subtypemeans_and_sds$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Reads by Subtype")
-piechartsubcounts2b <- piechartsubcountsblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsubcounts2b)
-piechartsubclonesblank <- ggplot(subtypemeans_and_sds, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_brewer(name = "Subtype", palette = "BuPu", labels = subtypemeans_and_sds$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Clones by Subtype")
-piechartsubclones2b <- piechartsubclonesblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsubclones2b)
-ggsave("piechart_subtype_reads_blank.png", piechartsubcounts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype_reads_blank.pdf", piechartsubcounts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype_clones_blank.png", piechartsubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype_clones_blank.pdf", piechartsubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
-
-# new color scheme
-piechartsub1countsblank <- ggplot(subtypemeans_and_sds1, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Subtype", values = c("orchid1", "mediumorchid2", "darkorchid3", "darkorchid4", "blue", "blue3"), labels = subtypemeans_and_sds1$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Reads by Subtype")
-piechartsub1counts2b <- piechartsub1countsblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsub1counts2b)
-piechartsub1clonesblank <- ggplot(subtypemeans_and_sds1, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Subtype", values = c("orchid1", "mediumorchid2", "darkorchid3", "darkorchid4", "blue", "blue3"), labels = subtypemeans_and_sds1$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Clones by Subtype")
-piechartsub1clones2b <- piechartsub1clonesblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartsub1clones2b)
-ggsave("piechart_subtype1_reads_blank.png", piechartsub1counts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype1_reads_blank.pdf", piechartsub1counts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype1_clones_blank.png", piechartsub1clones2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_subtype1_clones_blank.pdf", piechartsub1clones2b, width = 8, height = 6, units = "in", bg = "transparent")
-
-### ISOTYPES + SUBTYPES
-piechartisosubcountsblank <- ggplot(isosubmeans_and_sds, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "skyblue", "lightgreen"), labels = isosubmeans_and_sds$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("Reads by Isotype & Subtype")
-piechartisosubcounts2b <- piechartisosubcountsblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartisosubcounts2b)
-piechartisosubclonesblank <- ggplot(isosubmeans_and_sds, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid3", "darkorchid4", "blue", "blue3", "skyblue", "lightgreen"), labels = isosubmeans_and_sds$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("Clones by Isotype & Subtype")
-piechartisosubclones2b <- piechartisosubclonesblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piechartisosubclones2b)
-ggsave("piechart_isosub_reads_blank.png", piechartisosubcounts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_isosub_reads_blank.pdf", piechartisosubcounts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_isosub_clones_blank.png", piechartisosubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_isosub_clones_blank.pdf", piechartisosubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
-
-## HC ISOTYPES + SUBTYPES
-piecharthcisosubcountsblank <- ggplot(hcisosubmeans_and_sds, aes(x = "", y = n1, fill = GANDA_SUBTYPE, label = scales::percent(pern1))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid3", "darkorchid4", "blue", "blue3"), labels = hcisosubmeans_and_sds$subtypeandn1) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Reads by Isotype & Subtype")
-piecharthcisosubcounts2b <- piecharthcisosubcountsblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piecharthcisosubcounts2b)
-piecharthcisosubclonesblank <- ggplot(hcisosubmeans_and_sds, aes(x = "", y = n2, fill = GANDA_SUBTYPE, label = scales::percent(pern2))) +
-  geom_col(width = 1) +
-  scale_fill_manual(name = "Isotype/Subtype", values = c("salmon", "orchid1", "mediumorchid2", "darkorchid3", "darkorchid4", "blue", "blue3"), labels = hcisosubmeans_and_sds$subtypeandn2) +
-  coord_polar("y", start = 0, direction = -1) + theme_void() + theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm")) +
-  ggtitle("HC Clones by Isotype & Subtype")
-piecharthcisosubclones2b <- piecharthcisosubclonesblank + theme(plot.title = element_text(face = "bold", size = rel(1.5)), legend.title = element_text(size = rel(1.5)), legend.text = element_text(lineheight = 0.5, size = rel(1.5)))
-#plot(piecharthcisosubclones2b)
-ggsave("piechart_hcisosub_reads_blank.png", piecharthcisosubcounts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_hcisosub_reads_blank.pdf", piecharthcisosubcounts2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_hcisosub_clones_blank.png", piecharthcisosubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
-ggsave("piechart_hcisosub_clones_blank.pdf", piecharthcisosubclones2b, width = 8, height = 6, units = "in", bg = "transparent")
 
 ### PDFS
-pdfset1b <- c(list(piechartallcounts2b, piechartsub1counts2b, piecharthccounts2b, piechartlccounts2b, piechartisosubcounts2b, piecharthcisosubcounts2b, gfsplots1, gsplots1, mut2plots1h35, cdr3plots1, mut2vsCDR3rh35, mut2plotshisth35, mut2plotshistcountsh35))
+pdfset1b <- c(list(piechartallcounts2b, piecharthccounts2b, piechartlccounts2b, gfsplots1, gsplots1, mut2plots1h35, cdr3plots1, mut2vsCDR3rh35, mut2plotshisth35, mut2plotshistcountsh35))
 manypdfs1b <- marrangeGrob(pdfset1b, nrow=1, ncol=1)
 ggsave("results_byreads_blankpies.pdf", manypdfs1b, width = 16, height = 12, units = "in")
-pdfset2b <- c(list(piechartallclones2b, piechartsub1clones2b, piecharthcclones2b, piechartlcclones2b, piechartisosubclones2b, piecharthcisosubclones2b, gfplots1, gplots1, mut2plots1ch35, cdr3plots1c, mut2vsCDR3h35, mut2plotshistbycloneh35, mut2plotshistcountsbycloneh35, nreadshistogrambyclonefree, nreadshistogramcountsbyclone, gmut2andnhexhbyisotypeh35))
+pdfset2b <- c(list(piechartallclones2b, piecharthcclones2b, piechartlcclones2b, gfplots1, gplots1, mut2plots1ch35, cdr3plots1c, mut2vsCDR3h35, mut2plotshistbycloneh35, mut2plotshistcountsbycloneh35, nreadshistogrambyclonefree, nreadshistogramcountsbyclone, gmut2andnhexhbyisotypeh35))
 manypdfs2b <- marrangeGrob(pdfset2b, nrow=1, ncol=1)
 ggsave("results_byclones_blankpies.pdf", manypdfs2b, width = 16, height = 12, units = "in")
 
