@@ -487,8 +487,8 @@ printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "SplitSeq group"
 SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f CONSCOUNT --num $MIN_CONSCOUNT \
     >> $PIPELINE_LOG 2> $ERROR_LOG
 ## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
-## also adding file name change here...
-mv "${OUTNAME}-final_collapse-unique_atleast-3.fastq" "${OUTNAME}-final_collapse-unique_atleast-2.fastq"
+## also adding file name change here... COMMENTING OUT SINCE NOW STAYS 2
+# mv "${OUTNAME}-final_collapse-unique_atleast-3.fastq" "${OUTNAME}-final_collapse-unique_atleast-2.fastq"
 # IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
     --mode tag --revpr --pf GandA_SUBTYPE
