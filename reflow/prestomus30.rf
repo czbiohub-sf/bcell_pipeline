@@ -10,7 +10,7 @@
    are used for the yaml file. */
 param (
 	docker_image = "kleinstein/immcantation:2.7.0"
-	presto_script = file("../src/presto-abseq_mus3.sh")
+	presto_script = file("../src/presto-abseq_mus.sh")
 	python_script = file("../src/createYaml.py")
 	subtypes = file("../src/HCsubtypes_mus2.fasta")
 	cregion = file("../src/heavy_and_light_motifs_mus.fasta")
