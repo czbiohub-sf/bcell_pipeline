@@ -1,4 +1,4 @@
-* Reflow workflow for B-cell repertoire sequencing pipeline. Follows Immcantation framework.
+/* Reflow workflow for B-cell repertoire sequencing pipeline. Follows Immcantation framework.
    Used for single runs in the reflow/ directory. For batch runs, use bcell_batch.rf from 
    experiments/bcell_initial_runs/.
 
