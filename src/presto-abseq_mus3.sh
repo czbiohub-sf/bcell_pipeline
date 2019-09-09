@@ -547,7 +547,7 @@ fi
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "Compressing files"
 LOG_FILES=$(ls ${LOGDIR}/*.log | grep -v "pipeline")
 FILTER_FILES="$(basename ${R1_READS})\|$(basename ${R2_READS})\|$(basename ${R1_PRIMERS})\|$(basename ${R2_PRIMERS})"
-FILTER_FILES+="\|final_total.fastq\|final_collapse-unique.fastq\|final_collapse-unique_atleast-2.fastq\|final_collapse-unique_atleast-2_primers-pass.fastq\|final_collapse-unique_atleast-2_primers-fail.fastq\|final_collapse-unique_primers-pass.fastq\|final_collapse-unique_primers-fail.fastq"
+FILTER_FILES+="\|final_collapse-unique.fastq\|final_collapse-unique_atleast-2.fastq\|final_collapse-unique_atleast-2_primers-pass.fastq\|final_collapse-unique_atleast-2_primers-fail.fastq\|final_collapse-unique_primers-pass.fastq\|final_collapse-unique_primers-fail.fastq"
 TEMP_FILES=$(ls *.fastq | grep -v ${FILTER_FILES})
 if $ZIP_FILES; then
     tar -zcf log_files.tar.gz $LOG_FILES
