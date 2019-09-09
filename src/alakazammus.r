@@ -1193,7 +1193,7 @@ gmutandcdr3hexlr <- ggplot(BX_lobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads")
 #plot(gmutandcdr3hexlr)
 mutvsCDR3r <- grid.arrange(gmutandcdr3hexhr,gmutandcdr3hexkr,gmutandcdr3hexlr, layout_matrix = layouthkl3)
 ggsave("mutationvsCDR3_byread_hlseparatepanels.png", mutvsCDR3r, width = 16, height = 12, units = "in")
@@ -1216,7 +1216,7 @@ gmutandcdr3hexl <- ggplot(clonestatsl, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones")
 #plot(gmutandcdr3hexl)
 mutvsCDR3 <- grid.arrange(gmutandcdr3hexh,gmutandcdr3hexk,gmutandcdr3hexl, layout_matrix = layouthkl3)
 ggsave("mutationvsCDR3_byclone_hlseparatepanels.png", mutvsCDR3, width = 16, height = 12, units = "in")
@@ -1260,7 +1260,7 @@ gmut2andcdr3hexlr <- ggplot(BX_lobs, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Read") +
   scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Reads")
 mut2vsCDR3rh35 <- grid.arrange(gmut2andcdr3hexhrh35,gmut2andcdr3hexkr,gmut2andcdr3hexlr, layout_matrix = layouthkl3)
 ggsave("mutation2vsCDR3_byread_hlseparatepanelsh35.png", mut2vsCDR3rh35, width = 16, height = 12, units = "in")
 ggsave("mutation2vsCDR3_byread_hlseparatepanelsh35.pdf", mut2vsCDR3rh35, width = 16, height = 12, units = "in")
@@ -1281,7 +1281,7 @@ gmut2andcdr3hexl <- ggplot(clonestatsl, aes(x=CDRL3KABAT_LENGTH, y=MU_FREQ2)) +
   theme_bw() +
   xlab("CDRL3 Length, Kabat (aa)") + ylab("Average % Somatic Hypermutation per Clone") +
   scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones", breaks = c(0, 1, 2, 3), labels = c(1, 10, 100, 1000))
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones")
 mut2vsCDR3h35 <- grid.arrange(gmut2andcdr3hexhh35,gmut2andcdr3hexk,gmut2andcdr3hexl, layout_matrix = layouthkl3)
 ggsave("mutation2vsCDR3_byclone_hlseparatepanelsh35.png", mut2vsCDR3h35, width = 16, height = 12, units = "in")
 ggsave("mutation2vsCDR3_byclone_hlseparatepanelsh35.pdf", mut2vsCDR3h35, width = 16, height = 12, units = "in")
@@ -1371,7 +1371,7 @@ gmutandnhexhbyisotypel <- ggplot(clonestatsl, aes(x=n, y=MU_FREQ)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones")
 #plot(gmutandnhexhbyisotypel)
 gmutandnhexhbyisotype <- grid.arrange(gmutandnhexhbyisotypeh,gmutandnhexhbyisotypek,gmutandnhexhbyisotypel, layout_matrix = layouthkl3)
 ggsave("clonalfamily_n_vs_mutation_hlseparatepanels.png", gmutandnhexhbyisotype, width = 16, height = 12, units = "in")
@@ -1427,7 +1427,7 @@ gmut2andnhexhbyisotypel <- ggplot(clonestatsl, aes(x=n, y=MU_FREQ2)) +
   theme_bw() + ggtitle("# Reads per Clonal Family & Somatic Hypermutation") +
   xlab("# Reads per Clonal Family") + ylab("Average % Somatic Hypermutation") +
   scale_x_log10(breaks = c(1, 10, 100, 1000)) + scale_y_continuous(labels = scales::percent) +
-  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones",  breaks = c(0, 1, 2, 3, 4), labels = c(1, 10, 100, 1000, 10000))
+  geom_hex(aes(fill=log10(..count..))) + facet_wrap(~ PRCONS2, ncol=1) + scale_fill_gradient(low = "light blue", high = "magenta", name = "Number of Clones")
 gmut2andnhexhbyisotypeh35 <- grid.arrange(gmut2andnhexhbyisotypehh35,gmut2andnhexhbyisotypek,gmut2andnhexhbyisotypel, layout_matrix = layouthkl3)
 ggsave("clonalfamily_n_vs_mutation2_hlseparatepanelsh35.png", gmut2andnhexhbyisotypeh35, width = 16, height = 12, units = "in")
 ggsave("clonalfamily_n_vs_mutation2_hlseparatepanelsh35.pdf", gmut2andnhexhbyisotypeh35, width = 16, height = 12, units = "in")
