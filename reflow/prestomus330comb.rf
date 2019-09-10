@@ -12,7 +12,7 @@ param (
 	docker_image = "kleinstein/immcantation:2.7.0"
 	presto_script = file("../src/presto-abseq_mus3.sh")
 	python_script = file("../src/createYaml.py")
-	subtypes = file("../src/HCsubtypes_mus.fasta")
+	subtypes = file("../src/HCsubtypes_musIgGIgA.fasta")
 	cregion = file("../src/heavy_and_light_motifs_mus.fasta")
 	author = "CZ Biohub"
 	singlesequences = file("s3://eric.waltari-bucket/BX_miseq/presto/singlelambdasequences.fastq")
