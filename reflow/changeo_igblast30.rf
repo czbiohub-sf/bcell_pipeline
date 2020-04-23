@@ -22,8 +22,8 @@ func ChangeoRun(fastq file, run_name string) dir = {
 	exec(image := docker_image) (output dir) {"
     sh /usr/local/bin/changeo-igblast \
     	-s {{d}}/changeo_igblast.fastq \
+	-f changeo \
     	-n {{run_name}} \
-    	-o {{output}} \
-    	-f
+    	-o {{output}}
 	"}
 }
