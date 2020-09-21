@@ -71,7 +71,7 @@ COORD_SET=false
 BARCODE_LENGTH_SET=false
 
 # Get commandline arguments
-while getopts "1:2:j:v:c:r:y:n:o:x:p:b:h" OPT; do
+while getopts "1:2:j:v:c:r:s:y:n:o:x:p:b:h" OPT; do
     case "$OPT" in
     1)  R1_READS=${OPTARG}
         R1_READS_SET=true
