@@ -15,6 +15,7 @@
 #       If unspecified internal C-region alignment is not performed.
 #   -r  V-segment reference file.
 #       Defaults to /usr/local/share/germlines/igblast/fasta/imgt_human_ig_v.fasta
+#   -s  Ig subtype reference file.
 #   -y  YAML file providing description fields for report generation.
 #   -n  Sample name or run identifier which will be used as the output file prefix.
 #       Defaults to a truncated version of the read 1 filename.
@@ -41,6 +42,7 @@ print_usage() {
             "     If unspecified internal C-region alignment is not performed."
     echo -e "  -r  V-segment reference file.\n" \
             "     Defaults to /usr/local/share/igblast/fasta/imgt_human_ig_v.fasta."
+    echo -e "  -s  V-segment reference file.\n"
     echo -e "  -y  YAML file providing description fields for report generation."
     echo -e "  -n  Sample identifier which will be used as the output file prefix.\n" \
             "     Defaults to a truncated version of the read 1 filename."
@@ -88,6 +90,8 @@ while getopts "1:2:j:v:c:r:y:n:o:x:p:b:h" OPT; do
         ;;
     r)  VREF_SEQ=${OPTARG}
         VREF_SEQ_SET=true
+        ;;
+    s)  IGGIGA_SUBTYPES=${OPTARG}
         ;;
     y)  YAML=$OPTARG
         YAML_SET=true
@@ -353,6 +357,12 @@ check_error
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "SplitSeq group"
 SplitSeq.py group -s "${OUTNAME}-final.fastq" -f DUPCOUNT --num 2 \
     >> $PIPELINE_LOG 2> $ERROR_LOG
+    ## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
+    # IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
+MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
+        --mode tag --revpr --pf GandA_SUBTYPE
+MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
+        --mode tag --revpr --pf GandA_SUBTYPE  
 check_error
 
 
