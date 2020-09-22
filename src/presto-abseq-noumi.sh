@@ -286,6 +286,7 @@ check_error() {
     fi
 }
 
+
 # Start
 PRESTO_VERSION=$(python3 -c "import presto; print('%s-%s' % (presto.__version__, presto.__date__))")
 echo -e "IDENTIFIER: ${OUTNAME}"
@@ -308,16 +309,16 @@ AssemblePairs.py sequential -1 $R2_READS \
     --minlen $AP_MINLEN --maxerror $AP_MAXERR --alpha $AP_ALPHA --scanrev \
     --minident $AP_MINIDENT --evalue $AP_EVALUE --maxhits $AP_MAXHITS --aligner blastn \
     --nproc $NPROC --log "${LOGDIR}/assemble.log" \
-    --outname "${OUTNAME}" >> $PIPELINE_LOG 2> $ERROR_LOG
+    --outdir . --outname "${OUTNAME}" >> $PIPELINE_LOG 2> $ERROR_LOG
 PH_FILE="${OUTNAME}_assemble-pass.fastq"
 check_error
 
 
-# Remove low quality reads
+# Remove low quality reads - note changing to maskqual instead
 if $FILTER_LOWQUAL; then
     printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "FilterSeq quality"
     #OUTPREFIX="$(printf '%02d' $STEP)--${OUTNAME}"
-    FilterSeq.py quality -s "${OUTNAME}_assemble-pass.fastq" -q $FS_QUAL --nproc $NPROC \
+    FilterSeq.py quality -s $PH_FILE -q $FS_QUAL --nproc $NPROC \
         --outname "${OUTNAME}" --outdir . --log "${LOGDIR}/quality.log" \
         >> $PIPELINE_LOG  2> $ERROR_LOG
     MPR_FILE="${OUTNAME}_quality-pass.fastq"
@@ -326,70 +327,97 @@ else
     MPR_FILE="${OUTNAME}_assemble-pass.fastq"
 fi
 
+## added cregion steps
 
-# Identify primers and UID
+if $ALIGN_CREGION; then
+    # Annotate with internal C-region
+    printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "MaskPrimers align"
+    CREGION_FIELD="CREGION"
+    MaskPrimers.py align -s $MPR_FILE -p $CREGION_SEQ \
+        --maxlen $CREGION_MAXLEN --maxerror $CREGION_MAXERR \
+        --mode tag --revpr --skiprc --pf $CREGION_FIELD \
+        --log "${LOGDIR}/cregion.log" --outname "${OUTNAME}-CR" --nproc $NPROC \
+        >> $PIPELINE_LOG 2> $ERROR_LOG
+    MPR_FILE="${OUTNAME}-CR_primers-pass.fastq"
+    check_error
+else
+    CREGION_FIELD=""
+fi
+
+# Identify primers and UID - NOTE ADDED --PF VPRIMER SO THAT PRIMER WILL ONLY BE REVERSE...
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "MaskPrimers score"
-MaskPrimers.py align -s "${OUTNAME}_quality-pass.fastq" -p $R2_PRIMERS --mode mask \
+MaskPrimers.py align -s $MPR_FILE -p $R2_PRIMERS --mode mask --pf VPRIMER \
     --maxerror $MP_R2_MAXERR --nproc $NPROC \
     --log "${LOGDIR}/primers-2.log" --outname "${OUTNAME}-FWD" \
     >> $PIPELINE_LOG 2> $ERROR_LOG
-MaskPrimers.py score -s "${OUTNAME}_quality-pass.fastq" -p $R1_PRIMERS --mode cut --revpr \
+MaskPrimers.py score -s "${OUTNAME}-FWD_primers-pass.fastq" -p $R1_PRIMERS --mode cut --revpr \
     --maxerror $MP_R1_MAXERR --nproc $NPROC \
     --log "${LOGDIR}/primers-1.log" --outname "${OUTNAME}-REV" \
     >> $PIPELINE_LOG 2> $ERROR_LOG
 check_error
 
-# Remove duplicate sequences
+## SOMEWHERE ALSO ADD CREGION ANNOTATION STEP??
+## ADD A RENAME TO REMOVE FIRST PART OF PIMER NAME (UNNEEDED AFTER ADDING PF COMMAND ABOVE)
+
+
+
+# Remove duplicate sequences NEED TO USE PRIMERCLPSD INSTEAD OF PRIMER - NO BUT MAYBE USE CREGION INSTEAD?
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "CollapseSeq"
-if $CS_KEEP; then
+if $ALIGN_CREGION; then
     CollapseSeq.py -s "${OUTNAME}-REV_primers-pass.fastq" -n $CS_MISS \
-        --uf PRIMER --cf PRIMER --act sum --inner \
+        --uf CREGION --cf PRIMER --act set --inner \
         --keepmiss --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
 else
     CollapseSeq.py -s "${OUTNAME}-REV_primers-pass.fastq" -n $CS_MISS \
-        --uf PRIMER --cf PRIMER --act sum --inner \
-        --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
+        --uf PRIMER --cf PRIMER --act set --inner \
+        --keepmiss --outname "${OUTNAME}-final" >> $PIPELINE_LOG 2> $ERROR_LOG
 fi
 check_error
 
 
 # Filter to sequences with at least 2 supporting sources
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "SplitSeq group"
-SplitSeq.py group -s "${OUTNAME}-final.fastq" -f DUPCOUNT --num 2 \
+SplitSeq.py group -s "${OUTNAME}-final_collapse-unique.fastq" -f DUPCOUNT --num 2 \
     >> $PIPELINE_LOG 2> $ERROR_LOG
-    ## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
+check_error
+
+## ADDING COMMAND TO GET IGG & IGA GSUBTYPES
     # IGGIGA_SUBTYPES="/data/IgGIgAsubtypes.fasta"
+printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "MaskPrimers subtypes"
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
         --mode tag --revpr --pf GandA_SUBTYPE
 MaskPrimers.py align -s "${OUTNAME}-final_collapse-unique.fastq" -p $IGGIGA_SUBTYPES --failed --maxlen 100 --maxerror 0.03 \
-        --mode tag --revpr --pf GandA_SUBTYPE  
+        --mode tag --revpr --pf GandA_SUBTYPE
 check_error
 
 
 # Create table of final repertoire
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseHeaders table"
 ParseHeaders.py table -s "${OUTNAME}-final.fastq" \
-    -f ID DUPCOUNT PRIMER --outname "final-total" \
+    -f ID $CREGION_FIELD DUPCOUNT PRIMER --outname "final-total" \
     --outdir ${LOGDIR} >> $PIPELINE_LOG 2> $ERROR_LOG
 ParseHeaders.py table -s "${OUTNAME}-final_collapse-unique.fastq" \
-    -f ID DUPCOUNT PRIMER --outname "final-unique" \
+    -f ID $CREGION_FIELD DUPCOUNT PRIMER --outname "final-unique" \
     --outdir ${LOGDIR} >> $PIPELINE_LOG 2> $ERROR_LOG
 ParseHeaders.py table -s "${OUTNAME}-final_collapse-unique_atleast-2.fastq" \
-    -f ID DUPCOUNT PRIMER --outname "final-unique-atleast2" \
+    -f ID $CREGION_FIELD DUPCOUNT PRIMER --outname "final-unique-atleast2" \
     --outdir ${LOGDIR} >> $PIPELINE_LOG 2> $ERROR_LOG
 check_error
 
+# Generate pRESTO report
+if $REPORT; then
+    printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "Generating report"
+    REPORT_SCRIPT="report_abseq3(\"${LOGDIR}\", sample=\"${OUTNAME}\", output_dir=\"${REPORTDIR}\", config=\"${YAML}\", quiet=FALSE)"
+    Rscript -e "library(prestor); ${REPORT_SCRIPT}" > ${REPORTDIR}/report.out 2> ${REPORTDIR}/report.err
+fi
 
 # Process log files
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "ParseLog"
 if $FILTER_LOWQUAL; then
-    ParseLog.py -l "${LOGDIR}/quality-1.log" "${LOGDIR}/quality-2.log" -f ID QUALITY \
+    ParseLog.py -l "${LOGDIR}/quality.log" -f ID QUALITY \
         --outdir ${LOGDIR} > /dev/null &
 fi
-ParseLog.py -l "${LOGDIR}/primers-1.log" "${LOGDIR}/primers-2.log" -f ID BARCODE PRIMER ERROR \
-    --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
-ParseLog.py -l "${LOGDIR}/consensus-1.log" "${LOGDIR}/consensus-2.log" \
-    -f BARCODE SEQCOUNT CONSCOUNT PRIMER PRCONS PRCOUNT PRFREQ ERROR \
+ParseLog.py -l "${LOGDIR}/primers-1.log" "${LOGDIR}/primers-2.log" -f ID PRIMER ERROR \
     --outdir ${LOGDIR} > /dev/null  2> $ERROR_LOG &
 ParseLog.py -l "${LOGDIR}/assemble.log" \
     -f ID REFID LENGTH OVERLAP GAP ERROR PVALUE EVALUE1 EVALUE2 IDENTITY FIELDS1 FIELDS2 \
@@ -404,13 +432,6 @@ if $ALIGN_CREGION; then
 fi
 wait
 check_error
-
-# Generate pRESTO report
-if $REPORT; then
-    printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "Generating report"
-    REPORT_SCRIPT="report_abseq3(\"${LOGDIR}\", sample=\"${OUTNAME}\", output_dir=\"${REPORTDIR}\", config=\"${YAML}\", quiet=FALSE)"
-    Rscript -e "library(prestor); ${REPORT_SCRIPT}" > ${REPORTDIR}/report.out 2> ${REPORTDIR}/report.err
-fi
 
 # Zip or delete intermediate and log files
 printf "  %2d: %-*s $(date +'%H:%M %D')\n" $((++STEP)) 24 "Compressing files"
