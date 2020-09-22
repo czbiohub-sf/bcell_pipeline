@@ -223,7 +223,7 @@ fi
 
 # Define pipeline steps
 ZIP_FILES=true
-DELETE_FILES=false
+DELETE_FILES=true
 FILTER_LOWQUAL=true
 ALIGN_SETS=false
 MASK_LOWQUAL=false
