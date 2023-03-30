@@ -4,6 +4,11 @@ Author: Eric Waltari, Gerry Meixiong, Aaron McGeever, CZ Biohub
 
 Date: 2.22.19
 
+For more information, see the accompanying [article](https://www.frontiersin.org/articles/10.3389/fimmu.2019.01452/full):
+
+Waltari, E., McGeever, A., Friedland, N., Kim, P.S. and McCutcheon, K.M., 2019. Functional enrichment and analysis of antigen-specific memory B cell antibody repertoires in PBMCs. Frontiers in immunology, 10, p.1452.
+
+
 ## Contents ##
 1. [Introduction](#introduction)
 2. [Setup](#setup)
